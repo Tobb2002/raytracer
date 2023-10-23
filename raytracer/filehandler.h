@@ -5,9 +5,8 @@
 #define FILEHANDLER_H_
 
 #include <iostream>
-using namespace std;
 
-void safe_picture(string filename);
+void safe_picture(std::string filename);
 void init_picture(void);
 
 #endif
