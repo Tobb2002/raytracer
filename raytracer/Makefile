@@ -1,33 +1,32 @@
 .PHONY: all
 
 CC = g++
-FLAGS = -g -c
-
-BUILDDIR = build
-SOURCEDIR = src
+FLAGS = -Wall
 
 # tasks
 all: compile checkstyle
 
-compile: $(BUILDDIR) $(BUILDDIR)/raytracer
+compile: build build/raytracer
 
-$(BUILDDIR):
-	mkdir -p $(BUILDDIR)
+build:
+	mkdir -p build
 
 clean:
-	rm -rf $(BUILDDIR)
+	rm -rf build
 
 checkstyle:
-	cpplint src/*.cpp
+	cpplint *.cpp
 
 run: compile
-	./$(BUILDDIR)/raytracer
+	./build/raytracer
 
 # main
-$(BUILDDIR)/raytracer: $(BUILDDIR)/raytracer.o
-	g++ -o $(BUILDDIR)/raytracer $(BUILDDIR)/raytracer.o
+build/raytracer: build/raytracer.o build/filehandler.o
+	$(CC) $(FLAGS) -o build/raytracer build/raytracer.o build/filehandler.o
 
-$(BUILDDIR)/raytracer.o: $(SOURCEDIR)/raytracer.cpp
-	g++ -c $(SOURCEDIR)/raytracer.cpp -o $(BUILDDIR)/raytracer.o
+build/raytracer.o: raytracer.cpp
+	$(CC) $(FLAGS) -c raytracer.cpp -o build/raytracer.o
 
 # modules
+build/filehandler.o: filehandler.cpp filehandler.h
+	$(CC) $(FLAGS) -c filehandler.cpp -o build/filehandler.o
