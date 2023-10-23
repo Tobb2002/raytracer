@@ -7,25 +7,24 @@ BUILDDIR = build
 SOURCEDIR = src
 
 # tasks
-all: build checkstyle
+all: compile checkstyle
 
-build: dir raytracer
+compile: $(BUILDDIR) $(BUILDDIR)/raytracer
 
-dir:
+$(BUILDDIR):
 	mkdir -p $(BUILDDIR)
 
 clean:
 	rm -rf $(BUILDDIR)
 
 checkstyle:
-	echo "\nSTYLECHECKER:"
 	cpplint src/*.cpp
 
-run: build
+run: compile
 	./$(BUILDDIR)/raytracer
 
 # main
-raytracer: $(BUILDDIR)/raytracer.o
+$(BUILDDIR)/raytracer: $(BUILDDIR)/raytracer.o
 	g++ -o $(BUILDDIR)/raytracer $(BUILDDIR)/raytracer.o
 
 $(BUILDDIR)/raytracer.o: $(SOURCEDIR)/raytracer.cpp
