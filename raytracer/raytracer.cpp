@@ -9,8 +9,7 @@
 #include "./ray.h"
 #include <glm/gtx/string_cast.hpp>
 
-using namespace glm;
-
+using glm::vec3;
 
 
 int main(void) {

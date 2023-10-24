@@ -7,16 +7,15 @@
 
 #include <glm/glm.hpp>
 
-using namespace glm;
+using glm::vec3;
 
 
 class Ray {
-  public:
+ public:
     Ray(vec3 origin, vec3 direction);
     vec3 get_point(float t);
-  private:
+ private:
     vec3 origin;
     vec3 direction;
-
 };
-#endif
+#endif  // RAY_H_
