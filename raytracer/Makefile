@@ -15,7 +15,7 @@ clean:
 	rm -rf build
 
 checkstyle:
-	cpplint --filter=-build/include *.cpp
+	cclint --filter=-build/include,-build/header_guard *.cpp *.h
 
 run: compile
 	./build/raytracer
