@@ -5,16 +5,16 @@
 #include <iostream>
 #include "./filehandler.h"
 #include "./vector.h"
+#include <glm/glm.hpp>
+#include "./ray.h"
+#include <glm/gtx/string_cast.hpp>
+
+using namespace glm;
+
 
 
 int main(void) {
   safe_picture("filename.ppm");
-
-  init_picture();
-
-  Vector v = Vector(1,2,3);
-  
-  v.print();
 
   return 0;
 }
