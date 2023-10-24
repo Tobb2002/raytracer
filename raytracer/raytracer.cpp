@@ -3,17 +3,22 @@
  */
 
 #include <iostream>
-#include "./filehandler.h"
-#include "./vector.h"
 #include <glm/glm.hpp>
-#include "./ray.h"
 #include <glm/gtx/string_cast.hpp>
+#include "./filehandler.h"
+#include "./ray.h"
+#include "./triangle.h"
 
 using glm::vec3;
 
 
 int main(void) {
   safe_picture("filename.ppm");
+
+  vec3 points[] = {vec3(0,0,0), vec3(1,2,3), vec3(1,1,1) };
+
+  Triangle t = Triangle(points, vec3(100, 100, 100));
+  t.print();
 
   return 0;
 }

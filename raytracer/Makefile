@@ -21,8 +21,8 @@ run: compile
 	./build/raytracer
 
 # main
-build/raytracer: build/raytracer.o build/filehandler.o build/ray.o build/vector.o
-	$(CC) $(FLAGS) -o build/raytracer build/raytracer.o build/filehandler.o build/ray.o build/vector.o
+build/raytracer: build/raytracer.o build/filehandler.o build/ray.o build/triangle.o
+	$(CC) $(FLAGS) -o build/raytracer build/raytracer.o build/filehandler.o build/ray.o build/triangle.o
 
 build/raytracer.o: raytracer.cpp
 	$(CC) $(FLAGS) -c raytracer.cpp -o build/raytracer.o
@@ -34,5 +34,5 @@ build/filehandler.o: filehandler.cpp filehandler.h
 build/ray.o: ray.cpp ray.h
 	$(CC) $(FLAGS) -c ray.cpp -o build/ray.o
 
-build/vector.o: vector.cpp vector.h
-	$(CC) $(FLAGS) -c vector.cpp -o build/vector.o
+build/triangle.o: triangle.cpp triangle.h
+	$(CC) $(FLAGS) -c triangle.cpp -o build/triangle.o
