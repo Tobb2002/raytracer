@@ -4,7 +4,7 @@ CC = g++
 FLAGS = -Wall
 
 # tasks
-all: compile checkstyle
+all: compile
 
 compile: build build/raytracer
 
