@@ -16,6 +16,10 @@ Triangle::Triangle(vec3 points[3], vec3 color) {
 }
 
 vec3 Triangle::intersect(Ray ray) {
+  /* 
+   * returns intersection Point beetween ray and trianlge.
+   * if intersection is outside of triangle return vec(0,0,0) since that's the camera origin.
+   */
   vec3 e[2];
   
   e[0] = _p[1] - _p[0];
@@ -24,14 +28,25 @@ vec3 Triangle::intersect(Ray ray) {
   vec3 s = ray.get_origin() - _p[0];
   vec3 d = ray.get_direction();
 
-  vec3 v = vec3(
-    (glm::cross(s, e[1]) * e[2]),
-    (glm::cross(d, e[2]) * s),
-    (glm::cross(s, e[1]) * d)
-  )
+  float p1 = (
+    1 / (glm::dot(glm::cross(d, e[1]), e[0]))
+  );
+  vec3 p2 = vec3(
+    (glm::dot(glm::cross(s, e[0]), e[1])),
+    (glm::dot(glm::cross(d, e[1]), s)),
+    (glm::dot(glm::cross(s, e[0]), d)));
+  
+  // res = vec(t, b1, b2);
+  vec3 res = p1 * p2; 
 
+  // check if intersection is inside triangle and in front of Camera(t >0)
+  
+  // intersection outside of triangle
+  if (!(1 - res[1] - res[2] >= 0 && res[1] >= 0 && res[2] >= 0 && res[0] >= 0)) {
+    res = vec3(0, 0, 0);
+  }
 
-
+  return res;
 }
 
 void Triangle::print(){
