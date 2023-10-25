@@ -21,16 +21,13 @@ run: compile
 	./build/raytracer
 
 # main
-build/raytracer: build/raytracer.o build/filehandler.o build/ray.o build/triangle.o build/camera.o build/image.o
-	$(CC) $(FLAGS) -o build/raytracer build/raytracer.o build/filehandler.o build/ray.o build/triangle.o build/camera.o build/image.o
+build/raytracer: build/raytracer.o build/ray.o build/triangle.o build/camera.o build/image.o
+	$(CC) $(FLAGS) -o build/raytracer build/raytracer.o build/ray.o build/triangle.o build/camera.o build/image.o
 
 build/raytracer.o: raytracer.cpp
 	$(CC) $(FLAGS) -c raytracer.cpp -o build/raytracer.o
 
 # modules
-build/filehandler.o: filehandler.cpp filehandler.h
-	$(CC) $(FLAGS) -c filehandler.cpp -o build/filehandler.o
-
 build/ray.o: ray.cpp ray.h
 	$(CC) $(FLAGS) -c ray.cpp -o build/ray.o
 

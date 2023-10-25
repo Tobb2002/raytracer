@@ -5,7 +5,6 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
-#include "./filehandler.h"
 #include "./ray.h"
 #include "./triangle.h"
 #include "./camera.h"
@@ -15,8 +14,6 @@ using glm::vec3;
 
 
 int main(void) {
-  safe_picture("filename.ppm");
-
   vec3 points[] = {vec3(2, 0, 0), vec3(2, 4, 0), vec3(2, 2, 2) };
 
   Ray r = Ray(vec3(0, 2, 0), vec3(1, 0, 0));
