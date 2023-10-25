@@ -8,6 +8,7 @@
 #include "./filehandler.h"
 #include "./ray.h"
 #include "./triangle.h"
+#include "./camera.h"
 
 using glm::vec3;
 
@@ -17,17 +18,15 @@ int main(void) {
 
   vec3 points[] = {vec3(2, 0, 0), vec3(2, 4, 0), vec3(2, 2, 2) };
 
-  Ray r = Ray(vec3(0, 10, 0), vec3(0, 1, 0));
+  Ray r = Ray(vec3(0, 2, 0), vec3(1, 0, 0));
 
   Triangle t = Triangle(points, vec3(100, 100, 100));
-  t.print();
 
-  r.print();
-  // test triangle ray intersection
-  vec3 res = t.intersect(r);
+  Camera camera = Camera(2, 2);
 
-
-  std::cout << glm::to_string(res) << std::endl;
+  Ray ray = camera.get_ray(vec2(0, 0));
+  
+  ray.print();
 
   return 0;
 }
