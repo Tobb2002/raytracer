@@ -26,7 +26,7 @@ int main(void) {
   Camera camera = Camera(2, 2);
 
   Ray ray = camera.get_ray(vec2(0, 0));
-  
+
   ray.print();
 
   // test making and writing image

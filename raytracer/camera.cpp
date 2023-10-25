@@ -14,7 +14,7 @@ Camera::Camera(float resolution_x, float resolution_y) {
 
 
   // set standart zoom /image size
-  _image_size = vec2(16,9);
+  _image_size = vec2(16, 9);
 
   _pixel_size = vec2(
     _image_size.x / _resolution.x,
@@ -51,8 +51,7 @@ vec3 Camera::image_to_world(vec2 pos_image) {
     -0.5 * _image_size.x,
     -0.5 * _image_size.y,
     -1.f);
-  
-  
+
   vec3 p = vec3(pos_image.x, pos_image.y, 0.f);
 
   return start + p;
@@ -60,11 +59,7 @@ vec3 Camera::image_to_world(vec2 pos_image) {
 
 Ray Camera::get_ray(vec2 pixel) {
   vec2 pos_image = pixel_to_image_pos(pixel);
-
-  // TODO return ray not direction of ray
-
   vec3 direction = image_to_world(pos_image);
-
   Ray res = Ray(_origin, direction);
 
   return res;

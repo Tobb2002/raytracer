@@ -22,7 +22,6 @@ class Image {
   void delete_matrix();
   int _resolution[2];
   vec3** _matrix;
-
 };
 
 #endif  // IMAGE_H_
