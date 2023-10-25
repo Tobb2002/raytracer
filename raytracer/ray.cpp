@@ -7,10 +7,14 @@
 
 // constructor
 Ray::Ray(vec3 origin, vec3 direction) {
-  Ray::origin = origin;
-  Ray::direction = direction;
+  Ray::_origin = origin;
+  Ray::_direction = direction;
 }
 
+// getter
+vec3 Ray::get_origin() { return _origin; }
+vec3 Ray::get_direction() { return _direction; }
+
 vec3 Ray::get_point(float t) {
-  return origin + (t * direction);
+  return _origin + (t * _direction);
 }

@@ -20,5 +20,10 @@ int main(void) {
   Triangle t = Triangle(points, vec3(100, 100, 100));
   t.print();
 
+  // test crossproduct
+  vec3 res = glm::cross(vec3(1,2,3), vec3(1,1,1));
+
+  std::cout << glm::to_string(res) << std::endl;
+
   return 0;
 }
