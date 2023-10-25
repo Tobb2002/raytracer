@@ -9,6 +9,7 @@
 #include "./ray.h"
 #include "./triangle.h"
 #include "./camera.h"
+#include "image.h"
 
 using glm::vec3;
 
@@ -27,6 +28,10 @@ int main(void) {
   Ray ray = camera.get_ray(vec2(0, 0));
   
   ray.print();
+
+  // test making and writing image
+  Image img = Image(100, 100);
+  img.write_to_file("test.ppm");
 
   return 0;
 }
