@@ -40,6 +40,10 @@ void Image::delete_matrix() {
   delete[] _matrix;
 }
 
+void Image::set_pixel(point pixel, vec3 color) {
+  _matrix[pixel.x][pixel.y] = color;
+}
+
 void Image::write_to_file(std::string filename) {
   /**
    * Function that outputs given Picture in ppm format.

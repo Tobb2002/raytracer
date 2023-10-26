@@ -15,6 +15,10 @@ class Triangle {
     Triangle(vec3 points[3], vec3 color);
 
     vec3 intersect(Ray ray);
+    bool intersect_bool(Ray ray);
+
+    // getters
+    vec3 get_color();
 
     void print();
  private:

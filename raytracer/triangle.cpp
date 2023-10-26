@@ -50,6 +50,19 @@ vec3 Triangle::intersect(Ray ray) {
   return res;
 }
 
+bool Triangle::intersect_bool(Ray ray) {
+  vec3 p = intersect(ray);
+
+  if (p.x == 0 && p.y == 0 && p.z == 0) {
+    return false;
+  }
+  return true;
+}
+
+vec3 Triangle::get_color() {
+  return _color;
+}
+
 void Triangle::print() {
   std::cout << "----Triangle---- " <<  std::endl;
   for (int i = 0; i < 3; i++) {

@@ -14,21 +14,30 @@ using glm::vec3;
 
 
 int main(void) {
-  vec3 points[] = {vec3(2, 0, 0), vec3(2, 4, 0), vec3(2, 2, 2) };
+  // try to trace first image
+  // setup scene
+  vec3 points[] = {vec3(-3, -4, -1), vec3(4, -3, -1), vec3(0, 4, -1) };
+  Triangle t = Triangle(points, vec3(200, 0, 0));
 
-  Ray r = Ray(vec3(0, 2, 0), vec3(1, 0, 0));
+  int resolution[2] = {100, 100};
+  Camera camera = Camera(resolution[0], resolution[1]);
 
-  Triangle t = Triangle(points, vec3(100, 100, 100));
+  Image image = Image(resolution[0], resolution[1]);
 
-  Camera camera = Camera(2, 2);
+  // iterate throug image and calulate intersection
+  // between camera rays and Triangle
+  for (int x = 0; x < resolution[0]; x++) {
+    for (int y = 0; y < resolution[1]; y++) {
+      Ray ray = camera.get_ray(vec2(x, y));
 
-  Ray ray = camera.get_ray(vec2(0, 0));
+      if (t.intersect_bool(ray)) {
+        image.set_pixel({x, y}, t.get_color());
+      }
+    }
+  }
 
-  ray.print();
+  image.write_to_file("test.ppm");
 
-  // test making and writing image
-  Image img = Image(100, 100);
-  img.write_to_file("test.ppm");
 
   return 0;
 }
