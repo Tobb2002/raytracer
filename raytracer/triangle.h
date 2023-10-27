@@ -12,6 +12,7 @@ using glm::vec3;
 
 class Triangle {
  public:
+   Triangle();
     Triangle(vec3 points[3], vec3 color);
 
     vec3 intersect(Ray ray);
@@ -19,6 +20,7 @@ class Triangle {
 
     // getters
     vec3 get_color();
+    void set_color(vec3 color);
 
     void print();
  private:

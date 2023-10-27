@@ -10,16 +10,89 @@
 #include "./camera.h"
 #include "image.h"
 
+// obj
+#include "lib/tinyobjloader/obj_loader.h"
+
 using glm::vec3;
+
+void trace_triagle(void);
+void test_obj(void);
 
 
 int main(void) {
-  // try to trace first image
+  
+  // test obj loader
+  test_obj();
+
+
+  return 0;
+}
+
+void test_obj(void) {
+  // Initialize Loader
+	objl::Loader Loader;
+
+  std::string input_file = "input/bunny.obj";
+
+	// Load .obj File
+	bool loadout = Loader.LoadFile(input_file);
+
+	// Check to see if it loaded
+
+	// If so continue
+	if (loadout)
+	{
+		// Go through each loaded mesh and out its contents
+		for (int i = 0; i < Loader.LoadedMeshes.size(); i++)
+		{
+			// Copy one of the loaded meshes to be our current mesh
+			objl::Mesh curMesh = Loader.LoadedMeshes[i];
+
+      // Generate all Triangles
+      int num_triangles = curMesh.Vertices.size()/3;
+      Triangle *triangle_list = new Triangle[num_triangles];
+
+      std::cout << "Generating Triangles." << std::endl;
+      int id = 0;
+      for (int j = 0; j < curMesh.Vertices.size(); j+=3) {
+          // get points of Triangle
+          vec3 p1 = vec3(curMesh.Vertices[j].Position.X, 
+                         curMesh.Vertices[j].Position.Y,
+                         curMesh.Vertices[j].Position.Z);
+          vec3 p2 = vec3(curMesh.Vertices[j + 1].Position.X, 
+                         curMesh.Vertices[j + 1].Position.Y,
+                         curMesh.Vertices[j + 1].Position.Z);
+          vec3 p3 = vec3(curMesh.Vertices[j + 2].Position.X, 
+                         curMesh.Vertices[j + 2].Position.Y,
+                         curMesh.Vertices[j + 2].Position.Z);
+          
+          std::cout << glm::to_string(p1) << std::endl;
+          
+          vec3 points[] = {p1, p2, p3};
+          triangle_list[id] = Triangle(points, vec3(200, 0, 0));
+          id++;
+      }
+
+			// Print Triangles
+      std::cout << "Triangles:" << std::endl;
+
+      delete[] triangle_list;
+		}
+	}
+	// If not output an error
+	else
+	{
+    throw std::runtime_error("Could not read file:" + input_file);
+	}
+
+}
+
+void trace_triagle(void) {
   // setup scene
-  vec3 points[] = {vec3(-3, -4, -1), vec3(4, -3, -1), vec3(0, 4, -1) };
+  vec3 points[] = {vec3(-4, -3, -1), vec3(4, -3, -1), vec3(0, 4, -1) };
   Triangle t = Triangle(points, vec3(200, 0, 0));
 
-  int resolution[2] = {100, 100};
+  int resolution[2] = {200, 200};
   Camera camera = Camera(resolution[0], resolution[1]);
 
   Image image = Image(resolution[0], resolution[1]);
@@ -36,8 +109,6 @@ int main(void) {
     }
   }
 
-  image.write_to_file("test.ppm");
+  image.write_to_file("output/triangle.ppm");
 
-
-  return 0;
 }

@@ -7,6 +7,9 @@
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+Triangle::Triangle() {
+
+}
 
 Triangle::Triangle(vec3 points[3], vec3 color) {
   for (int i = 0; i < 3; i++) {
@@ -61,6 +64,10 @@ bool Triangle::intersect_bool(Ray ray) {
 
 vec3 Triangle::get_color() {
   return _color;
+}
+
+void Triangle::set_color(vec3 color) {
+  _color = color;
 }
 
 void Triangle::print() {
