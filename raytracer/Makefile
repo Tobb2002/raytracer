@@ -1,7 +1,7 @@
 .PHONY: all
 
 CC = g++
-FLAGS = -Wall
+FLAGS = -Wall -O -g -fsanitize=address
 
 # tasks
 all: compile

@@ -5,10 +5,9 @@
 #ifndef MESH_H_
 #define MESH_H_
 
-#include "triangle.h"
-//#define TINYOBJLOADER_IMPLEMENTATION // define this in only *one* .cc
 #include "lib/tiny_obj_loader.h"
 #include <iostream>
+#include "triangle.h"
 
 class Mesh {
  public:
@@ -16,9 +15,13 @@ class Mesh {
   ~Mesh();
 
   void print_triangles(void);
+  int get_size(void);
+
+  Triangle get_triangle(int i);
 
 
  private:
+  bool _triangle_exists;
   Triangle *_triangles;
   int _size;
 

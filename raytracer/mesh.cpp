@@ -5,23 +5,31 @@
 #include "mesh.h"
 
 Mesh::Mesh(std::string input_file) {
+  _triangle_exists = false;
   read_from_obj(input_file);
 }
 
 Mesh::~Mesh() {
-  delete_triangles();
+  if (_triangle_exists) {
+    delete[] _triangles;
+    _triangle_exists = false;
+  }
 }
 
 void Mesh::delete_triangles(void) {
-  if (_triangles) {
-    delete[] _triangles;
-  }
 }
 
 void Mesh::print_triangles(void) {
   for (int i = 0; i < _size; i++) {
     _triangles[i].print();
   }
+ }
+
+int Mesh::get_size(void) { return _size; };
+
+Triangle Mesh::get_triangle(int i) {
+  Triangle t = _triangles[i];
+  return t;
 }
 
 void Mesh::read_from_obj(std::string inputfile) {
@@ -55,6 +63,7 @@ for (size_t s = 0; s < shapes.size(); s++) {
   // check if shape is triangle
   _size = shapes[s].mesh.num_face_vertices.size();
   _triangles = new Triangle[_size];
+  _triangle_exists = true;
 
   size_t index_offset = 0;
   for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++) {
