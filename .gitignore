@@ -4,5 +4,7 @@
 # cpp
 build
 
-# output files
+# files
 *.ppm
+
+raytracer/data

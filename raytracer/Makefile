@@ -6,7 +6,7 @@ FLAGS = -Wall -O -g -fsanitize=address
 # tasks
 all: compile
 
-compile: build build/raytracer
+compile: build build/main
 
 build:
 	mkdir -p build
@@ -15,33 +15,34 @@ clean:
 	rm -rf build
 
 checkstyle:
-	cclint --filter=-build/include,-build/header_guard *.cpp *.h
+	cclint --filter=-build/include,-build/header_guard *.h *.cpp objects/*
 
 run: compile
-	./build/raytracer
+	./build/main
 
 # main
-build/raytracer: build/raytracer.o build/ray.o build/triangle.o build/camera.o build/image.o build/mesh.o build/pointlight.o
-	$(CC) $(FLAGS) -o build/raytracer build/raytracer.o build/ray.o build/triangle.o build/camera.o build/image.o build/mesh.o build/pointlight.o
+build/main: build/main.o build/ray.o build/triangle.o build/camera.o build/image.o build/mesh.o build/pointlight.o
+	$(CC) $(FLAGS) -o build/main build/main.o build/ray.o build/triangle.o build/camera.o build/image.o build/mesh.o build/pointlight.o
 
-build/raytracer.o: raytracer.cpp
-	$(CC) $(FLAGS) -c raytracer.cpp -o build/raytracer.o
+build/main.o: main.cpp
+	$(CC) $(FLAGS) -c main.cpp -o build/main.o
 
 # modules
-build/ray.o: ray.cpp ray.h
-	$(CC) $(FLAGS) -c ray.cpp -o build/ray.o
-
-build/triangle.o: triangle.cpp triangle.h
-	$(CC) $(FLAGS) -c triangle.cpp -o build/triangle.o
-
-build/camera.o: camera.cpp camera.h
-	$(CC) $(FLAGS) -c camera.cpp -o build/camera.o
-
 build/image.o: image.cpp image.h
 	$(CC) $(FLAGS) -c image.cpp -o build/image.o
 
-build/mesh.o: mesh.cpp mesh.h
-	$(CC) $(FLAGS) -c mesh.cpp -o build/mesh.o
+#objects
+build/ray.o: objects/ray.cpp objects/ray.h
+	$(CC) $(FLAGS) -c objects/ray.cpp -o build/ray.o
 
-build/pointlight.o: pointlight.cpp pointlight.h
-	$(CC) $(FLAGS) -c pointlight.cpp -o build/pointlight.o
+build/triangle.o: objects/triangle.cpp objects/triangle.h
+	$(CC) $(FLAGS) -c objects/triangle.cpp -o build/triangle.o
+
+build/camera.o: objects/camera.cpp objects/camera.h
+	$(CC) $(FLAGS) -c objects/camera.cpp -o build/camera.o
+
+build/mesh.o: objects/mesh.cpp objects/mesh.h
+	$(CC) $(FLAGS) -c objects/mesh.cpp -o build/mesh.o
+
+build/pointlight.o: objects/pointlight.cpp objects/pointlight.h
+	$(CC) $(FLAGS) -c objects/pointlight.cpp -o build/pointlight.o

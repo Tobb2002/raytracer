@@ -5,12 +5,12 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
-#include "ray.h"
-#include "triangle.h"
-#include "camera.h"
+#include "objects/ray.h"
+#include "objects/triangle.h"
+#include "objects/camera.h"
 #include "image.h"
-#include "pointlight.h"
-#include "mesh.h"
+#include "objects/pointlight.h"
+#include "objects/mesh.h"
 
 
 using glm::vec3;
