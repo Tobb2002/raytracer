@@ -11,7 +11,7 @@
 
 class Mesh {
  public:
-  Mesh(std::string input_file);
+  Mesh(std::string input_file, vec3 origin);
   ~Mesh();
 
   void print_triangles(void);
@@ -24,6 +24,7 @@ class Mesh {
   bool _triangle_exists;
   Triangle *_triangles;
   int _size;
+  vec3 _origin;
 
   void delete_triangles(void);
 

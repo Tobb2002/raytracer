@@ -4,8 +4,9 @@
 
 #include "mesh.h"
 
-Mesh::Mesh(std::string input_file) {
+Mesh::Mesh(std::string input_file, vec3 origin) {
   _triangle_exists = false;
+  _origin = origin;
   read_from_obj(input_file);
 }
 
@@ -33,47 +34,46 @@ Triangle Mesh::get_triangle(int i) {
 }
 
 void Mesh::read_from_obj(std::string inputfile) {
-tinyobj::attrib_t attrib;
-std::vector<tinyobj::shape_t> shapes;
-std::vector<tinyobj::material_t> materials;
-  
-std::string err;
-std::string warn;
+  tinyobj::attrib_t attrib;
+  std::vector<tinyobj::shape_t> shapes;
+  std::vector<tinyobj::material_t> materials;
 
-bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, inputfile.c_str());
-  
-if (!err.empty()) { // `err` may contain warning message.
-  std::cerr << err << std::endl;
-}
+  std::string err;
+  std::string warn;
 
-if (!ret) {
-  exit(1);
-}
+  bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, inputfile.c_str());
+
+  if (!err.empty()) { // `err` may contain warning message.
+    std::cerr << err << std::endl;
+  }
+
+  if (!ret) {
+    exit(1);
+  }
 
 
-// shapes.size() number of objects
-// shapes[s].mesh.num_face_vertices.size() -> number of triangle
+  // shapes.size() number of objects
+  // shapes[s].mesh.num_face_vertices.size() -> number of triangle
 
-if (shapes.size() > 1) {
-  throw std::runtime_error("only support one mesh per obj at the moment");
-}
-// Loop over shapes
-for (size_t s = 0; s < shapes.size(); s++) {
-  // Loop over faces(polygon)
+  if (shapes.size() != 1) {
+    throw std::runtime_error("only support one mesh per obj at the moment");
+  }
   // check if shape is triangle
-  _size = shapes[s].mesh.num_face_vertices.size();
+  _size = shapes[0].mesh.num_face_vertices.size();
+
+  // create array for triangles
   _triangles = new Triangle[_size];
   _triangle_exists = true;
 
   size_t index_offset = 0;
-  for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++) {
-    int fv = shapes[s].mesh.num_face_vertices[f];
+  for (size_t f = 0; f < shapes[0].mesh.num_face_vertices.size(); f++) {
+    int fv = shapes[0].mesh.num_face_vertices[f];
 
     // Loop over vertices of one Triangle
     vec3 triangle_points[3];
     for (size_t v = 0; v < fv; v++) {
       // access to vertex
-      tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
+      tinyobj::index_t idx = shapes[0].mesh.indices[index_offset + v];
       tinyobj::real_t vx = attrib.vertices[3*idx.vertex_index+0];
       tinyobj::real_t vy = attrib.vertices[3*idx.vertex_index+1];
       tinyobj::real_t vz = attrib.vertices[3*idx.vertex_index+2];
@@ -88,19 +88,18 @@ for (size_t s = 0; s < shapes.size(); s++) {
       // tinyobj::real_t red = attrib.colors[3*idx.vertex_index+0];
       // tinyobj::real_t green = attrib.colors[3*idx.vertex_index+1];
       // tinyobj::real_t blue = attrib.colors[3*idx.vertex_index+2];
-      
+
       // insert point into triangle_points
-      triangle_points[v] = vec3(vx, vy, vz);
+      triangle_points[v] = vec3(vx +_origin.x, vy + _origin.y, vz + _origin.z);
     }
     // make triangle and add to _triangles
-    _triangles[f] = Triangle(triangle_points, vec3(200,0,0));
+    _triangles[f] = Triangle(triangle_points, vec3(1,0,0));
 
     index_offset += fv;
 
     // per-face material
-    shapes[s].mesh.material_ids[f];
+    // shapes[s].mesh.material_ids[f];
   }
-}
 
 
 }

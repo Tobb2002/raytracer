@@ -21,8 +21,8 @@ run: compile
 	./build/raytracer
 
 # main
-build/raytracer: build/raytracer.o build/ray.o build/triangle.o build/camera.o build/image.o build/mesh.o
-	$(CC) $(FLAGS) -o build/raytracer build/raytracer.o build/ray.o build/triangle.o build/camera.o build/image.o build/mesh.o
+build/raytracer: build/raytracer.o build/ray.o build/triangle.o build/camera.o build/image.o build/mesh.o build/pointlight.o
+	$(CC) $(FLAGS) -o build/raytracer build/raytracer.o build/ray.o build/triangle.o build/camera.o build/image.o build/mesh.o build/pointlight.o
 
 build/raytracer.o: raytracer.cpp
 	$(CC) $(FLAGS) -c raytracer.cpp -o build/raytracer.o
@@ -42,3 +42,6 @@ build/image.o: image.cpp image.h
 
 build/mesh.o: mesh.cpp mesh.h
 	$(CC) $(FLAGS) -c mesh.cpp -o build/mesh.o
+
+build/pointlight.o: pointlight.cpp pointlight.h
+	$(CC) $(FLAGS) -c pointlight.cpp -o build/pointlight.o

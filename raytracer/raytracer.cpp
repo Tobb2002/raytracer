@@ -9,6 +9,7 @@
 #include "./triangle.h"
 #include "./camera.h"
 #include "image.h"
+#include "pointlight.h"
 
 #define TINYOBJLOADER_IMPLEMENTATION // define this in only *one* .cc
 #include "mesh.h"
@@ -28,7 +29,8 @@ int main(void) {
   std::string input_file = "input/test.obj";
 
 	// Load .obj File
-  Mesh m = Mesh(input_file);
+  Mesh m = Mesh(input_file, vec3(-1, -1, -1));
+
 
   trace_mesh(m);
 
@@ -36,7 +38,24 @@ int main(void) {
 }
 
 
-void trace_triangle(Triangle triangle, Camera* camera, Image* image) {
+vec3 calculate_phong(vec3 point, vec3 material, vec3 surface_normal, Pointlight* light) {
+  vec3 c = light->get_color();
+  vec3 s = vec3(material.x * c.x, material.y * c.y, material.z * c.z);
+
+  float nl = glm::dot(surface_normal, light->get_light_direction(point));
+
+  if (nl < 0) {
+    surface_normal *= -1;
+  }
+  nl = glm::dot(surface_normal, light->get_light_direction(point));
+
+
+  vec3 v = s * nl;
+
+  return vec3(glm::round(v.x), glm::round(v.y), glm::round(v.z));
+}
+
+void trace_triangle(Triangle triangle, Camera* camera, Image* image, Pointlight* pointlight) {
 
   vec2 resolution = camera->get_resolution();
   // iterate throug image and calulate intersection
@@ -46,7 +65,12 @@ void trace_triangle(Triangle triangle, Camera* camera, Image* image) {
       Ray ray = camera->get_ray(vec2(x, y));
 
       if (triangle.intersect_bool(ray)) {
-        image->set_pixel({x, y}, triangle.get_color());
+        // calculate reflected light at intersection point
+        vec3 intersection = triangle.intersect(ray);
+
+        vec3 color = calculate_phong(intersection, triangle.get_color(), triangle.get_normal(), pointlight);
+
+        image->set_pixel({x, y}, color);
       }
     }
   }
@@ -59,10 +83,11 @@ void trace_mesh(Mesh mesh) {
 
   Image image = Image(resolution[0], resolution[1]);
 
+  Pointlight light_source = Pointlight(vec3(2, -1, 0), vec3(200, 200, 200));
 
-  for (int i = 0; i < mesh.get_size(); i++) {
-    trace_triangle(mesh.get_triangle(i), &camera, &image);
-    mesh.get_triangle(i).print();
+  int size = mesh.get_size();
+  for (int i = 0; i < size; i++) {
+    trace_triangle(mesh.get_triangle(i), &camera, &image, &light_source);
 
   }
   image.write_to_file("output/mesh.ppm");

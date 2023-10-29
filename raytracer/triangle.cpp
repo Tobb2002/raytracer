@@ -15,7 +15,16 @@ Triangle::Triangle(vec3 points[3], vec3 color) {
   for (int i = 0; i < 3; i++) {
     _p[i] = points[i];
   }
+  _normal = calculate_normal();
   _color = color;
+}
+
+vec3 Triangle::calculate_normal(void) {
+  // take the cross product of p1,p2 and p2,p3
+  vec3 v1 = _p[0] - _p[1];
+  vec3 v2 = _p[1] - _p[2];
+
+  return glm::normalize(glm::cross(v1, v2));
 }
 
 vec3 Triangle::intersect(Ray ray) {
@@ -50,7 +59,8 @@ vec3 Triangle::intersect(Ray ray) {
     res = vec3(0, 0, 0);
   }
 
-  return res;
+
+  return ray.get_point(res[0]);
 }
 
 bool Triangle::intersect_bool(Ray ray) {
@@ -65,6 +75,7 @@ bool Triangle::intersect_bool(Ray ray) {
 vec3 Triangle::get_color() {
   return _color;
 }
+vec3 Triangle::get_normal() { return _normal; }
 
 void Triangle::set_color(vec3 color) {
   _color = color;
@@ -76,5 +87,6 @@ void Triangle::print() {
     std::cout << "p" << i << ": " << glm::to_string(_p[i]) << std::endl;
   }
   std::cout << "color: " << glm::to_string(_color) << std::endl;
+  std::cout << "normal: " << glm::to_string(_normal) << std::endl;
   std::cout << "---------------- " <<  std::endl;
 }
