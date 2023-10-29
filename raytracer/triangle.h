@@ -6,7 +6,7 @@
 #define TRIANGLE_H_
 
 #include <glm/glm.hpp>
-#include "./ray.h"
+#include "ray.h"
 
 using glm::vec3;
 

@@ -2,7 +2,7 @@
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
 
-#include "./ray.h"
+#include "ray.h"
 #include <iostream>
 #include <glm/gtx/string_cast.hpp>
 
