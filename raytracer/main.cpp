@@ -19,7 +19,7 @@ void trace_triangle(void);
 void trace_mesh(Mesh m);
 
 int main(void) {
-  std::string input_file = "input/test copy.obj";
+  std::string input_file = "data/input/test copy.obj";
 
   // Load .obj File
   Mesh m = Mesh(input_file, vec3(-1, -1, -1));
@@ -89,5 +89,5 @@ void trace_mesh(Mesh mesh) {
     Triangle t = mesh.get_triangle(i);
     trace_triangle(&t, &camera, &image, &light_source);
   }
-  image.write_to_file("output/mesh.ppm");
+  image.write_to_file("data/output/mesh.ppm");
 }
