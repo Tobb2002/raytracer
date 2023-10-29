@@ -28,7 +28,7 @@ int main(void) {
 
 	// Load .obj File
   Mesh m = Mesh(input_file, vec3(-1, -1, -1));
-
+  std::cout << "testen" << std::endl;
 
   trace_mesh(m);
 
@@ -53,7 +53,7 @@ vec3 calculate_phong(vec3 point, vec3 material, vec3 surface_normal, Pointlight*
   return vec3(glm::round(v.x), glm::round(v.y), glm::round(v.z));
 }
 
-void trace_triangle(Triangle triangle, Camera* camera, Image* image, Pointlight* pointlight) {
+void trace_triangle(Triangle* triangle, Camera* camera, Image* image, Pointlight* pointlight) {
 
   vec2 resolution = camera->get_resolution();
   // iterate throug image and calulate intersection
@@ -62,11 +62,11 @@ void trace_triangle(Triangle triangle, Camera* camera, Image* image, Pointlight*
     for (int y = 0; y < resolution[1]; y++) {
       Ray ray = camera->get_ray(vec2(x, y));
 
-      if (triangle.intersect_bool(ray)) {
+      if (triangle->intersect_bool(ray)) {
         // calculate reflected light at intersection point
-        vec3 intersection = triangle.intersect(ray);
+        vec3 intersection = triangle->intersect(ray);
 
-        vec3 color = calculate_phong(intersection, triangle.get_color(), triangle.get_normal(), pointlight);
+        vec3 color = calculate_phong(intersection, triangle->get_color(), triangle->get_normal(), pointlight);
 
         image->set_pixel({x, y}, color);
       }
@@ -85,7 +85,8 @@ void trace_mesh(Mesh mesh) {
 
   int size = mesh.get_size();
   for (int i = 0; i < size; i++) {
-    trace_triangle(mesh.get_triangle(i), &camera, &image, &light_source);
+    Triangle t = mesh.get_triangle(i);
+    trace_triangle(&t, &camera, &image, &light_source);
 
   }
   image.write_to_file("output/mesh.ppm");

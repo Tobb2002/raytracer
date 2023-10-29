@@ -6,6 +6,7 @@
 #define MESH_H_
 
 #include <iostream>
+#include <vector>
 #include "triangle.h"
 
 class Mesh {
@@ -21,11 +22,11 @@ class Mesh {
 
  private:
   bool _triangle_exists;
-  Triangle* _triangles;
+  std::vector<Triangle> _triangles;
   int _size;
   vec3 _origin;
 
-  Triangle* read_from_obj(std::string input_file);
+  void read_from_obj(std::string input_file);
 };
 
 

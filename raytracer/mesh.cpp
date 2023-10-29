@@ -8,11 +8,10 @@
 
 Mesh::Mesh(std::string input_file, vec3 origin) {
   _origin = origin;
-  _triangles = read_from_obj(input_file);
+  read_from_obj(input_file);
 }
 
 Mesh::~Mesh() {
-  delete[] _triangles;
 }
 
 
@@ -25,11 +24,11 @@ void Mesh::print_triangles(void) {
 int Mesh::get_size(void) { return _size; };
 
 Triangle Mesh::get_triangle(int i) {
-  Triangle t = _triangles[i];
+  Triangle t = _triangles.at(i);
   return t;
 }
 
-Triangle* Mesh::read_from_obj(std::string inputfile) {
+void Mesh::read_from_obj(std::string inputfile) {
   tinyobj::attrib_t attrib;
   std::vector<tinyobj::shape_t> shapes;
   std::vector<tinyobj::material_t> materials;
@@ -54,10 +53,7 @@ Triangle* Mesh::read_from_obj(std::string inputfile) {
     throw std::runtime_error("only support one mesh per obj at the moment");
   }
 
-  // create array for triangles
   _size = shapes[0].mesh.num_face_vertices.size();
-  Triangle* triangles = new Triangle[_size];
-
 
   size_t index_offset = 0;
   for (size_t f = 0; f < _size; f++) {
@@ -87,14 +83,13 @@ Triangle* Mesh::read_from_obj(std::string inputfile) {
       triangle_points[v] = vec3(vx +_origin.x, vy + _origin.y, vz + _origin.z);
     }
     // make triangle and add to triangles
-    triangles[f] = Triangle(triangle_points, vec3(1,0,0));
+    _triangles.push_back(Triangle(triangle_points, vec3(1,0,0)));
 
     index_offset += fv;
 
     // per-face material
     // shapes[s].mesh.material_ids[f];
   }
-  return triangles;
 
 
 }
