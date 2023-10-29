@@ -3,7 +3,7 @@
  */
 
 #include "mesh.h"
-#define TINYOBJLOADER_IMPLEMENTATION // define this in only *one* .cc
+#define TINYOBJLOADER_IMPLEMENTATION  // define this in only *one* .cc
 #include "lib/tiny_obj_loader.h"
 
 Mesh::Mesh(std::string input_file, vec3 origin) {
@@ -11,17 +11,15 @@ Mesh::Mesh(std::string input_file, vec3 origin) {
   read_from_obj(input_file);
 }
 
-Mesh::~Mesh() {
-}
-
+Mesh::~Mesh() {}
 
 void Mesh::print_triangles(void) {
   for (int i = 0; i < _size; i++) {
     _triangles[i].print();
   }
- }
+}
 
-int Mesh::get_size(void) { return _size; };
+int Mesh::get_size(void) { return _size; }
 
 Triangle Mesh::get_triangle(int i) {
   Triangle t = _triangles.at(i);
@@ -36,15 +34,16 @@ void Mesh::read_from_obj(std::string inputfile) {
   std::string err;
   std::string warn;
 
-  bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, inputfile.c_str());
+  bool ret = tinyobj::LoadObj(&attrib, &shapes,
+                              &materials, &warn,
+                              &err, inputfile.c_str());
 
-  if (!err.empty()) { // `err` may contain warning message.
+  if (!err.empty()) {  // `err` may contain warning message.
     std::cerr << err << std::endl;
   }
   if (!ret) {
     exit(1);
   }
-
 
   // shapes.size() number of objects
   // shapes[s].mesh.num_face_vertices.size() -> number of triangle
@@ -56,12 +55,12 @@ void Mesh::read_from_obj(std::string inputfile) {
   _size = shapes[0].mesh.num_face_vertices.size();
 
   size_t index_offset = 0;
-  for (size_t f = 0; f < _size; f++) {
+  for (int f = 0; f < _size; f++) {
     int fv = shapes[0].mesh.num_face_vertices[f];
 
     // Loop over vertices of one Triangle
     vec3 triangle_points[3];
-    for (size_t v = 0; v < fv; v++) {
+    for (int v = 0; v < fv; v++) {
       // access to vertex
       tinyobj::index_t idx = shapes[0].mesh.indices[index_offset + v];
       tinyobj::real_t vx = attrib.vertices[3*idx.vertex_index+0];
@@ -83,13 +82,11 @@ void Mesh::read_from_obj(std::string inputfile) {
       triangle_points[v] = vec3(vx +_origin.x, vy + _origin.y, vz + _origin.z);
     }
     // make triangle and add to triangles
-    _triangles.push_back(Triangle(triangle_points, vec3(1,0,0)));
+    _triangles.push_back(Triangle(triangle_points, vec3(1, 0, 0)));
 
     index_offset += fv;
 
     // per-face material
     // shapes[s].mesh.material_ids[f];
   }
-
-
 }

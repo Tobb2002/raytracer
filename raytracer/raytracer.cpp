@@ -19,16 +19,10 @@ void trace_triangle(void);
 void trace_mesh(Mesh m);
 
 int main(void) {
-  
-  // test obj loader
-  //test_obj();
-
-
   std::string input_file = "input/test copy.obj";
 
-	// Load .obj File
+  // Load .obj File
   Mesh m = Mesh(input_file, vec3(-1, -1, -1));
-  std::cout << "testen" << std::endl;
 
   trace_mesh(m);
 
@@ -36,7 +30,10 @@ int main(void) {
 }
 
 
-vec3 calculate_phong(vec3 point, vec3 material, vec3 surface_normal, Pointlight* light) {
+vec3 calculate_phong(vec3 point,
+                     vec3 material,
+                     vec3 surface_normal,
+                     Pointlight* light) {
   vec3 c = light->get_color();
   vec3 s = vec3(material.x * c.x, material.y * c.y, material.z * c.z);
 
@@ -53,8 +50,10 @@ vec3 calculate_phong(vec3 point, vec3 material, vec3 surface_normal, Pointlight*
   return vec3(glm::round(v.x), glm::round(v.y), glm::round(v.z));
 }
 
-void trace_triangle(Triangle* triangle, Camera* camera, Image* image, Pointlight* pointlight) {
-
+void trace_triangle(Triangle* triangle,
+                    Camera* camera,
+                    Image* image,
+                    Pointlight* pointlight) {
   vec2 resolution = camera->get_resolution();
   // iterate throug image and calulate intersection
   // between camera rays and Triangle
@@ -66,15 +65,17 @@ void trace_triangle(Triangle* triangle, Camera* camera, Image* image, Pointlight
         // calculate reflected light at intersection point
         vec3 intersection = triangle->intersect(ray);
 
-        vec3 color = calculate_phong(intersection, triangle->get_color(), triangle->get_normal(), pointlight);
+        vec3 color = calculate_phong(intersection,
+                                     triangle->get_color(),
+                                     triangle->get_normal(),
+                                     pointlight);
 
         image->set_pixel({x, y}, color);
       }
     }
   }
-
-
 }
+
 void trace_mesh(Mesh mesh) {
   int resolution[2] = {500, 500};
   Camera camera = Camera(resolution[0], resolution[1]);
@@ -87,7 +88,6 @@ void trace_mesh(Mesh mesh) {
   for (int i = 0; i < size; i++) {
     Triangle t = mesh.get_triangle(i);
     trace_triangle(&t, &camera, &image, &light_source);
-
   }
   image.write_to_file("output/mesh.ppm");
 }

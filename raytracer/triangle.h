@@ -12,24 +12,24 @@ using glm::vec3;
 
 class Triangle {
  public:
-   Triangle();
-   Triangle(vec3 points[3], vec3 color);
+  Triangle();
+  Triangle(vec3 points[3], vec3 color);
 
-   vec3 intersect(Ray ray);
-   bool intersect_bool(Ray ray);
+  vec3 intersect(Ray ray);
+  bool intersect_bool(Ray ray);
 
-   // getters
-   vec3 get_color();
-   vec3 get_normal();
-   void set_color(vec3 color);
+  // getters
+  vec3 get_color();
+  vec3 get_normal();
+  void set_color(vec3 color);
 
-   void print();
+  void print();
  private:
-   vec3 _p[3];
-   vec3 _color;
-   vec3 _normal;
+  vec3 _p[3];
+  vec3 _color;
+  vec3 _normal;
 
-   vec3 calculate_normal(void);
+  vec3 calculate_normal(void);
 };
 
 #endif  // TRIANGLE_H_

@@ -18,6 +18,5 @@ class Pointlight {
  private:
   vec3 _position;
   vec3 _color;
-
 };
 #endif  // POINTLIGHT_H_

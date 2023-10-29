@@ -19,7 +19,6 @@ class Mesh {
 
   Triangle get_triangle(int i);
 
-
  private:
   bool _triangle_exists;
   std::vector<Triangle> _triangles;
@@ -30,4 +29,4 @@ class Mesh {
 };
 
 
-#endif  //MESH_H_
+#endif  // MESH_H_
