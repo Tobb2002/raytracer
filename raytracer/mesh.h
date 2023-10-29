@@ -5,7 +5,6 @@
 #ifndef MESH_H_
 #define MESH_H_
 
-#include "lib/tiny_obj_loader.h"
 #include <iostream>
 #include "triangle.h"
 
