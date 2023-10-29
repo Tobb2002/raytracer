@@ -10,8 +10,6 @@
 #include "./camera.h"
 #include "image.h"
 #include "pointlight.h"
-
-#define TINYOBJLOADER_IMPLEMENTATION // define this in only *one* .cc
 #include "mesh.h"
 
 
@@ -26,7 +24,7 @@ int main(void) {
   //test_obj();
 
 
-  std::string input_file = "input/test.obj";
+  std::string input_file = "input/test copy.obj";
 
 	// Load .obj File
   Mesh m = Mesh(input_file, vec3(-1, -1, -1));
@@ -78,7 +76,7 @@ void trace_triangle(Triangle triangle, Camera* camera, Image* image, Pointlight*
 
 }
 void trace_mesh(Mesh mesh) {
-  int resolution[2] = {100, 100};
+  int resolution[2] = {500, 500};
   Camera camera = Camera(resolution[0], resolution[1]);
 
   Image image = Image(resolution[0], resolution[1]);

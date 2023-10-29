@@ -21,13 +21,11 @@ class Mesh {
 
  private:
   bool _triangle_exists;
-  Triangle *_triangles;
+  Triangle* _triangles;
   int _size;
   vec3 _origin;
 
-  void delete_triangles(void);
-
-  void read_from_obj(std::string input_file);
+  Triangle* read_from_obj(std::string input_file);
 };
 
 

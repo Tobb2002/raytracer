@@ -8,7 +8,12 @@
 #include <glm/gtc/type_ptr.hpp>
 
 Triangle::Triangle() {
-
+  // initialize trianlge with all points zero.
+  for (int i = 0; i < 3; i++) {
+    _p[i] = vec3(0, 0, 0);
+  }
+  _normal = vec3(0, 0, 0);
+  _color = vec3(0, 0, 0);
 }
 
 Triangle::Triangle(vec3 points[3], vec3 color) {
