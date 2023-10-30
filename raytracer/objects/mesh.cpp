@@ -26,6 +26,10 @@ Triangle Mesh::get_triangle(int i) {
   return t;
 }
 
+intersection get_closest_intersection(Ray ray) {
+
+}
+
 void Mesh::read_from_obj(std::string inputfile) {
   tinyobj::attrib_t attrib;
   std::vector<tinyobj::shape_t> shapes;

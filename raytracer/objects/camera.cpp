@@ -14,7 +14,7 @@ Camera::Camera(float resolution_x, float resolution_y) {
 
 
   // set standart zoom /image size
-  _image_size = vec2(5, 5);
+  _image_size = vec2(3, 3);
 
   _pixel_size = vec2(
     _image_size.x / _resolution.x,

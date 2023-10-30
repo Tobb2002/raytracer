@@ -9,6 +9,11 @@
 #include <vector>
 #include "triangle.h"
 
+struct intersection {
+  vec3 point;
+  Triangle triangle;
+};
+
 class Mesh {
  public:
   Mesh(std::string input_file, vec3 origin);
@@ -18,6 +23,7 @@ class Mesh {
   int get_size(void);
 
   Triangle get_triangle(int i);
+  intersection get_closest_intersection(Ray ray);
 
  private:
   bool _triangle_exists;
