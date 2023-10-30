@@ -26,8 +26,25 @@ Triangle Mesh::get_triangle(int i) {
   return t;
 }
 
-intersection get_closest_intersection(Ray ray) {
+Intersection Mesh::get_closest_intersection(Ray ray) {
+  // calculate the intersection with the smallest value for t
+  Triangle triangle_best;
+  float t_min = MAXFLOAT;
+  bool found_one = false;
 
+  for (Triangle triangle : _triangles) {
+    float t = triangle.intersect(ray);
+
+    if (t > 0 && t < t_min) {
+      found_one = true;
+      t_min = t;
+      triangle_best = triangle;
+    }
+  }
+
+  Intersection intersection = {found_one, ray.get_point(t_min), triangle_best};
+
+  return intersection;
 }
 
 void Mesh::read_from_obj(std::string inputfile) {

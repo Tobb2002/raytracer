@@ -9,7 +9,8 @@
 #include <vector>
 #include "triangle.h"
 
-struct intersection {
+struct Intersection {
+  bool found = false;
   vec3 point;
   Triangle triangle;
 };
@@ -23,7 +24,7 @@ class Mesh {
   int get_size(void);
 
   Triangle get_triangle(int i);
-  intersection get_closest_intersection(Ray ray);
+  Intersection get_closest_intersection(Ray ray);
 
  private:
   bool _triangle_exists;

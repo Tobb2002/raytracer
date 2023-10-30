@@ -61,9 +61,10 @@ void trace_triangle(Triangle* triangle,
     for (int y = 0; y < resolution[1]; y++) {
       Ray ray = camera->get_ray(vec2(x, y));
 
-      if (triangle->intersect_bool(ray)) {
+      float t = triangle->intersect(ray);
+      if (t > 0) {
         // calculate reflected light at intersection point
-        vec3 intersection = triangle->intersect(ray);
+        vec3 intersection = ray.get_point(t);
 
         vec3 color = calculate_phong(intersection,
                                      triangle->get_color(),
@@ -77,17 +78,25 @@ void trace_triangle(Triangle* triangle,
 }
 
 void trace_mesh(Mesh mesh) {
-  int resolution[2] = {500, 500};
+  int resolution[2] = {200, 200};
   Camera camera = Camera(resolution[0], resolution[1]);
 
   Image image = Image(resolution[0], resolution[1]);
 
-  Pointlight light_source = Pointlight(vec3(2, -1, 0), vec3(200, 200, 200));
+  Pointlight light_source = Pointlight(vec3(1, -1, 0), vec3(200, 200, 200));
 
-  int size = mesh.get_size();
-  for (int i = 0; i < size; i++) {
-    Triangle t = mesh.get_triangle(i);
-    trace_triangle(&t, &camera, &image, &light_source);
+  for (int x = 0; x < resolution[0]; x++) {
+    for (int y = 0; y < resolution[1]; y++) {
+      Intersection intersect = mesh.get_closest_intersection(camera.get_ray({x, y}));
+
+      // if intersection found calculate color
+      if (intersect.found) {
+        vec3 color = calculate_phong(intersect.point, intersect.triangle.get_color(), intersect.triangle.get_normal(), &light_source);
+
+        image.set_pixel({x, y}, color);
+      }
+    }
   }
+
   image.write_to_file("data/output/mesh.ppm");
 }

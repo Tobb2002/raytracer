@@ -32,7 +32,9 @@ vec3 Triangle::calculate_normal(void) {
   return glm::normalize(glm::cross(v1, v2));
 }
 
-vec3 Triangle::intersect(Ray ray) {
+// calculate intersection and give back t.
+// if no intersection return -1.
+float Triangle::intersect(Ray ray) {
   /* 
    * returns intersection Point beetween ray and trianlge.
    * if intersection is outside of triangle return vec(0,0,0) since that's the camera origin.
@@ -61,17 +63,17 @@ vec3 Triangle::intersect(Ray ray) {
       res[1] >= 0 &&
       res[2] >= 0 &&
       res[0] >= 0)) {
-    res = vec3(0, 0, 0);
+    // return -1 if not
+    return -1.f;
   }
 
-
-  return ray.get_point(res[0]);
+  return res[0];
 }
 
 bool Triangle::intersect_bool(Ray ray) {
-  vec3 p = intersect(ray);
+  float t = intersect(ray);
 
-  if (p.x == 0 && p.y == 0 && p.z == 0) {
+  if (t < 0) {
     return false;
   }
   return true;
