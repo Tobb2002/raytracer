@@ -87,8 +87,18 @@ void trace_mesh(Mesh mesh) {
 
   Pointlight light_source = Pointlight(vec3(1, -1, 0), vec3(255, 255, 255));
 
+  float progress_step = 0.05 * resolution[0];
+  float progress = 0;
+  std::cout << "rendering\n\n";
   for (int x = 0; x < resolution[0]; x++) {
     for (int y = 0; y < resolution[1]; y++) {
+      // print progress
+      if (x > progress) {
+        // erase line and write new progress
+        std::cout << "\e[2K\e[1A" << "Progress:" << progress << "% \n";
+        progress += progress_step;
+      }
+
       Intersection intersect = mesh.get_closest_intersection(camera.get_ray({x, y}));
 
       // if intersection found calculate color
