@@ -18,11 +18,15 @@ class Camera {
 
   // getters
   vec2 get_resolution();
+
+  // setters
+  void set_sensor_size(int x, int y);
+
  private:
   const vec3 _origin = vec3(0, 0, 0);
   const vec3 _direction = vec3(0, 0, -1);
   vec2 _resolution;
-  vec2 _image_size;
+  vec2 _sensor_size;
   vec2 _pixel_size;
   float _aspect_ratio;
 

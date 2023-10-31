@@ -78,12 +78,14 @@ void trace_triangle(Triangle* triangle,
 }
 
 void trace_mesh(Mesh mesh) {
-  int resolution[2] = {200, 200};
+  int resolution[2] = {500, 500};
   Camera camera = Camera(resolution[0], resolution[1]);
+
+  camera.set_sensor_size(4, 4);
 
   Image image = Image(resolution[0], resolution[1]);
 
-  Pointlight light_source = Pointlight(vec3(1, -1, 0), vec3(200, 200, 200));
+  Pointlight light_source = Pointlight(vec3(1, -1, 0), vec3(255, 255, 255));
 
   for (int x = 0; x < resolution[0]; x++) {
     for (int y = 0; y < resolution[1]; y++) {

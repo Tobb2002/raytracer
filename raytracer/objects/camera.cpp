@@ -13,17 +13,22 @@ Camera::Camera(float resolution_x, float resolution_y) {
   _aspect_ratio = resolution_x / resolution_y;
 
 
-  // set standart zoom /image size
-  _image_size = vec2(3, 3);
+  // set standart zoom (sensor_size)
+  set_sensor_size(3, 3);
 
-  _pixel_size = vec2(
-    _image_size.x / _resolution.x,
-    _image_size.y / _resolution.y);
 }
 
 // geters
 vec2 Camera::get_resolution() {
   return _resolution;
+}
+// setters
+void Camera::set_sensor_size(int x, int y) {
+  _sensor_size = vec2(x, y);
+
+  _pixel_size = vec2(
+    _sensor_size.x / _resolution.x,
+    _sensor_size.y / _resolution.y);
 }
 
 // transfomation beetween diffrent spaces
@@ -48,8 +53,8 @@ vec2 Camera::pixel_to_image_pos(vec2 pixel) {
 
 vec3 Camera::image_to_world(vec2 pos_image) {
   vec3 start = vec3(
-    -0.5 * _image_size.x,
-    -0.5 * _image_size.y,
+    -0.5 * _sensor_size.x,
+    -0.5 * _sensor_size.y,
     -1.f);
 
   vec3 p = vec3(pos_image.x, pos_image.y, 0.f);
