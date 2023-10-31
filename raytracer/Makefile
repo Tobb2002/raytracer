@@ -15,7 +15,7 @@ clean:
 	rm -rf build
 
 checkstyle:
-	cclint --filter=-build/include,-build/header_guard *.h *.cpp objects/*
+	cclint --filter=-build/include,-build/header_guard *.h *.cpp objects/*.h objects/*.cpp
 
 run: compile
 	./build/main

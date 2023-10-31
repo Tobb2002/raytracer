@@ -20,7 +20,7 @@ class Camera {
   vec2 get_resolution();
 
   // setters
-  void set_sensor_size(int x, int y);
+  void set_sensor_size(float x, float y);
 
  private:
   const vec3 _origin = vec3(0, 0, 0);

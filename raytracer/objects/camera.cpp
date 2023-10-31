@@ -15,7 +15,6 @@ Camera::Camera(float resolution_x, float resolution_y) {
 
   // set standart zoom (sensor_size)
   set_sensor_size(3, 3);
-
 }
 
 // geters
@@ -23,7 +22,7 @@ vec2 Camera::get_resolution() {
   return _resolution;
 }
 // setters
-void Camera::set_sensor_size(int x, int y) {
+void Camera::set_sensor_size(float x, float y) {
   _sensor_size = vec2(x, y);
 
   _pixel_size = vec2(

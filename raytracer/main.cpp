@@ -19,10 +19,10 @@ void trace_triangle(void);
 void trace_mesh(Mesh m);
 
 int main(void) {
-  std::string input_file = "data/input/test copy.obj";
+  std::string input_file = "data/input/bunny.obj";
 
   // Load .obj File
-  Mesh m = Mesh(input_file, vec3(-1, -1, -1));
+  Mesh m = Mesh(input_file, vec3(0, -0.1, -2));
 
   trace_mesh(m);
 
@@ -78,10 +78,10 @@ void trace_triangle(Triangle* triangle,
 }
 
 void trace_mesh(Mesh mesh) {
-  int resolution[2] = {500, 500};
+  int resolution[2] = {100, 100};
   Camera camera = Camera(resolution[0], resolution[1]);
 
-  camera.set_sensor_size(4, 4);
+  camera.set_sensor_size(0.1, 0.1);
 
   Image image = Image(resolution[0], resolution[1]);
 
