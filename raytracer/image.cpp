@@ -59,7 +59,7 @@ void Image::write_to_file(std::string filename) {
   file << "P3\n" << _resolution[0] << " " << _resolution[1] << "\n255\n";
 
   // Picture Content
-  for (int y = 0; y < _resolution[1]; y++) {
+  for (int y = _resolution[1]-1; y >= 0; y--) {
     for (int x = 0; x < _resolution[0]; x++) {
       vec3 color = _matrix[x][y];
       file << static_cast<int>(color[0]) << " "
