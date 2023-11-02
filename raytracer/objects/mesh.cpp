@@ -9,7 +9,6 @@
 Mesh::Mesh(std::string input_file, vec3 origin) {
   _origin = origin;
   read_from_obj(input_file);
-  generate_bounding_box();
 }
 
 Mesh::~Mesh() {}
@@ -145,8 +144,4 @@ void Mesh::read_from_obj(std::string inputfile) {
   }
   // set bounding box values
   _bounding_box.set_min_max(box_min, box_max);
-}
-
-void Mesh::generate_bounding_box(void) {
-
 }

@@ -87,10 +87,10 @@ void trace_triangle(Triangle* triangle,
 }
 
 void trace_mesh(Mesh mesh) {
-  int resolution[2] = {100, 100};
+  int resolution[2] = {1000, 1000};
   Camera camera = Camera(resolution[0], resolution[1]);
 
-  camera.set_sensor_size(0.1, 0.1);
+  camera.set_sensor_size(0.5, 0.5);
 
   Image image = Image(resolution[0], resolution[1]);
 

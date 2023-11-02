@@ -52,7 +52,7 @@ void Box::ensure_min_max(void) {
 bool Box::intersect_bool(Ray ray) {
   interval tx = {(_min.x - ray.get_origin().x) / ray.get_direction().x,
                 (_max.x - ray.get_origin().x) / ray.get_direction().x};
-  
+
   interval ty = {(_min.y - ray.get_origin().y) / ray.get_direction().y,
                 (_max.y - ray.get_origin().y) / ray.get_direction().y};
 
@@ -87,5 +87,4 @@ bool Box::intersect_bool(Ray ray) {
 
   // all intervalls overlap
   return true;
-  
 }

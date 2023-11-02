@@ -35,7 +35,6 @@ class Mesh {
   vec3 _origin;
   Box _bounding_box;
 
-  void generate_bounding_box(void);
   void read_from_obj(std::string input_file);
 };
 

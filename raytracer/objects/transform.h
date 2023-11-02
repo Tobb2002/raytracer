@@ -21,4 +21,4 @@ vec3 scale(vec3 point, vec3 factor) {
   return scale_mat * f;
 }
 
-#endif  //TRANSFORM_H_
+#endif  // TRANSFORM_H_
