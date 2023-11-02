@@ -17,8 +17,15 @@ struct interval {
 
 class Box {
  public:
+  Box();
   Box(vec3 min, vec3 max);
+  void set_min_max(vec3 min, vec3 max);
   bool intersect_bool(Ray ray);
+
+  void print(void);
+
+  // function ensures that min is smaller than max for x, y, z
+  void ensure_min_max(void);
  private:
   vec3 _min;
   vec3 _max;;

@@ -9,6 +9,7 @@
 Mesh::Mesh(std::string input_file, vec3 origin) {
   _origin = origin;
   read_from_obj(input_file);
+  generate_bounding_box();
 }
 
 Mesh::~Mesh() {}
@@ -26,19 +27,25 @@ Triangle Mesh::get_triangle(int i) {
   return t;
 }
 
+void Mesh::print_bounding_box(void) {
+  _bounding_box.print();
+}
+
 Intersection Mesh::get_closest_intersection(Ray ray) {
   // calculate the intersection with the smallest value for t
   Triangle triangle_best;
   float t_min = MAXFLOAT;
   bool found_one = false;
 
-  for (Triangle triangle : _triangles) {
-    float t = triangle.intersect(ray);
+  if (_bounding_box.intersect_bool(ray)) {
+    for (Triangle triangle : _triangles) {
+      float t = triangle.intersect(ray);
 
-    if (t > 0 && t < t_min) {
-      found_one = true;
-      t_min = t;
-      triangle_best = triangle;
+      if (t > 0 && t < t_min) {
+        found_one = true;
+        t_min = t;
+        triangle_best = triangle;
+      }
     }
   }
 
@@ -75,6 +82,10 @@ void Mesh::read_from_obj(std::string inputfile) {
 
   _size = shapes[0].mesh.num_face_vertices.size();
 
+  // initialize values for bounding box
+  vec3 box_min = vec3(FLT_MAX);
+  vec3 box_max = vec3(-FLT_MAX);
+
   size_t index_offset = 0;
   for (int f = 0; f < _size; f++) {
     int fv = shapes[0].mesh.num_face_vertices[f];
@@ -101,6 +112,28 @@ void Mesh::read_from_obj(std::string inputfile) {
 
       // insert point into triangle_points
       triangle_points[v] = vec3(vx +_origin.x, vy + _origin.y, vz + _origin.z);
+
+      // update bounding box values
+      // min values
+      if (triangle_points[v].x < box_min.x) {
+        box_min.x = triangle_points[v].x;
+      }
+      if (triangle_points[v].y < box_min.y) {
+        box_min.y = triangle_points[v].y;
+      }
+      if (triangle_points[v].z < box_min.z) {
+        box_min.z = triangle_points[v].z;
+      }
+      // max values
+      if (triangle_points[v].x > box_max.x) {
+        box_max.x = triangle_points[v].x;
+      }
+      if (triangle_points[v].y > box_max.y) {
+        box_max.y = triangle_points[v].y;
+      }
+      if (triangle_points[v].z > box_max.z) {
+        box_max.z = triangle_points[v].z;
+      }
     }
     // make triangle and add to triangles
     _triangles.push_back(Triangle(triangle_points, vec3(1, 0, 0)));
@@ -110,4 +143,10 @@ void Mesh::read_from_obj(std::string inputfile) {
     // per-face material
     // shapes[s].mesh.material_ids[f];
   }
+  // set bounding box values
+  _bounding_box.set_min_max(box_min, box_max);
+}
+
+void Mesh::generate_bounding_box(void) {
+
 }

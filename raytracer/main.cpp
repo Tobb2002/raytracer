@@ -23,15 +23,18 @@ int main(void) {
   std::string input_file = "data/input/test copy.obj";
 
   // Load .obj File
-  //Mesh m = Mesh(input_file, vec3(0, -0.1, -2));
-  //trace_mesh(m);
+  Mesh m = Mesh(input_file, vec3(0, -0.1, -2));
+  trace_mesh(m);
+  m.print_bounding_box();
 
   // test box intersection
-  Ray ray = Ray(vec3(0, 0, 0), vec3(1, 1, 1));
+  /*
+  Ray ray = Ray(vec3(0, 0, 0), vec3(1, 1, 0));
 
   Box box = Box(vec3 (2, 2, 2), vec3(3, 3, 3));
 
   std::cout << box.intersect_bool(ray) << std::endl;
+  */
 
   return 0;
 }

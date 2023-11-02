@@ -3,12 +3,33 @@
  */
 
 #include "box.h"
+#include <iostream>
+#include <glm/gtx/string_cast.hpp>
 
 
+Box::Box() {
+  _min = vec3(0, 0, 0);
+  _max = vec3(0, 0, 0);
+}
 Box::Box(vec3 min, vec3 max) {
+  set_min_max(min, max);
+}
+
+void Box::set_min_max(vec3 min, vec3 max) {
   _min = min;
   _max = max;
 
+  ensure_min_max();
+}
+
+void Box::print(void) {
+  std::cout << "------Box------\n";
+  std::cout << "min: " << glm::to_string(_min) << "\n";
+  std::cout << "max: " << glm::to_string(_max) << "\n";
+  std::cout << "---------------\n";
+}
+
+void Box::ensure_min_max(void) {
   // ensure that all values in min are smaller than the values in max
   if (_min.x > _max.x) {
     float tmp = _min.x;

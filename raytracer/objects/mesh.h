@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include "triangle.h"
+#include "box.h"
 
 struct Intersection {
   bool found = false;
@@ -21,6 +22,7 @@ class Mesh {
   ~Mesh();
 
   void print_triangles(void);
+  void print_bounding_box(void);
   int get_size(void);
 
   Triangle get_triangle(int i);
@@ -31,7 +33,9 @@ class Mesh {
   std::vector<Triangle> _triangles;
   int _size;
   vec3 _origin;
+  Box _bounding_box;
 
+  void generate_bounding_box(void);
   void read_from_obj(std::string input_file);
 };
 
