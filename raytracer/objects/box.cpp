@@ -62,6 +62,16 @@ bool Box::intersect_bool(Ray ray) {
   // overlapping intervals indicate intersection
   // check box intersection
 
+  if (tx.min > tx.max) {
+    std::swap(tx.min, tx.max);
+  }
+  if (ty.min > ty.max) {
+    std::swap(ty.min, ty.max);
+  }
+  if (tz.min > tz.max) {
+    std::swap(tz.min, tz.max);
+  }
+
   if (tx.min > ty.max || ty.min > tx.max) {
     // xy do not ovelap
     return false;
