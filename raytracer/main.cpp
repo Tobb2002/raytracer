@@ -87,7 +87,7 @@ void trace_triangle(Triangle* triangle,
 }
 
 void trace_mesh(Mesh mesh) {
-  int resolution[2] = {1000, 1000};
+  int resolution[2] = {100, 100};
   Camera camera = Camera(resolution[0], resolution[1]);
 
   camera.set_sensor_size(0.5, 0.5);
@@ -104,7 +104,7 @@ void trace_mesh(Mesh mesh) {
       // print progress
       if (x > progress) {
         // erase line and write new progress
-        std::cout << "\e[2K\e[1A" << "Progress:" << progress << "% \n";
+        std::cout << "\e[2K\e[1A" << "Progress: " << 100 * progress / resolution[0] << "%\n";
         progress += progress_step;
       }
 
