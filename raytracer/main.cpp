@@ -11,6 +11,7 @@
 #include "image.h"
 #include "objects/pointlight.h"
 #include "objects/mesh.h"
+#include "objects/box.h"
 
 
 using glm::vec3;
@@ -19,12 +20,18 @@ void trace_triangle(void);
 void trace_mesh(Mesh m);
 
 int main(void) {
-  std::string input_file = "data/input/bunny.obj";
+  std::string input_file = "data/input/test copy.obj";
 
   // Load .obj File
-  Mesh m = Mesh(input_file, vec3(0, -0.1, -2));
+  //Mesh m = Mesh(input_file, vec3(0, -0.1, -2));
+  //trace_mesh(m);
 
-  trace_mesh(m);
+  // test box intersection
+  Ray ray = Ray(vec3(0, 0, 0), vec3(1, 1, 1));
+
+  Box box = Box(vec3 (2, 2, 2), vec3(3, 3, 3));
+
+  std::cout << box.intersect_bool(ray) << std::endl;
 
   return 0;
 }
@@ -81,7 +88,7 @@ void trace_mesh(Mesh mesh) {
   int resolution[2] = {100, 100};
   Camera camera = Camera(resolution[0], resolution[1]);
 
-  camera.set_sensor_size(0.1, 0.1);
+  camera.set_sensor_size(3, 3);
 
   Image image = Image(resolution[0], resolution[1]);
 
@@ -99,11 +106,15 @@ void trace_mesh(Mesh mesh) {
         progress += progress_step;
       }
 
-      Intersection intersect = mesh.get_closest_intersection(camera.get_ray({x, y}));
+      Intersection intersect = mesh.get_closest_intersection(
+                                      camera.get_ray({x, y}));
 
       // if intersection found calculate color
       if (intersect.found) {
-        vec3 color = calculate_phong(intersect.point, intersect.triangle.get_color(), intersect.triangle.get_normal(), &light_source);
+        vec3 color = calculate_phong(intersect.point,
+                        intersect.triangle.get_color(),
+                        intersect.triangle.get_normal(),
+                        &light_source);
 
         image.set_pixel({x, y}, color);
       }
