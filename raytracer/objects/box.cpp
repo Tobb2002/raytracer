@@ -22,6 +22,11 @@ void Box::set_min_max(vec3 min, vec3 max) {
   ensure_min_max();
 }
 
+void Box::move(vec3 vec) {
+  _min = _min + vec;
+  _max = _max + vec;
+}
+
 void Box::print(void) {
   std::cout << "------Box------\n";
   std::cout << "min: " << glm::to_string(_min) << "\n";

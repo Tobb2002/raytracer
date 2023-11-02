@@ -24,6 +24,9 @@ int main(void) {
 
   // Load .obj File
   Mesh m = Mesh(input_file, vec3(0, -0.1, -2));
+  Triangle t = m.get_triangle(0);
+  m.move(vec3(0, 0, 1));
+  t = m.get_triangle(0);
   trace_mesh(m);
 
   // test box intersection
@@ -90,7 +93,7 @@ void trace_mesh(Mesh mesh) {
   int resolution[2] = {100, 100};
   Camera camera = Camera(resolution[0], resolution[1]);
 
-  camera.set_sensor_size(0.5, 0.5);
+  camera.set_sensor_size(0.2, 0.2);
 
   Image image = Image(resolution[0], resolution[1]);
 

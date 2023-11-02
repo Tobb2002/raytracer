@@ -79,6 +79,12 @@ bool Triangle::intersect_bool(Ray ray) {
   return true;
 }
 
+void Triangle::move(vec3 vec) {
+  for (int i = 0; i < 3; i++) {
+    _p[i] +=vec;
+  }
+}
+
 vec3 Triangle::get_color() {
   return _color;
 }

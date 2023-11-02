@@ -26,6 +26,14 @@ Triangle Mesh::get_triangle(int i) {
   return t;
 }
 
+void Mesh::move(vec3 vec) {
+  for (int i = 0; i < _triangles.size(); i++) {
+    Triangle *t = &_triangles[i];
+    t->move(vec);
+  }
+  _bounding_box.move(vec);
+}
+
 void Mesh::print_bounding_box(void) {
   _bounding_box.print();
 }

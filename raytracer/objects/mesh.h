@@ -25,6 +25,9 @@ class Mesh {
   void print_bounding_box(void);
   int get_size(void);
 
+  // transformations
+  void move(vec3 vec);
+
   Triangle get_triangle(int i);
   Intersection get_closest_intersection(Ray ray);
 
