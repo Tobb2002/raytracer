@@ -7,17 +7,17 @@
 
 #include <glm/glm.hpp>
 #include "ray.h"
-#include "hittable_object.h"
+#include "object.hpp"
 
 using glm::vec3;
 
-class Plane {
+class Plane : public Object{
  public:
   Plane();
   Plane(vec3 pos, vec3 normal, vec3 color);
 
-  Intersection intersect(Ray ray);
-  bool intersect_bool(Ray ray);
+  Intersection intersect(Ray ray) override;
+  bool intersect_bool(Ray ray) override;
 
   //transformations
   void move(vec3 vec);
@@ -26,7 +26,6 @@ class Plane {
   vec3 get_color();
   vec3 get_normal();
   void set_color(vec3 color);
-  void intersect(void);
 
  private:
   vec3 _position;

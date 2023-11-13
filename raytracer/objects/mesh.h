@@ -9,9 +9,9 @@
 #include <vector>
 #include "triangle.h"
 #include "box.h"
-#include "hittable_object.h"
+#include "object.hpp"
 
-class Mesh {
+class Mesh : public Object{
  public:
   Mesh(std::string input_file, vec3 origin);
   ~Mesh();
@@ -24,7 +24,7 @@ class Mesh {
   void move(vec3 vec);
 
   Triangle get_triangle(int i);
-  Intersection get_closest_intersection(Ray ray);
+  Intersection intersect(Ray ray) override;
 
  private:
   bool _triangle_exists;

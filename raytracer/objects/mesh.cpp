@@ -38,7 +38,7 @@ void Mesh::print_bounding_box(void) {
   _bounding_box.print();
 }
 
-Intersection Mesh::get_closest_intersection(Ray ray) {
+Intersection Mesh::intersect(Ray ray) {
   // calculate the intersection with the smallest value for t
   Triangle triangle_best;
   float t_min = MAXFLOAT;

@@ -7,6 +7,7 @@
 
 #include <glm/glm.hpp>
 #include "ray.h"
+#include "object.hpp"
 
 using glm::vec3;
 
