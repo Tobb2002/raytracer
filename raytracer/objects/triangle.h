@@ -19,7 +19,7 @@ class Triangle {
   float intersect(Ray ray);
   bool intersect_bool(Ray ray);
 
-  //transformations
+  // transformations
   void move(vec3 vec);
 
   // getters

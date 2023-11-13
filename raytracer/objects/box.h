@@ -22,7 +22,7 @@ class Box {
   void set_min_max(vec3 min, vec3 max);
   bool intersect_bool(Ray ray);
 
-  //transformations
+  // transformations
   void move(vec3 vec);
 
   void print(void);

@@ -17,9 +17,6 @@
 
 using glm::vec3;
 
-void trace_triangle(void);
-void trace_mesh(Mesh m, Plane plane);
-
 void trace_object(Object *object);
 
 int main(void) {
@@ -29,7 +26,7 @@ int main(void) {
   Mesh m = Mesh(input_file, vec3(0, -0.1, -2));
   Plane plane = Plane(vec3(0, -1, 0), vec3(0, 1, 0), vec3(1, 0, 0));
 
-  trace_object(&m);
+  trace_object(&plane);
 
   return 0;
 }
@@ -59,7 +56,7 @@ void trace_object(Object *object) {
   int resolution[2] = {100, 100};
   Camera camera = Camera(resolution[0], resolution[1]);
 
-  camera.set_sensor_size(0.1, 0.1);
+  camera.set_sensor_size(5, 5);
 
   Image image = Image(resolution[0], resolution[1]);
 
@@ -73,7 +70,8 @@ void trace_object(Object *object) {
       // print progress
       if (x > progress) {
         // erase line and write new progress
-        std::cout << "\e[2K\e[1A" << "Progress: " << 100 * progress / resolution[0] << "%\n";
+        std::cout << "\e[2K\e[1A" << "Progress: "
+        << 100 * progress / resolution[0] << "%\n";
         progress += progress_step;
       }
 
@@ -89,7 +87,6 @@ void trace_object(Object *object) {
 
         image.set_pixel({x, y}, color);
       }
-      
     }
   }
 

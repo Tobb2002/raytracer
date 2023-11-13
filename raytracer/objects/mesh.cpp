@@ -56,7 +56,10 @@ Intersection Mesh::intersect(Ray ray) {
     }
   }
 
-  Intersection intersection = {found_one, ray.get_point(t_min), triangle_best.get_normal(), triangle_best.get_color()};
+  Intersection intersection = {found_one,
+                               ray.get_point(t_min),
+                               triangle_best.get_normal(),
+                               triangle_best.get_color()};
 
   return intersection;
 }

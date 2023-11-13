@@ -18,9 +18,9 @@ Plane::Plane(vec3 position, vec3 normal, vec3 color) {
 
 // calculate The intersection Point with a Ray.
 Intersection Plane::intersect(Ray ray) {
-  float t = -(glm::dot(ray.get_origin() - _position, _normal) 
+  float t = -(glm::dot(ray.get_origin() - _position, _normal)
             / glm::dot(ray.get_direction(), _normal));
-  
+
   bool found = false;
   if (t >= 0) {
     found = true;
@@ -31,5 +31,4 @@ Intersection Plane::intersect(Ray ray) {
 }
 
 bool Plane::intersect_bool(Ray ray) {
-
 }
