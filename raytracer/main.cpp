@@ -12,12 +12,13 @@
 #include "objects/pointlight.h"
 #include "objects/mesh.h"
 #include "objects/box.h"
+#include "objects/plane.hpp"
 
 
 using glm::vec3;
 
 void trace_triangle(void);
-void trace_mesh(Mesh m);
+void trace_mesh(Mesh m, Plane plane);
 
 int main(void) {
   std::string input_file = "data/input/bunny.obj";
@@ -25,9 +26,11 @@ int main(void) {
   // Load .obj File
   Mesh m = Mesh(input_file, vec3(0, -0.1, -2));
   Triangle t = m.get_triangle(0);
-  m.move(vec3(0, 0, 1));
+  m.move(vec3(0, 0, -2));
   t = m.get_triangle(0);
-  trace_mesh(m);
+  Plane plane = Plane(vec3(0, -1, 0), vec3(0, 1, 0), vec3(1, 1, 0));
+  trace_mesh(m, plane);
+
 
   // test box intersection
   /*
@@ -89,15 +92,15 @@ void trace_triangle(Triangle* triangle,
   }
 }
 
-void trace_mesh(Mesh mesh) {
+void trace_mesh(Mesh mesh, Plane plane) {
   int resolution[2] = {100, 100};
   Camera camera = Camera(resolution[0], resolution[1]);
 
-  camera.set_sensor_size(0.2, 0.2);
+  camera.set_sensor_size(5, 5);
 
   Image image = Image(resolution[0], resolution[1]);
 
-  Pointlight light_source = Pointlight(vec3(1, -1, 0), vec3(255, 255, 255));
+  Pointlight light_source = Pointlight(vec3(0, 0, -2), vec3(255, 255, 255));
 
   float progress_step = 0.05 * resolution[0];
   float progress = 0;
@@ -111,18 +114,22 @@ void trace_mesh(Mesh mesh) {
         progress += progress_step;
       }
 
-      Intersection intersect = mesh.get_closest_intersection(
+      //Intersection intersect = mesh.get_closest_intersection(
+      //                                camera.get_ray({x, y}));
+
+      Intersection intersect = plane.intersect(
                                       camera.get_ray({x, y}));
 
       // if intersection found calculate color
       if (intersect.found) {
         vec3 color = calculate_phong(intersect.point,
-                        intersect.triangle.get_color(),
-                        intersect.triangle.get_normal(),
+                        intersect.color,
+                        intersect.normal,
                         &light_source);
 
         image.set_pixel({x, y}, color);
       }
+      
     }
   }
 

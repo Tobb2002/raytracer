@@ -21,8 +21,8 @@ run: compile
 	./build/main
 
 # main
-build/main: build/main.o build/ray.o build/triangle.o build/camera.o build/image.o build/mesh.o build/pointlight.o build/box.o
-	$(CC) $(FLAGS) -o build/main build/main.o build/ray.o build/triangle.o build/camera.o build/image.o build/mesh.o build/pointlight.o build/box.o
+build/main: build/main.o build/ray.o build/triangle.o build/camera.o build/image.o build/mesh.o build/pointlight.o build/box.o build/plane.o
+	$(CC) $(FLAGS) -o build/main build/main.o build/ray.o build/triangle.o build/camera.o build/image.o build/mesh.o build/pointlight.o build/box.o build/plane.o
 
 build/main.o: main.cpp
 	$(CC) $(FLAGS) -c main.cpp -o build/main.o
@@ -49,3 +49,6 @@ build/pointlight.o: objects/pointlight.cpp objects/pointlight.h
 
 build/box.o: objects/box.cpp objects/box.h
 	$(CC) $(FLAGS) -c objects/box.cpp -o build/box.o
+
+build/plane.o: objects/plane.cpp objects/plane.hpp
+	$(CC) $(FLAGS) -c objects/plane.cpp -o build/plane.o

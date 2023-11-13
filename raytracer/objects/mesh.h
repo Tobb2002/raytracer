@@ -9,12 +9,7 @@
 #include <vector>
 #include "triangle.h"
 #include "box.h"
-
-struct Intersection {
-  bool found = false;
-  vec3 point;
-  Triangle triangle;
-};
+#include "hittable_object.h"
 
 class Mesh {
  public:

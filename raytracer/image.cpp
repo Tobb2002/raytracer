@@ -10,7 +10,7 @@ Image::Image(int resolution_x, int resolution_y) {
   _resolution[1] = resolution_y;
 
   // initialize all pixels to light-blue
-  initialize_matrix(vec3(152, 245, 255));
+  initialize_matrix(vec3(0, 0, 0));
 }
 
 Image::~Image() {
