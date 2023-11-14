@@ -71,19 +71,29 @@ Image Scene::trace_image() {
       }
 
       // calculate object intersections
+      Intersection best_intersection = {false,
+                                        MAXFLOAT,
+                                        vec3(0, 0, 0),
+                                        vec3(0, 0, 0),
+                                        vec3(0, 0, 0)};
       for (Object *object: _objects) {
         Intersection intersect = object->intersect(
                                         _camera.get_ray({x, y}));
 
         // if intersection found calculate color
         if (intersect.found) {
-          vec3 color = calculate_phong(intersect.point,
-                          intersect.color,
-                          intersect.normal,
-                          _lights.at(0));
-
-          image.set_pixel({x, y}, color);
+          if (intersect.t < best_intersection.t) {
+            best_intersection = intersect;
+          }
         }
+      }
+      if (best_intersection.found && best_intersection.t > 0) {
+        vec3 color = calculate_phong(best_intersection.point,
+                        best_intersection.color,
+                        best_intersection.normal,
+                        _lights.at(0));
+
+        image.set_pixel({x, y}, color);
       }
     }
   }

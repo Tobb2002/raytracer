@@ -27,7 +27,7 @@ Intersection Plane::intersect(Ray ray) {
   if (t >= 0) {
     found = true;
   }
-  Intersection i = {found, ray.get_point(t), _normal, _color};
+  Intersection i = {found, t, ray.get_point(t), _normal, _color};
 
   return i;
 }

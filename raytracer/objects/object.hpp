@@ -13,6 +13,7 @@ using glm::vec3;
 
 struct Intersection {
   bool found;
+  float t;
   vec3 point;
   vec3 normal;
   vec3 color;
@@ -21,7 +22,7 @@ struct Intersection {
 class Object {
  public:
   virtual Intersection intersect(Ray ray) {
-    return {false, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0)};
+    return {false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0)};
   }
   virtual bool intersect_bool(Ray ray) {
     return false;
