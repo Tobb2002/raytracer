@@ -2,13 +2,12 @@
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
 
-#ifndef MESH_H_
-#define MESH_H_
+#pragma once
 
 #include <iostream>
 #include <vector>
-#include "triangle.h"
-#include "box.h"
+#include "triangle.hpp"
+#include "box.hpp"
 #include "object.hpp"
 
 class Mesh : public Object{
@@ -35,6 +34,3 @@ class Mesh : public Object{
 
   void read_from_obj(std::string input_file);
 };
-
-
-#endif  // MESH_H_

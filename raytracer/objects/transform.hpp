@@ -3,8 +3,7 @@
  */
 
 // functions for transforming points
-#ifndef TRANSFORM_H_
-#define TRANSFORM_H_
+#pragma once
 
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
@@ -20,5 +19,3 @@ vec3 scale(vec3 point, vec3 factor) {
 
   return scale_mat * f;
 }
-
-#endif  // TRANSFORM_H_

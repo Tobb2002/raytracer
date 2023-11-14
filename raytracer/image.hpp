@@ -2,8 +2,7 @@
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
 
-#ifndef IMAGE_H_
-#define IMAGE_H_
+#pragma once
 
 #include <glm/glm.hpp>
 #include <string>
@@ -29,5 +28,3 @@ class Image {
   int _resolution[2];
   vec3** _matrix;
 };
-
-#endif  // IMAGE_H_

@@ -2,7 +2,7 @@
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
 
-#include "pointlight.h"
+#include "pointlight.hpp"
 
 Pointlight::Pointlight(vec3 position, vec3 color) {
   _position = position;

@@ -5,13 +5,13 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
-#include "objects/ray.h"
-#include "objects/triangle.h"
-#include "objects/camera.h"
-#include "image.h"
-#include "objects/pointlight.h"
-#include "objects/mesh.h"
-#include "objects/box.h"
+#include "objects/ray.hpp"
+#include "objects/triangle.hpp"
+#include "objects/camera.hpp"
+#include "image.hpp"
+#include "objects/pointlight.hpp"
+#include "objects/mesh.hpp"
+#include "objects/box.hpp"
 #include "objects/plane.hpp"
 
 

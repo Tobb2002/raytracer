@@ -1,12 +1,10 @@
 /*
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
-
-#ifndef CAMERA_H_
-#define CAMERA_H_
+#pragma once
 
 #include <glm/glm.hpp>
-#include "ray.h"
+#include "ray.hpp"
 
 using glm::vec3;
 using glm::vec2;
@@ -33,5 +31,3 @@ class Camera {
   vec2 pixel_to_image_pos(vec2 pixel);
   vec3 image_to_world(vec2 pos_image);
 };
-
-#endif  // CAMERA_H_

@@ -2,7 +2,7 @@
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
 
-#include "box.h"
+#include "box.hpp"
 #include <iostream>
 #include <glm/gtx/string_cast.hpp>
 

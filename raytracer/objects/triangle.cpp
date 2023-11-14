@@ -2,7 +2,7 @@
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
 
-#include "triangle.h"
+#include "triangle.hpp"
 #include <iostream>
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtc/type_ptr.hpp>

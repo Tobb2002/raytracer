@@ -2,11 +2,10 @@
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
 
-#ifndef TRIANGLE_H_
-#define TRIANGLE_H_
+#pragma once
 
 #include <glm/glm.hpp>
-#include "ray.h"
+#include "ray.hpp"
 #include "object.hpp"
 
 using glm::vec3;
@@ -35,5 +34,3 @@ class Triangle {
 
   vec3 calculate_normal(void);
 };
-
-#endif  // TRIANGLE_H_

@@ -2,7 +2,7 @@
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
 
-#include "image.h"
+#include "image.hpp"
 #include <fstream>
 
 Image::Image(int resolution_x, int resolution_y) {

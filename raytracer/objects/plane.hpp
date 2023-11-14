@@ -2,11 +2,10 @@
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
 
-#ifndef PLANE_H_
-#define PLANE_H_
+#pragma once
 
 #include <glm/glm.hpp>
-#include "ray.h"
+#include "ray.hpp"
 #include "object.hpp"
 
 using glm::vec3;
@@ -32,5 +31,3 @@ class Plane : public Object{
   vec3 _normal;
   vec3 _color;
 };
-
-#endif  // PLANE_H_

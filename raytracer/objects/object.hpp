@@ -2,8 +2,7 @@
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
 
-#ifndef OBJECT_H_
-#define OBJECT_H_
+#pragma once
 
 #include <iostream>
 
@@ -33,4 +32,3 @@ class Object {
 
 
 };
-#endif  // HITABLE_OBJECT_H_

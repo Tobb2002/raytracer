@@ -2,11 +2,10 @@
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
 
-#ifndef BOX_H_
-#define BOX_H_
+#pragma once
 
 #include <glm/glm.hpp>
-#include "ray.h"
+#include "ray.hpp"
 
 using glm::vec3;
 
@@ -33,5 +32,3 @@ class Box {
   vec3 _min;
   vec3 _max;;
 };
-
-#endif  // BOX_H_

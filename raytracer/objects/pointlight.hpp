@@ -1,8 +1,7 @@
 /*
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
-#ifndef POINTLIGHT_H_
-#define POINTLIGHT_H_
+#pragma once
 
 #include <glm/glm.hpp>
 
@@ -19,4 +18,3 @@ class Pointlight {
   vec3 _position;
   vec3 _color;
 };
-#endif  // POINTLIGHT_H_

@@ -2,8 +2,7 @@
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
 
-#ifndef RAY_H_
-#define RAY_H_
+#pragma once
 
 #include <glm/glm.hpp>
 
@@ -24,4 +23,3 @@ class Ray {
     vec3 _origin;
     vec3 _direction;
 };
-#endif  // RAY_H_
