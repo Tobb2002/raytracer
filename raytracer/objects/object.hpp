@@ -5,6 +5,11 @@
 #pragma once
 
 #include <iostream>
+#include <glm/glm.hpp>
+
+#include "ray.hpp"
+
+using glm::vec3;
 
 struct Intersection {
   bool found;

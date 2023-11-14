@@ -4,6 +4,8 @@
 
 #include "plane.hpp"
 
+#include <glm/gtx/string_cast.hpp>
+
 Plane::Plane() {
   _position = vec3(0, 0, 0);
   _normal = vec3(0, 1, 0);
@@ -31,4 +33,13 @@ Intersection Plane::intersect(Ray ray) {
 }
 
 bool Plane::intersect_bool(Ray ray) {
+  // TODO implement
+  return false;
+}
+
+void Plane::print(void) {
+  std::cout << "-----Plane------\n";
+  std::cout << "Position: " << glm::to_string(_position) << "\n";
+  std::cout << "Normal: " << glm::to_string(_normal) << "\n";
+  std::cout << "----------------\n";
 }

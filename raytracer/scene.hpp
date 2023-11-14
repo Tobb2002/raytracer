@@ -2,7 +2,7 @@
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
 
-#pragma once;
+#pragma once
 
 #include <vector>
 
@@ -15,16 +15,20 @@ class Scene {
  public:
   Scene();
 
-  void add_light(Pointlight light);
-  // adds an object and return it id.
-  size_t add_object(Object object);
+  // add objects
+  size_t add_light(Pointlight *light);
+  size_t add_object(Object *object);
 
-  Object *get_object(int id);
+  // get objects to manipulate them
+  Camera *get_camera(void);
+  Object *get_object(size_t id);
 
-  Image render_image();
+
+  // rendering functions
+  Image trace_image();
 
  private:
-  std::vector<Pointlight> _lights;
-  std::vector<Object> _objects;
+  std::vector<Pointlight*> _lights;
+  std::vector<Object*> _objects;
   Camera _camera;
 };
