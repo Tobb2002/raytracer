@@ -8,13 +8,21 @@
 #include <iostream>
 #include <glm/gtx/string_cast.hpp>
 
-Camera::Camera(float resolution_x, float resolution_y) {
-  _resolution = vec2(resolution_x, resolution_y);
-  _aspect_ratio = resolution_x / resolution_y;
+Camera::Camera() {
+  set_resolution(1000, 1000);
 
+  set_sensor_size(3, 3);
+}
+Camera::Camera(float resolution_x, float resolution_y) {
+  set_resolution(resolution_x, resolution_y);
 
   // set standart zoom (sensor_size)
   set_sensor_size(3, 3);
+}
+
+void Camera::set_resolution(float resolution_x, float resolution_y) {
+  _resolution = vec2(resolution_x, resolution_y);
+  _aspect_ratio = resolution_x / resolution_y;
 }
 
 // geters

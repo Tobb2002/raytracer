@@ -11,11 +11,13 @@ using glm::vec2;
 
 class Camera {
  public:
+  Camera();
   Camera(float resolution_x, float resolution_y);
   Ray get_ray(vec2 pixel);
 
   // getters
   vec2 get_resolution();
+  void set_resolution(float resolution_x, float resolution_y);
 
   // setters
   void set_sensor_size(float x, float y);
