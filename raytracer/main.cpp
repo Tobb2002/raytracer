@@ -27,8 +27,8 @@ int main(void) {
   // define objects for the scene
   Mesh m = Mesh(input_file, vec3(0.5, -4, -15));
   Plane plane = Plane(vec3(0, -4, 0), vec3(0, 1, 0), vec3(0, 1, 0));
-  Plane plane2 = Plane(vec3(0, 0, -50), vec3(0, 0, -1), vec3(0, 50, 100));
-  Pointlight light = Pointlight(vec3(5, 2, -10), vec3(200, 200, 200));
+  Plane plane2 = Plane(vec3(0, 0, -50), vec3(0, 0, -1), vec3(0, 0.5, 1));
+  Pointlight light = Pointlight(vec3(5, 2, -10), 500);
 
   Scene scene = Scene();
 

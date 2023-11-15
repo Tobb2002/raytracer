@@ -9,6 +9,11 @@ Pointlight::Pointlight(vec3 position, vec3 color) {
   _color = color;
 }
 
+Pointlight::Pointlight(vec3 position, float intensity) {
+  _position = position;
+  _color = vec3(intensity);
+}
+
 vec3 Pointlight::get_light_direction(vec3 point) {
   return glm::normalize(_position - point);
 }

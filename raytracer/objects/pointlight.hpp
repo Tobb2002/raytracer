@@ -10,6 +10,7 @@ using glm::vec3;
 class Pointlight {
  public:
   Pointlight(vec3 position, vec3 color);
+  Pointlight(vec3 position, float intensity);
 
   vec3 get_light_direction(vec3 point);
   float get_distance(vec3 point);
