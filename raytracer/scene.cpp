@@ -42,28 +42,30 @@ vec3 Scene::calculate_phong(vec3 point,
                      vec3 surface_normal) {
   vec3 res_color = vec3(0, 0, 0);
 
-  // find reachable light sources
-  Pointlight *light = _lights.at(0);
+  // calculate light for all lightsources
+  for (Pointlight *light: _lights) {
+    vec3 col = light->get_color();
+    vec3 s = vec3(material.x * col.x, material.y * col.y, material.z * col.z);
 
-  vec3 col = light->get_color();
-  vec3 s = vec3(material.x * col.x, material.y * col.y, material.z * col.z);
+    Ray r_to_light = Ray(point, light->get_light_direction(point));
+    r_to_light.move_into_dir(0.01);
 
-  Ray r_to_light = Ray(point, light->get_light_direction(point));
-  r_to_light.move_into_dir(0.01);
+    // only ad the ones which are not blocked
+    if (!check_intersection(r_to_light, light->get_distance(point))) {
+      float nl = glm::dot(surface_normal, r_to_light.get_direction());
 
-  if (!check_intersection(r_to_light, light->get_distance(point))) {
-    float nl = glm::dot(surface_normal, r_to_light.get_direction());
+      if (nl < 0) {
+        surface_normal *= -1;
+      }
+      nl = glm::dot(surface_normal, r_to_light.get_direction());
 
-    if (nl < 0) {
-      surface_normal *= -1;
+
+      vec3 v = s * (nl / _lights.size());
+      res_color += vec3(glm::round(v.x), glm::round(v.y), glm::round(v.z));
+      // todo divide by number of light sources
     }
-    nl = glm::dot(surface_normal, r_to_light.get_direction());
-
-
-    vec3 v = s * nl;
-    res_color += vec3(glm::round(v.x), glm::round(v.y), glm::round(v.z));
-    // todo divide by number of light sources
   }
+
 
   return res_color;
 }
