@@ -34,6 +34,7 @@ class Scene {
 
   vec3 calculate_phong(vec3 point,
                        vec3 material,
-                       vec3 surface_normal);
+                       vec3 surface_normal,
+                       Ray camera_ray);
   bool check_intersection(Ray ray, float t_max);
 };

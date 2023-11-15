@@ -39,29 +39,42 @@ bool Scene::check_intersection(Ray ray, float t_max) {
 // rendering functions
 vec3 Scene::calculate_phong(vec3 point,
                      vec3 material,
-                     vec3 surface_normal) {
+                     vec3 surface_normal,
+                     Ray camera_ray) {
   vec3 res_color = vec3(0, 0, 0);
 
   // calculate light for all lightsources
   for (Pointlight *light : _lights) {
     vec3 col = light->get_color();
-    vec3 s = vec3(material.x * col.x, material.y * col.y, material.z * col.z);
+    vec3 incoming_light = vec3(material.x * col.x, material.y * col.y, material.z * col.z);
 
-    Ray r_to_light = Ray(point, light->get_light_direction(point));
-    r_to_light.move_into_dir(0.01);
+    Ray ray_to_light = Ray(point, light->get_light_direction(point));
+    ray_to_light.move_into_dir(0.01);
 
     // only ad the ones which are not blocked
-    if (!check_intersection(r_to_light, light->get_distance(point))) {
-      float nl = glm::dot(surface_normal, r_to_light.get_direction());
+    if (!check_intersection(ray_to_light, light->get_distance(point))) {
+      float nl = glm::dot(surface_normal, ray_to_light.get_direction());
+
+      vec3 r = 2 * nl * surface_normal - ray_to_light.get_direction();
+      vec3 v = camera_ray.get_direction();
+      //v *= -1;
 
       if (nl < 0) {
         surface_normal *= -1;
       }
-      nl = glm::dot(surface_normal, r_to_light.get_direction());
+      nl = glm::dot(surface_normal, ray_to_light.get_direction());
 
 
-      vec3 v = s * (nl / _lights.size());
-      res_color += vec3(glm::round(v.x), glm::round(v.y), glm::round(v.z));
+      float spec_factor = 1;
+      vec3 l_ambient = vec3(0); // TODO
+      vec3 l_surface = incoming_light * (nl / _lights.size());
+
+      vec3 l_specular = material + vec3(1, 1, 1) * glm::pow(glm::dot(r, v), spec_factor);
+
+      vec3 l_cam = l_ambient + glm::cross(l_surface, l_specular);
+      res_color += vec3(glm::round(l_cam.x),
+                        glm::round(l_cam.y),
+                        glm::round(l_cam.z));
       // todo divide by number of light sources
     }
   }
@@ -113,7 +126,8 @@ Image Scene::trace_image() {
       if (best_intersection.found && best_intersection.t > 0) {
         vec3 color = calculate_phong(best_intersection.point,
                         best_intersection.color,
-                        best_intersection.normal);
+                        best_intersection.normal,
+                        _camera.get_ray({x, y}));
 
         image.set_pixel({x, y}, color);
       }
