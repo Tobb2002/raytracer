@@ -21,15 +21,12 @@ using glm::vec3;
 void trace_object(Object *object);
 
 int main(void) {
-
-  // Load .obj File
-  // define objects for the scene
   Mesh m = Mesh("data/input/bunny_scaled.obj", vec3(1.2, -4.8, -10));
   Mesh m2 = Mesh("data/input/test copy.obj", vec3(-4, -4, -17));
   Plane plane = Plane(vec3(0, -4, 0), vec3(0, 1, 0), vec3(0, 1, 0));
   Plane plane2 = Plane(vec3(0, 0, -50), vec3(0, 0, -1), vec3(0, 0.5, 1));
   Pointlight light = Pointlight(vec3(5, 2, 0), 300);
-  Pointlight light2 = Pointlight(vec3(-2, 2, 0), 100);
+  Pointlight light2 = Pointlight(vec3(-1.8, 2, 0), 100);
 
   Scene scene = Scene();
 
@@ -46,7 +43,6 @@ int main(void) {
   Image img = scene.trace_image();
 
   img.write_to_file("data/output/mesh.ppm");
-
 
   return 0;
 }

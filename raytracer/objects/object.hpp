@@ -41,6 +41,4 @@ class Object {
  private:
   vec3 _origin;
   vec3 _color;
-
-
 };

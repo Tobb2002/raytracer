@@ -18,7 +18,8 @@ class Plane : public Object{
   Intersection intersect(Ray ray) override;
 
   void print(void) override;
-  //transformations
+
+  // transformations
   void move(vec3 vec);
 
   // getters

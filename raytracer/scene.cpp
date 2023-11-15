@@ -8,13 +8,13 @@
 Scene::Scene() { }
 
 size_t Scene::add_light(Pointlight *light) {
-   _lights.push_back(light);
-   return _lights.size() -1;
+  _lights.push_back(light);
+  return _lights.size() -1;
 }
 
 size_t Scene::add_object(Object *object) {
-   _objects.push_back(object);
-   return _objects.size() -1;
+  _objects.push_back(object);
+  return _objects.size() -1;
 }
 
 
@@ -28,7 +28,7 @@ Object *Scene::get_object(size_t id) {
 }
 
 bool Scene::check_intersection(Ray ray, float t_max) {
-  for (Object *object: _objects) {
+  for (Object *object : _objects) {
     if (object->intersect_bool(ray, t_max)) {
       return true;
     }
@@ -43,7 +43,7 @@ vec3 Scene::calculate_phong(vec3 point,
   vec3 res_color = vec3(0, 0, 0);
 
   // calculate light for all lightsources
-  for (Pointlight *light: _lights) {
+  for (Pointlight *light : _lights) {
     vec3 col = light->get_color();
     vec3 s = vec3(material.x * col.x, material.y * col.y, material.z * col.z);
 
@@ -74,7 +74,9 @@ Image Scene::trace_image() {
   Image image = Image(_camera.get_resolution().x,
                       _camera.get_resolution().y);
 
-  int resolution[2] = {static_cast<int>(_camera.get_resolution().x), static_cast<int>(_camera.get_resolution().y)};
+  int resolution[2] =
+    {static_cast<int>(_camera.get_resolution().x),
+    static_cast<int>(_camera.get_resolution().y)};
 
 
 
@@ -97,7 +99,7 @@ Image Scene::trace_image() {
                                         vec3(0, 0, 0),
                                         vec3(0, 0, 0),
                                         vec3(0, 0, 0)};
-      for (Object *object: _objects) {
+      for (Object *object : _objects) {
         Intersection intersect = object->intersect(
                                         _camera.get_ray({x, y}));
 
