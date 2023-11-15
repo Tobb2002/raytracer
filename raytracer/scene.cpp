@@ -27,26 +27,45 @@ Object *Scene::get_object(size_t id) {
   return _objects.at(id);
 }
 
+bool Scene::check_intersection(Ray ray, float t_max) {
+  for (Object *object: _objects) {
+    if (object->intersect_bool(ray, t_max)) {
+      return true;
+    }
+  }
+  return false;
+}
 
 // rendering functions
-vec3 calculate_phong(vec3 point,
+vec3 Scene::calculate_phong(vec3 point,
                      vec3 material,
-                     vec3 surface_normal,
-                     Pointlight* light) {
-  vec3 c = light->get_color();
-  vec3 s = vec3(material.x * c.x, material.y * c.y, material.z * c.z);
+                     vec3 surface_normal) {
+  vec3 res_color = vec3(0, 0, 0);
 
-  float nl = glm::dot(surface_normal, light->get_light_direction(point));
+  // find reachable light sources
+  Pointlight *light = _lights.at(0);
 
-  if (nl < 0) {
-    surface_normal *= -1;
+  vec3 col = light->get_color();
+  vec3 s = vec3(material.x * col.x, material.y * col.y, material.z * col.z);
+
+  Ray r_to_light = Ray(point, light->get_light_direction(point));
+  r_to_light.move_into_dir(0.01);
+
+  if (!check_intersection(r_to_light, light->get_distance(point))) {
+    float nl = glm::dot(surface_normal, r_to_light.get_direction());
+
+    if (nl < 0) {
+      surface_normal *= -1;
+    }
+    nl = glm::dot(surface_normal, r_to_light.get_direction());
+
+
+    vec3 v = s * nl;
+    res_color += vec3(glm::round(v.x), glm::round(v.y), glm::round(v.z));
+    // todo divide by number of light sources
   }
-  nl = glm::dot(surface_normal, light->get_light_direction(point));
 
-
-  vec3 v = s * nl;
-
-  return vec3(glm::round(v.x), glm::round(v.y), glm::round(v.z));
+  return res_color;
 }
 
 Image Scene::trace_image() {
@@ -90,8 +109,7 @@ Image Scene::trace_image() {
       if (best_intersection.found && best_intersection.t > 0) {
         vec3 color = calculate_phong(best_intersection.point,
                         best_intersection.color,
-                        best_intersection.normal,
-                        _lights.at(0));
+                        best_intersection.normal);
 
         image.set_pixel({x, y}, color);
       }

@@ -66,6 +66,7 @@ Intersection Mesh::intersect(Ray ray) {
   return intersection;
 }
 
+
 void Mesh::read_from_obj(std::string inputfile) {
   tinyobj::attrib_t attrib;
   std::vector<tinyobj::shape_t> shapes;

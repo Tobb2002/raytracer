@@ -32,11 +32,6 @@ Intersection Plane::intersect(Ray ray) {
   return i;
 }
 
-bool Plane::intersect_bool(Ray ray) {
-  // TODO implement
-  return false;
-}
-
 void Plane::print(void) {
   std::cout << "-----Plane------\n";
   std::cout << "Position: " << glm::to_string(_position) << "\n";

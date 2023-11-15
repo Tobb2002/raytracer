@@ -12,6 +12,7 @@ class Pointlight {
   Pointlight(vec3 position, vec3 color);
 
   vec3 get_light_direction(vec3 point);
+  float get_distance(vec3 point);
   vec3 get_color();
 
  private:

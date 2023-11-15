@@ -20,6 +20,10 @@ vec3 Ray::get_point(float t) {
   return _origin + (t * _direction);
 }
 
+void Ray::move_into_dir(float x) {
+  _origin += _direction * x;
+}
+
 void Ray::print(void) {
   std::cout << "------Ray------- " <<  std::endl;
   std::cout << "origin: " << glm::to_string(_origin) << std::endl;

@@ -15,8 +15,10 @@ class Ray {
     // getter
     vec3 get_origin();
     vec3 get_direction();
-
     vec3 get_point(float t);
+
+   // functions
+   void move_into_dir(float x);
     void print(void);
 
  private:

@@ -31,4 +31,9 @@ class Scene {
   std::vector<Pointlight*> _lights;
   std::vector<Object*> _objects;
   Camera _camera;
+
+  vec3 calculate_phong(vec3 point,
+                       vec3 material,
+                       vec3 surface_normal);
+  bool check_intersection(Ray ray, float t_max);
 };

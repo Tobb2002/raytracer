@@ -24,7 +24,13 @@ class Object {
   virtual Intersection intersect(Ray ray) {
     return {false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0)};
   }
-  virtual bool intersect_bool(Ray ray) {
+  virtual bool intersect_bool(Ray ray, float t_max) {
+    Intersection i = intersect(ray);
+
+    if (i.found && i.t < t_max) {
+      return true;
+    }
+
     return false;
   }
 
