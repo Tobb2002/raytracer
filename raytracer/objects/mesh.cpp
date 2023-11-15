@@ -28,7 +28,7 @@ Triangle Mesh::get_triangle(int i) {
 }
 
 void Mesh::move(vec3 vec) {
-  for (int i = 0; i < _triangles.size(); i++) {
+  for (size_t i = 0; i < _triangles.size(); i++) {
     Triangle *t = &_triangles[i];
     t->move(vec);
   }

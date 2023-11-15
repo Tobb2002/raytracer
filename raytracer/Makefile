@@ -20,38 +20,22 @@ checkstyle:
 run: compile
 	./build/main
 
-# main
-build/main: build/main.o build/ray.o build/triangle.o build/camera.o build/image.o build/mesh.o build/pointlight.o build/box.o build/plane.o build/scene.o
-	$(CC) $(FLAGS) -o build/main build/main.o build/ray.o build/triangle.o build/camera.o build/image.o build/mesh.o build/pointlight.o build/box.o build/plane.o build/scene.o
+files = main ray triangle camera image mesh pointlight box plane scene
 
+targets = $(addsuffix .o,$(addprefix build/,$(files)))
+
+# linke everything
+build/main: $(targets)
+	$(CC) $(FLAGS) -o build/main $(targets)
+
+# main
 build/main.o: main.cpp
 	$(CC) $(FLAGS) -c main.cpp -o build/main.o
 
 # modules
-build/image.o: image.cpp image.hpp
-	$(CC) $(FLAGS) -c image.cpp -o build/image.o
-
-build/scene.o: scene.cpp scene.hpp
-	$(CC) $(FLAGS) -c scene.cpp -o build/scene.o
+build/%.o: %.cpp %.hpp
+	$(CC) $(FLAGS) -c $< -o $@
 
 #objects
-build/ray.o: objects/ray.cpp objects/ray.hpp
-	$(CC) $(FLAGS) -c objects/ray.cpp -o build/ray.o
-
-build/triangle.o: objects/triangle.cpp objects/triangle.hpp
-	$(CC) $(FLAGS) -c objects/triangle.cpp -o build/triangle.o
-
-build/camera.o: objects/camera.cpp objects/camera.hpp
-	$(CC) $(FLAGS) -c objects/camera.cpp -o build/camera.o
-
-build/mesh.o: objects/mesh.cpp objects/mesh.hpp
-	$(CC) $(FLAGS) -c objects/mesh.cpp -o build/mesh.o
-
-build/pointlight.o: objects/pointlight.cpp objects/pointlight.hpp
-	$(CC) $(FLAGS) -c objects/pointlight.cpp -o build/pointlight.o
-
-build/box.o: objects/box.cpp objects/box.hpp
-	$(CC) $(FLAGS) -c objects/box.cpp -o build/box.o
-
-build/plane.o: objects/plane.cpp objects/plane.hpp
-	$(CC) $(FLAGS) -c objects/plane.cpp -o build/plane.o
+build/%.o: objects/%.cpp objects/%.hpp
+	$(CC) $(FLAGS) -c $< -o $@
