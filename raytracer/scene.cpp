@@ -4,6 +4,8 @@
 
 #include "scene.hpp"
 
+#include <glm/gtx/string_cast.hpp>
+
 // initialize Scene
 Scene::Scene() { }
 
@@ -43,41 +45,59 @@ vec3 Scene::calculate_phong(vec3 point,
                      Ray camera_ray) {
   vec3 res_color = vec3(0, 0, 0);
 
+  surface_normal = glm::normalize(surface_normal);
+
+  float spec_factor = 0.2;
+  float diffuse_factor = 0.8;
+
   // calculate light for all lightsources
   for (Pointlight *light : _lights) {
-    vec3 col = light->get_color();
-    vec3 incoming_light = vec3(material.x * col.x, material.y * col.y, material.z * col.z);
+    vec3 incoming_light = light->get_color();
+    //vec3 incoming_light = vec3(material.x * col.x, material.y * col.y, material.z * col.z);
 
     Ray ray_to_light = Ray(point, light->get_light_direction(point));
     ray_to_light.move_into_dir(0.01);
 
+    vec3 light_direction = ray_to_light.get_direction();
+
+
     // only ad the ones which are not blocked
     if (!check_intersection(ray_to_light, light->get_distance(point))) {
-      float nl = glm::dot(surface_normal, ray_to_light.get_direction());
+      float ndotl = glm::dot(surface_normal, light_direction);
 
-      vec3 r = 2 * nl * surface_normal - ray_to_light.get_direction();
-      vec3 v = camera_ray.get_direction();
-      //v *= -1;
-
-      if (nl < 0) {
+      if (ndotl < 0) {
         surface_normal *= -1;
+        ndotl = glm::dot(surface_normal, ray_to_light.get_direction());
       }
-      nl = glm::dot(surface_normal, ray_to_light.get_direction());
+
+      vec3 r = 2 * ndotl * surface_normal - light_direction;
+
+      vec3 v = camera_ray.get_direction();
+      v *= -1;
+
+      vec3 halfway_direction = glm::normalize(light_direction + v);
+
+      float ndoth = glm::dot(surface_normal, halfway_direction);
+
+      vec3 l_cam = glm::cross(vec3(1, 1, 1), incoming_light * ndotl * glm::pow(ndoth, 5.f));
 
 
-      float spec_factor = 1;
-      vec3 l_ambient = vec3(0); // TODO
-      vec3 l_surface = incoming_light * (nl / _lights.size());
+      //vec3 l_surface = incoming_light * ndotl;
 
-      vec3 l_specular = material + vec3(1, 1, 1) * glm::pow(glm::dot(r, v), spec_factor);
+      //vec3 reflection = diffuse_factor * material + spec_factor * nh * vec3(1, 1, 1);
 
-      vec3 l_cam = l_ambient + glm::cross(l_surface, l_specular);
-      res_color += vec3(glm::round(l_cam.x),
-                        glm::round(l_cam.y),
-                        glm::round(l_cam.z));
+
+      //std::cout << glm::to_string(reflection) << "ref\n";
+
+      //vec3 l_cam = glm::cross(l_surface, reflection);
+      res_color += vec3(glm::round(l_cam.x / _lights.size()),
+                        glm::round(l_cam.y / _lights.size()),
+                        glm::round(l_cam.z / _lights.size()));
       // todo divide by number of light sources
     }
   }
+
+  // TODO add ambient reflection
 
 
   return res_color;
