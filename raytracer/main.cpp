@@ -34,7 +34,7 @@ int main(void) {
   scene.get_camera()->set_sensor_size(1, 1);
 
   scene.add_light(&light);
-  scene.add_light(&light2);
+  //scene.add_light(&light2);
   scene.add_object(&m);
   scene.add_object(&m2);
   scene.add_object(&plane);
