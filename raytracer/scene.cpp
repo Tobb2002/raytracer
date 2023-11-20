@@ -7,7 +7,9 @@
 #include <glm/gtx/string_cast.hpp>
 
 // initialize Scene
-Scene::Scene() { }
+Scene::Scene(vec3 standart_color) {
+  _standart_color = standart_color;
+}
 
 size_t Scene::add_light(Pointlight *light) {
   _lights.push_back(light);
@@ -158,6 +160,9 @@ Image Scene::trace_image() {
                         _camera.get_ray({x, y}));
 
         image.set_pixel({x, y}, color);
+      }
+      else {
+        image.set_pixel({x, y}, _standart_color);
       }
     }
   }

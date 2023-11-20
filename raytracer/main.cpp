@@ -24,12 +24,12 @@ int main(void) {
   Mesh m = Mesh("data/input/bunny_scaled.obj", vec3(1.2, -4.8, -10));
   Mesh m2 = Mesh("data/input/test copy.obj", vec3(-4, -4, -17));
   Plane plane = Plane(vec3(0, -4, 0), vec3(0, 1, 0), vec3(0, 1, 0));
-  Plane plane2 = Plane(vec3(0, 0, -50), vec3(0, 0, -1), vec3(0, 0.5, 1));
+  //Plane plane2 = Plane(vec3(0, 0, -50), vec3(0, 0, -1), vec3(0, 0.5, 1));
   Pointlight light = Pointlight(vec3(-2, -2, -16), 300);
   Pointlight light1 = Pointlight(vec3(5, 2, 1), 300);
   Pointlight light2 = Pointlight(vec3(-1.8, 2, 0), 300);
 
-  Scene scene = Scene();
+  Scene scene = Scene(vec3(0, 100, 200));
 
   scene.get_camera()->set_resolution(100, 100);
   scene.get_camera()->set_sensor_size(1, 1);
@@ -40,7 +40,7 @@ int main(void) {
   scene.add_object(&m);
   scene.add_object(&m2);
   scene.add_object(&plane);
-  scene.add_object(&plane2);
+  //scene.add_object(&plane2);
 
   Image img = scene.trace_image();
 
