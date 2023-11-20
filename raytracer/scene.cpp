@@ -47,8 +47,11 @@ vec3 Scene::calculate_phong(vec3 point,
 
   surface_normal = glm::normalize(surface_normal);
 
-  float spec_factor = 0.2;
+  float spec_factor = 1.2;
   float diffuse_factor = 0.8;
+  float ambient_factor = 0.2;
+
+  float pow_m = 5;
 
   // calculate light for all lightsources
   for (Pointlight *light : _lights) {
@@ -81,19 +84,32 @@ vec3 Scene::calculate_phong(vec3 point,
       float rdotv = glm::dot(r, v);
 
       vec3 l_material;
-      if (rdotv < 0) {
-        l_material = material;
+      //if (rdotv < 0) {
+      //  rdotv = 0;
+      //  //l_material = material;
+      //}
+      if (ndoth < 0) {
+        ndoth = 0;
+        //l_material = material;
       }
-      else {
-        l_material = diffuse_factor * material + spec_factor * vec3(1, 1, 1) * glm::pow(rdotv, 1.f);
-        std::cout << glm::to_string(glm::normalize(l_material)) << "test\n";
-      }
+      //else {
+        vec3 l_ambient = material * ambient_factor;
+        vec3 l_diffuse = diffuse_factor * material;
+        
+        vec3 l_specular = vec3(0, 0, 0);
+        //rdotv *= -1;
+        if (rdotv > 0) {
+          l_specular = spec_factor * (vec3(1, 1, 1) * glm::pow(rdotv, pow_m));
+        }
+        l_material = l_ambient + l_diffuse + l_specular;
+        //l_material = l_specular;
+      //}
 
 
-      vec3 l_cam = incoming_light * ndotl;
+      // TODO normalize l_material ?
+      vec3 l_cam = incoming_light * ndotl * l_material;
 
 
-      l_cam = glm::cross(l_cam, glm::normalize(l_material));
       
 
       //if (l_cam.x < 0 || l_cam.y < 0 || l_cam.z < 0) {

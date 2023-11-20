@@ -25,7 +25,8 @@ int main(void) {
   Mesh m2 = Mesh("data/input/test copy.obj", vec3(-4, -4, -17));
   Plane plane = Plane(vec3(0, -4, 0), vec3(0, 1, 0), vec3(0, 1, 0));
   Plane plane2 = Plane(vec3(0, 0, -50), vec3(0, 0, -1), vec3(0, 0.5, 1));
-  Pointlight light = Pointlight(vec3(5, 2, 0), 300);
+  //Pointlight light = Pointlight(vec3(-1.5, -2.4, -6), 300);
+  Pointlight light = Pointlight(vec3(2, 1, 0), 300);
   Pointlight light2 = Pointlight(vec3(-1.8, 2, 0), 100);
 
   Scene scene = Scene();
