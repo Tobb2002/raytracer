@@ -102,9 +102,9 @@ vec3 Scene::calculate_phong(vec3 point,
     }
 
     vec3 l_cam = incoming_light * ndotl * l_material;
-    res_color += vec3(glm::round(l_cam.x / _lights.size()),
-                      glm::round(l_cam.y / _lights.size()),
-                      glm::round(l_cam.z / _lights.size()));
+    res_color += vec3(glm::round(l_cam.x),
+                      glm::round(l_cam.y),
+                      glm::round(l_cam.z));
   }
 
   // TODO add ambient reflection
