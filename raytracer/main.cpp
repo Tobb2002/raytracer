@@ -31,7 +31,7 @@ int main(void) {
 
   Scene scene = Scene(vec3(0, 100, 200));
 
-  scene.get_camera()->set_resolution(500, 500);
+  scene.get_camera()->set_resolution(100, 100);
   scene.get_camera()->set_sensor_size(1, 1);
 
   scene.add_light(&light);

@@ -23,6 +23,8 @@ class Scene {
   Camera *get_camera(void);
   Object *get_object(size_t id);
 
+  vec3 get_color(Ray ray);
+
 
   // rendering functions
   Image trace_image();
