@@ -10,6 +10,7 @@
 #include "ray.hpp"
 
 using glm::vec3;
+using glm::mat4;
 
 struct Intersection {
   bool found;
@@ -21,24 +22,20 @@ struct Intersection {
 
 class Object {
  public:
-  virtual Intersection intersect(Ray ray) {
-    return {false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0)};
-  }
-  virtual bool intersect_bool(Ray ray, float t_max) {
-    Intersection i = intersect(ray);
+  virtual Intersection intersect(Ray ray);
+  virtual bool intersect_bool(Ray ray, float t_max);
 
-    if (i.found && i.t < t_max) {
-      return true;
-    }
+  virtual void print(void);
 
-    return false;
-  }
-
-  virtual void print(void) {
-    std::cout << "Empty Object\n";
-  }
+  // transformation functions
+  virtual void rotate(void);
 
  private:
   vec3 _origin;
   vec3 _color;
+
+  // transformation
+  mat4 _mat_translation;
+  mat4 _mat_rotation;
+  mat4 _mat_scale;
 };

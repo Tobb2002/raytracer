@@ -17,6 +17,7 @@ class Mesh : public Object{
 
   void print_triangles(void);
   void print_bounding_box(void);
+  void print(void) override;
   int get_size(void);
 
   // transformations

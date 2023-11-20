@@ -20,7 +20,7 @@ checkstyle:
 run: compile
 	./build/main
 
-files = main ray triangle camera image mesh pointlight box plane scene
+files = main ray triangle camera image mesh pointlight box plane scene object
 
 targets = $(addsuffix .o,$(addprefix build/,$(files)))
 

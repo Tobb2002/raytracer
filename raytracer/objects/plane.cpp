@@ -33,6 +33,7 @@ Intersection Plane::intersect(Ray ray) {
 }
 
 void Plane::print(void) {
+  Object::print();
   std::cout << "-----Plane------\n";
   std::cout << "Position: " << glm::to_string(_position) << "\n";
   std::cout << "Normal: " << glm::to_string(_normal) << "\n";

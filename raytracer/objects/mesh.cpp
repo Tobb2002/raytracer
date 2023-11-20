@@ -35,6 +35,12 @@ void Mesh::move(vec3 vec) {
   _bounding_box.move(vec);
 }
 
+void Mesh::print(void) {
+  Object::print();
+  std::cout << "mesh\n";
+  print_bounding_box();
+}
+
 void Mesh::print_bounding_box(void) {
   _bounding_box.print();
 }
