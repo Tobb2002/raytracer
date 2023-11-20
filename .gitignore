@@ -8,3 +8,5 @@ build
 *.ppm
 
 raytracer/data
+
+test/
