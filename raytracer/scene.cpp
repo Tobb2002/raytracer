@@ -64,48 +64,45 @@ vec3 Scene::calculate_phong(vec3 point,
     vec3 light_direction = ray_to_light.get_direction();
 
 
+
+    vec3 v = camera_ray.get_direction();
+
+    float ndotl = glm::dot(surface_normal, light_direction);
+
+    if (ndotl < 0) {
+      surface_normal *= -1;
+      ndotl = glm::dot(surface_normal, ray_to_light.get_direction());
+    }
+
+    vec3 r = 2 * ndotl * (surface_normal - light_direction);
+
+    float rdotv = glm::dot(r, v);
+
+    vec3 l_material;
+
+    vec3 l_ambient = material * ambient_factor;
+    vec3 l_diffuse = diffuse_factor * material;
+    
+    vec3 l_specular = vec3(0, 0, 0);
+    if (rdotv > 0) {
+      l_specular = spec_factor * (vec3(1, 1, 1) * glm::pow(rdotv, pow_m));
+    }
+    else {
+      rdotv *= -1;
+      l_specular = spec_factor * (vec3(1, 1, 1) * glm::pow(rdotv, pow_m));
+    }
     // only ad the ones which are not blocked
     if (!check_intersection(ray_to_light, light->get_distance(point))) {
-
-      vec3 v = camera_ray.get_direction();
-      vec3 halfway_direction = glm::normalize(light_direction + v);
-
-      float ndotl = glm::dot(surface_normal, light_direction);
-
-      if (ndotl < 0) {
-        surface_normal *= -1;
-        ndotl = glm::dot(surface_normal, ray_to_light.get_direction());
-      }
-
-      vec3 r = 2 * ndotl * (surface_normal - light_direction);
-
-      float ndoth = glm::dot(surface_normal, halfway_direction);
-      float rdotv = glm::dot(r, v);
-
-      if (ndoth < 0) {
-        ndoth = 0;
-      }
-
-      vec3 l_material;
-
-      vec3 l_ambient = material * ambient_factor;
-      vec3 l_diffuse = diffuse_factor * material;
-      
-      vec3 l_specular = vec3(0, 0, 0);
-      if (rdotv > 0) {
-        l_specular = spec_factor * (vec3(1, 1, 1) * glm::pow(rdotv, pow_m));
-      }
-      else {
-        rdotv *= -1;
-        l_specular = spec_factor * (vec3(1, 1, 1) * glm::pow(rdotv, pow_m));
-      }
       l_material = l_ambient + l_diffuse + l_specular;
-
-      vec3 l_cam = incoming_light * ndotl * l_material;
-      res_color += vec3(glm::round(l_cam.x / _lights.size()),
-                        glm::round(l_cam.y / _lights.size()),
-                        glm::round(l_cam.z / _lights.size()));
     }
+    else {
+      l_material = l_ambient;
+    }
+
+    vec3 l_cam = incoming_light * ndotl * l_material;
+    res_color += vec3(glm::round(l_cam.x / _lights.size()),
+                      glm::round(l_cam.y / _lights.size()),
+                      glm::round(l_cam.z / _lights.size()));
   }
 
   // TODO add ambient reflection
