@@ -21,7 +21,7 @@ class Mesh : public Object{
   int get_size(void);
 
   // transformations
-  void move(vec3 vec);
+  void move(vec3 vec) override;
 
   Triangle get_triangle(int i);
   Intersection intersect(Ray ray) override;

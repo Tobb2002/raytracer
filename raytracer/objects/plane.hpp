@@ -20,15 +20,10 @@ class Plane : public Object{
   void print(void) override;
 
   // transformations
-  void move(vec3 vec);
 
-  // getters
-  vec3 get_color();
-  vec3 get_normal();
-  void set_color(vec3 color);
+  void transform(mat4 transformation) override;
 
  private:
-  vec3 _position;
   vec3 _normal;
   vec3 _color;
 };

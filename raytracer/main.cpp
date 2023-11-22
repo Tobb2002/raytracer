@@ -22,10 +22,10 @@ void trace_object(Object *object);
 
 int main(void) {
   Mesh m = Mesh("data/input/bunny_scaled.obj", vec3(1.2, -4.8, -10));
-  m.print();
   Mesh m2 = Mesh("data/input/test copy.obj", vec3(-4, -4, -17));
   Plane plane = Plane(vec3(0, -4, 0), vec3(0, 1, 0), vec3(0, 1, 0));
-  plane.print();
+  //plane.move(vec3(0,-3,0));
+  plane.rotate(vec3(0, 0, 1), 10);
   Plane plane2 = Plane(vec3(0, 0, -50), vec3(0, 0, -1), vec3(0, 0.5, 1));
   Pointlight light = Pointlight(vec3(-2, -2, -16), 300);
   Pointlight light1 = Pointlight(vec3(5, 2, 1), 300);
