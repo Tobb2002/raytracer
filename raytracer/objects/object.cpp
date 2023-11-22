@@ -60,7 +60,13 @@ void Object::initialize_matrices(void) {
 
 void Object::calculate_inverse_mat(void) {
   // translation T^-1(t) = T(-t)
-  _mat_inv_translation =  glm::mat4(-1.0) * _mat_translation * -1.f;
+  _mat_inv_translation =  mat4(vec4(1, 0, 0,0),
+                               vec4(0, 1, 0,0),
+                               vec4(0, 0, 1,0),
+                               vec4(_mat_translation[3][0] * -1,
+                                    _mat_translation[3][1] * -1,
+                                    _mat_translation[3][2] * -1,
+                                    1));
   // rotation R^-1 = transpose(Rx)
   _mat_inv_rotation = glm::transpose(_mat_rotation);
   // scale S^-1 = S(1/s)

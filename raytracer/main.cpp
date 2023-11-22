@@ -26,8 +26,10 @@ int main(void) {
   Plane plane = Plane(vec3(0, -4, 0), vec3(0, 1, 0), vec3(0, 1, 0));
   //plane.move(vec3(0,-3,0));
   m.print();
-  m.rotate(vec3(1, 0, 0), 45);
+  m.print_matrices();
+  m.rotate(vec3(1, 0, 0), 5);
   m.print();
+  m.print_matrices();
   Plane plane2 = Plane(vec3(0, 0, -50), vec3(0, 0, -1), vec3(0, 0.5, 1));
   Pointlight light = Pointlight(vec3(-2, -2, -16), 100);
   Pointlight light1 = Pointlight(vec3(5, 2, 1), 100);

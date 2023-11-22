@@ -10,8 +10,6 @@
 
 Mesh::Mesh(std::string input_file, vec3 origin) {
   _origin = origin;
-  _mat_translation = glm::translate(glm::mat4(1.0), origin);
-  calculate_inverse_mat();
   read_from_obj(input_file); // read file with origin as offset
 }
 
@@ -184,4 +182,7 @@ void Mesh::read_from_obj(std::string inputfile) {
   _bounding_box.set_min_max(box_min, box_max);
 
   _origin = _bounding_box.get_middle();
+  _mat_translation = glm::translate(_mat_translation, _origin);
+
+  calculate_inverse_mat();
 }
