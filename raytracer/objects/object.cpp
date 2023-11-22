@@ -16,6 +16,7 @@ Object::Object() {
   _direction = vec3(0, 0, 1);
   // initialize transformation matrices
   initialize_matrices();
+  calculate_inverse_mat();
 }
 
 Intersection Object::intersect(Ray ray) {
@@ -35,6 +36,16 @@ void Object::print(void) {
   std::cout << "-----Object-----\n";
 }
 
+void Object::print_matrices(void) {
+  std::cout << "-----Object-----\n";
+  std::cout << "-----Matrix-----\n";
+  std::cout << "translation:\n" << glm::to_string(_mat_translation) << "\n";
+  std::cout << "rotation:\n" << glm::to_string(_mat_rotation) << "\n";
+  std::cout << "inv translation:\n" << glm::to_string(_mat_inv_translation) << "\n";
+  std::cout << "inv rotation:\n" << glm::to_string(_mat_inv_rotation) << "\n";
+  std::cout << "----------------\n";
+}
+
 // transformation functions
 
 void Object::initialize_matrices(void) {
@@ -49,9 +60,9 @@ void Object::initialize_matrices(void) {
 
 void Object::calculate_inverse_mat(void) {
   // translation T^-1(t) = T(-t)
-  _mat_inv_translation = _mat_translation * -1.f;
+  _mat_inv_translation =  glm::mat4(-1.0) * _mat_translation * -1.f;
   // rotation R^-1 = transpose(Rx)
-  _mat_rotation = glm::transpose(_mat_rotation);
+  _mat_inv_rotation = glm::transpose(_mat_rotation);
   // scale S^-1 = S(1/s)
   //_mat_inv_scale = glm::compScale
 }
@@ -90,7 +101,7 @@ void Object::rotate(vec3 axis, float degree) {
 
   // move to origin -> rotate -> move back
   //transform(_mat_inv_translation);
-  transform(rot);
+  transform(_mat_inv_translation * rot * _mat_translation);
   //transform(_mat_translation);
 
   _mat_rotation = _mat_rotation * rot;

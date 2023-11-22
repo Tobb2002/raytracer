@@ -6,6 +6,7 @@
 
 #include <glm/glm.hpp>
 #include "ray.hpp"
+#include "object.hpp"
 
 using glm::vec3;
 
@@ -14,15 +15,18 @@ struct interval {
   float max;
 };
 
-class Box {
+class Box : public Object{
  public:
   Box();
   Box(vec3 min, vec3 max);
   void set_min_max(vec3 min, vec3 max);
   bool intersect_bool(Ray ray);
 
+  vec3 get_middle(void);
+
   // transformations
   void move(vec3 vec);
+  void transform(mat4 transformation) override;
 
   void print(void);
 

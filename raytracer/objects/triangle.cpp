@@ -98,3 +98,15 @@ void Triangle::print() {
   std::cout << "normal: " << glm::to_string(_normal) << std::endl;
   std::cout << "---------------- " <<  std::endl;
 }
+
+/*
+ * transformation
+ */
+
+void Triangle::transform(mat4 transformation) {
+  Object::transform(transformation);
+
+  for (int i = 0; i < 3; i++) {
+    transform_point(transformation, &_p[i]);
+  }
+}

@@ -5,10 +5,14 @@
 #include "mesh.hpp"
 #include "lib/objloader.hpp"
 
+#include <glm/gtx/string_cast.hpp>
+
 
 Mesh::Mesh(std::string input_file, vec3 origin) {
   _origin = origin;
-  read_from_obj(input_file);
+  _mat_translation = glm::translate(glm::mat4(1.0), origin);
+  calculate_inverse_mat();
+  read_from_obj(input_file); // read file with origin as offset
 }
 
 Mesh::~Mesh() {}
@@ -36,7 +40,8 @@ void Mesh::move(vec3 vec) {
 
 void Mesh::print(void) {
   Object::print();
-  std::cout << "mesh\n";
+  std::cout << "------mesh------\n";
+  std::cout << "origin: " << glm::to_string(_origin) << "\n";
   print_bounding_box();
 }
 
@@ -74,7 +79,14 @@ Intersection Mesh::intersect(Ray ray) {
 void Mesh::transform(mat4 transformation) {
   Object::transform(transformation);
 
+  _bounding_box.transform(transformation);
 
+  _triangles[0].print();
+  for (size_t i = 0; i < _triangles.size(); i++) {
+    Triangle *t = &_triangles[i];
+    t->transform(transformation);
+  }
+  _triangles[0].print();
 }
 
 void Mesh::read_from_obj(std::string inputfile) {
@@ -84,6 +96,8 @@ void Mesh::read_from_obj(std::string inputfile) {
 
   std::string err;
   std::string warn;
+
+  std::cout << "testen" << glm::to_string(_origin) << "\n";
 
   bool ret = tinyobj::LoadObj(&attrib, &shapes,
                               &materials, &warn,
@@ -168,4 +182,6 @@ void Mesh::read_from_obj(std::string inputfile) {
   }
   // set bounding box values
   _bounding_box.set_min_max(box_min, box_max);
+
+  _origin = _bounding_box.get_middle();
 }

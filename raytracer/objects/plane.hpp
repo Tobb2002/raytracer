@@ -23,6 +23,7 @@ class Plane : public Object{
 
   void transform(mat4 transformation) override;
 
+
  private:
   vec3 _normal;
   vec3 _color;

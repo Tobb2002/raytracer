@@ -13,8 +13,11 @@ Plane::Plane() {
 
 Plane::Plane(vec3 position, vec3 normal, vec3 color) {
   _origin = position;
+  _mat_translation = glm::translate(_mat_translation, position);
   _normal = glm::normalize(normal);
   _color = color;
+
+  calculate_inverse_mat();
 }
 
 // calculate The intersection Point with a Ray.

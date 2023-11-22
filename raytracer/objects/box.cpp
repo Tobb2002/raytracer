@@ -34,6 +34,10 @@ void Box::print(void) {
   std::cout << "---------------\n";
 }
 
+vec3 Box::get_middle(void) {
+  return (_min + _max) * 0.5f;
+}
+
 void Box::ensure_min_max(void) {
   // ensure that all values in min are smaller than the values in max
   if (_min.x > _max.x) {
@@ -92,4 +96,11 @@ bool Box::intersect_bool(Ray ray) {
 
   // all intervalls overlap
   return true;
+}
+
+void Box::transform(mat4 transformation) {
+  Object::transform(transformation);
+
+  transform_point(transformation, &_min);
+  transform_point(transformation, &_max);
 }

@@ -25,8 +25,9 @@ int main(void) {
   Mesh m2 = Mesh("data/input/test copy.obj", vec3(-4, -4, -17));
   Plane plane = Plane(vec3(0, -4, 0), vec3(0, 1, 0), vec3(0, 1, 0));
   //plane.move(vec3(0,-3,0));
-  plane.rotate(vec3(0, 0, 1), 90);
-  plane.rotate(vec3(0, 0, 1), -90);
+  m.print();
+  m.rotate(vec3(1, 0, 0), 45);
+  m.print();
   Plane plane2 = Plane(vec3(0, 0, -50), vec3(0, 0, -1), vec3(0, 0.5, 1));
   Pointlight light = Pointlight(vec3(-2, -2, -16), 100);
   Pointlight light1 = Pointlight(vec3(5, 2, 1), 100);

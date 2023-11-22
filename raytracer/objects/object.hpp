@@ -28,6 +28,7 @@ class Object {
   virtual bool intersect_bool(Ray ray, float t_max);
 
   virtual void print(void);
+  void print_matrices(void);
 
   // transformation functions
 
