@@ -3,9 +3,8 @@
  */
 
 #include "mesh.hpp"
+#include "lib/objloader.hpp"
 
-#define TINYOBJLOADER_IMPLEMENTATION  // define this in only *one* .cc
-#include "lib/tiny_obj_loader.h"
 
 Mesh::Mesh(std::string input_file, vec3 origin) {
   _origin = origin;

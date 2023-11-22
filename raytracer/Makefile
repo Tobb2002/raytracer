@@ -20,7 +20,7 @@ checkstyle:
 run: compile
 	./build/main
 
-files = main ray triangle camera image mesh pointlight box plane scene object
+files = main ray triangle camera image mesh pointlight box plane scene object objloader
 
 targets = $(addsuffix .o,$(addprefix build/,$(files)))
 
@@ -38,4 +38,8 @@ build/%.o: %.cpp %.hpp
 
 #objects
 build/%.o: objects/%.cpp objects/%.hpp
+	$(CC) $(FLAGS) -c $< -o $@
+
+# lib obj
+build/objloader.o: objects/lib/objloader.cpp objects/lib/objloader.hpp
 	$(CC) $(FLAGS) -c $< -o $@
