@@ -31,7 +31,7 @@ int main(void) {
   Pointlight light1 = Pointlight(vec3(5, 2, 1), 300);
   Pointlight light2 = Pointlight(vec3(-1.8, 2, 0), 300);
 
-  Scene scene = Scene();
+  Scene scene = Scene(vec3(0, 100, 200));
 
   scene.get_camera()->set_resolution(100, 100);
   scene.get_camera()->set_sensor_size(1, 1);
@@ -42,7 +42,7 @@ int main(void) {
   scene.add_object(&m);
   scene.add_object(&m2);
   scene.add_object(&plane);
-  scene.add_object(&plane2);
+  //scene.add_object(&plane2);
 
   Image img = scene.trace_image();
 

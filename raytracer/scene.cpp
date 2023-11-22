@@ -7,7 +7,9 @@
 #include <glm/gtx/string_cast.hpp>
 
 // initialize Scene
-Scene::Scene() { }
+Scene::Scene(vec3 standart_color) {
+  _standart_color = standart_color;
+}
 
 size_t Scene::add_light(Pointlight *light) {
   _lights.push_back(light);
@@ -56,62 +58,83 @@ vec3 Scene::calculate_phong(vec3 point,
   // calculate light for all lightsources
   for (Pointlight *light : _lights) {
     vec3 incoming_light = light->get_color();
-    //vec3 incoming_light = vec3(material.x * col.x, material.y * col.y, material.z * col.z);
 
     Ray ray_to_light = Ray(point, light->get_light_direction(point));
     ray_to_light.move_into_dir(0.01);
 
     vec3 light_direction = ray_to_light.get_direction();
+    vec3 v = camera_ray.get_direction();
 
+    float ndotl = glm::dot(surface_normal, light_direction);
 
+    if (ndotl < 0) {
+      surface_normal *= -1;
+      ndotl = glm::dot(surface_normal, ray_to_light.get_direction());
+    }
+
+    vec3 r = 2 * ndotl * (surface_normal - light_direction);
+
+    float rdotv = glm::dot(r, v);
+
+    vec3 l_material;
+
+    vec3 l_ambient = material * ambient_factor;
+    vec3 l_diffuse = diffuse_factor * material;
+    
+    vec3 l_specular = vec3(0, 0, 0);
+    if (rdotv > 0) {
+      l_specular = spec_factor * (vec3(1, 1, 1) * glm::pow(rdotv, pow_m));
+    }
+    else {
+      rdotv *= -1;
+      l_specular = spec_factor * (vec3(1, 1, 1) * glm::pow(rdotv, pow_m));
+    }
     // only ad the ones which are not blocked
     if (!check_intersection(ray_to_light, light->get_distance(point))) {
-
-      vec3 v = camera_ray.get_direction();
-      vec3 halfway_direction = glm::normalize(light_direction + v);
-
-      float ndotl = glm::dot(surface_normal, light_direction);
-
-      if (ndotl < 0) {
-        surface_normal *= -1;
-        ndotl = glm::dot(surface_normal, ray_to_light.get_direction());
-      }
-
-      vec3 r = 2 * ndotl * (surface_normal - light_direction);
-
-      float ndoth = glm::dot(surface_normal, halfway_direction);
-      float rdotv = glm::dot(r, v);
-
-      if (ndoth < 0) {
-        ndoth = 0;
-      }
-
-      vec3 l_material;
-
-      vec3 l_ambient = material * ambient_factor;
-      vec3 l_diffuse = diffuse_factor * material;
-      
-      vec3 l_specular = vec3(0, 0, 0);
-      if (rdotv > 0) {
-        l_specular = spec_factor * (vec3(1, 1, 1) * glm::pow(rdotv, pow_m));
-      }
-      else {
-        rdotv *= -1;
-        l_specular = spec_factor * (vec3(1, 1, 1) * glm::pow(rdotv, pow_m));
-      }
       l_material = l_ambient + l_diffuse + l_specular;
-
-      vec3 l_cam = incoming_light * ndotl * l_material;
-      res_color += vec3(glm::round(l_cam.x / _lights.size()),
-                        glm::round(l_cam.y / _lights.size()),
-                        glm::round(l_cam.z / _lights.size()));
     }
+    else {
+      l_material = l_ambient;
+    }
+
+    vec3 l_cam = incoming_light * ndotl * l_material;
+    res_color += vec3(glm::round(l_cam.x),
+                      glm::round(l_cam.y),
+                      glm::round(l_cam.z));
   }
 
-  // TODO add ambient reflection
-
-
   return res_color;
+}
+
+vec3 Scene::get_color(Ray ray) {
+  // calculate object intersections
+  Intersection best_intersection = {false,
+                                    MAXFLOAT,
+                                    vec3(0, 0, 0),
+                                    vec3(0, 0, 0),
+                                    vec3(0, 0, 0)};
+  
+  // find closest intersection in Scene
+  for (Object *object : _objects) {
+    Intersection intersect = object->intersect(ray);
+
+    if (intersect.found) {
+      if (intersect.t < best_intersection.t) {
+        best_intersection = intersect;
+      }
+    }
+  }
+  if (best_intersection.found && best_intersection.t > 0) {
+    vec3 color = calculate_phong(best_intersection.point,
+                    best_intersection.color,
+                    best_intersection.normal,
+                    ray);
+
+    return color;
+  }
+  else {
+    return _standart_color;
+  }
 }
 
 Image Scene::trace_image() {
@@ -137,31 +160,8 @@ Image Scene::trace_image() {
         progress += progress_step;
       }
 
-      // calculate object intersections
-      Intersection best_intersection = {false,
-                                        MAXFLOAT,
-                                        vec3(0, 0, 0),
-                                        vec3(0, 0, 0),
-                                        vec3(0, 0, 0)};
-      for (Object *object : _objects) {
-        Intersection intersect = object->intersect(
-                                        _camera.get_ray({x, y}));
-
-        // if intersection found calculate color
-        if (intersect.found) {
-          if (intersect.t < best_intersection.t) {
-            best_intersection = intersect;
-          }
-        }
-      }
-      if (best_intersection.found && best_intersection.t > 0) {
-        vec3 color = calculate_phong(best_intersection.point,
-                        best_intersection.color,
-                        best_intersection.normal,
-                        _camera.get_ray({x, y}));
-
-        image.set_pixel({x, y}, color);
-      }
+      // get color from ray
+      image.set_pixel({x, y}, get_color(_camera.get_ray({x, y})));
     }
   }
   return image;

@@ -13,7 +13,7 @@
 
 class Scene {
  public:
-  Scene();
+  Scene(vec3 standart_color);
 
   // add objects
   size_t add_light(Pointlight *light);
@@ -23,6 +23,8 @@ class Scene {
   Camera *get_camera(void);
   Object *get_object(size_t id);
 
+  vec3 get_color(Ray ray);
+
 
   // rendering functions
   Image trace_image();
@@ -31,6 +33,8 @@ class Scene {
   std::vector<Pointlight*> _lights;
   std::vector<Object*> _objects;
   Camera _camera;
+
+  vec3 _standart_color;
 
   vec3 calculate_phong(vec3 point,
                        vec3 material,
