@@ -10,13 +10,12 @@
 
 using glm::vec3;
 
-class Triangle {
+class Triangle : public Object{
  public:
   Triangle();
   Triangle(vec3 points[3], vec3 color);
 
-  float intersect(Ray ray);
-  bool intersect_bool(Ray ray);
+  Intersection intersect(Ray ray) override;
 
   // transformations
   void move(vec3 vec);

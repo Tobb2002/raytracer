@@ -52,11 +52,11 @@ Intersection Mesh::intersect(Ray ray) {
 
   if (_bounding_box.intersect_bool(ray)) {
     for (Triangle triangle : _triangles) {
-      float t = triangle.intersect(ray);
+      Intersection t_i = triangle.intersect(ray);
 
-      if (t > 0 && t < t_min) {
+      if (t_i.found && t_i.t < t_min) {
         found_one = true;
-        t_min = t;
+        t_min = t_i.t;
         triangle_best = triangle;
       }
     }
@@ -71,6 +71,11 @@ Intersection Mesh::intersect(Ray ray) {
   return intersection;
 }
 
+void Mesh::transform(mat4 transformation) {
+  Object::transform(transformation);
+
+
+}
 
 void Mesh::read_from_obj(std::string inputfile) {
   tinyobj::attrib_t attrib;
