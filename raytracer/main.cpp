@@ -46,15 +46,22 @@ int main(void) {
 
   // generate animation
   float rotation = 360;
-  float samples = 20;
+  float samples = 10;
 
   for (int i = 0; i < samples; i++) {
     std::cout << "Sample (" << i + 1 << " of " << samples << ")\n";
     Image out = scene.trace_image();
     char filename[50];
-    sprintf(filename, "data/output/animation/bunny%d.ppm", i);
+    sprintf(filename, "data/output/animation/sample%d.ppm", i);
     out.write_to_file(filename);
-    m2.rotate(vec3(0, 1, 0), rotation / samples);
+
+    // motion
+    if (i < samples /2) {
+      m2.rotate(vec3(0, 1, 0), rotation / samples);
+    }
+    else {
+      m2.move(vec3(0, 0, -0.2));
+    }
   }
 
 

@@ -53,7 +53,7 @@ vec3 Scene::calculate_phong(vec3 point,
   
   float spec_factor = 1.4;
   float diffuse_factor = 0.7;
-  float ambient_factor = 0.4;
+  float ambient_factor = 0.3;
 
   float pow_m = 5;
 
