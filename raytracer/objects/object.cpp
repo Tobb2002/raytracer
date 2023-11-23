@@ -46,7 +46,9 @@ void Object::print_matrices(void) {
   std::cout << "----------------\n";
 }
 
-// transformation functions
+/*
+ * Transformation
+ */
 
 void Object::initialize_matrices(void) {
   // matrices should be identity matrix at beginning.
@@ -113,4 +115,42 @@ void Object::rotate(vec3 axis, float degree) {
   _mat_rotation = _mat_rotation * rot;
 
   calculate_inverse_mat();
+}
+
+vec3 Object::origin_to_virtual(vec3 point) {
+  mat4 transform = _mat_translation * _mat_rotation;
+  vec3 res = point;
+  transform_point(transform, &res);
+  return res;
+}
+
+vec3 Object::virtual_to_origin(vec3 point) {
+  mat4 transform = _mat_inv_rotation;
+  vec3 res = point;
+  transform_point(transform, &res);
+  return res;
+}
+
+// updates rotation matrix and sets new direction
+void Object::calculate_direction(vec3 new_dir) {
+  // TODO implement
+  vec3 axis = glm::cross(_direction, new_dir);
+  
+  float degree = glm::acos(glm::dot(new_dir, _direction) / glm::length(new_dir) * glm::length(_direction));
+
+  // if new_dir points to exactly th oposite direction axis = 0, 0, 0
+  // TODO check if this is right or nonsense
+  if (axis.x == 0 && axis.y == 0 && axis.z == 0) {
+    axis = vec3(0, 1, 0);
+  }
+
+  std::cout << "ndir: " << glm::to_string(new_dir) << "\n";
+  std::cout << "dir: " << glm::to_string(_direction) << "\n";
+
+  std::cout << "deg: " << degree << "\n";
+  std::cout << "axis: " << glm::to_string(axis) << "\n";
+
+  _mat_rotation = glm::rotate(_mat_rotation, degree, axis);
+  calculate_inverse_mat();
+  transform_point(_mat_rotation, &_direction);
 }

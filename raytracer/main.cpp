@@ -25,8 +25,8 @@ void trace_object(Object *object);
 int main(void) {
   //Mesh m = Mesh("data/input/bunny_scaled.obj", vec3(1.2, -4.8, -10));
   Mesh m2 = Mesh("data/input/test copy.obj", vec3(-2, -4, -17));
-  Plane plane = Plane(vec3(0, -4, 0), vec3(0, 1, 0), vec3(0, 1, 0));
-  Plane plane2 = Plane(vec3(0, 0, -50), vec3(0, 0, -1), vec3(0, 0.5, 1));
+  Plane plane = Plane(vec3(0, -4, 0), vec3(0, 1, 0), vec3(0, 1, 0), vec3(1, 0, 0));
+  //Plane plane2 = Plane(vec3(0, 0, -50), vec3(0, 0, -1), vec3(0, 0.5, 1));
   Pointlight light = Pointlight(vec3(-2, -2, -16), 100);
   Pointlight light1 = Pointlight(vec3(5, 8, 1), 250);
   Pointlight light2 = Pointlight(vec3(-1.8, 2, 0), 100);
@@ -44,6 +44,10 @@ int main(void) {
   scene.add_object(&plane);
   //scene.add_object(&plane2);
 
+
+  // test point transform
+  std::cout <<"blibla" << glm::to_string(plane.virtual_to_origin(vec3(1, 0, 0))) << "\n";
+
   // generate animation
   float rotation = 360;
   float samples = 10;
@@ -56,12 +60,13 @@ int main(void) {
     out.write_to_file(filename);
 
     // motion
-    if (i < samples /2) {
-      m2.rotate(vec3(0, 1, 0), rotation / samples);
-    }
-    else {
-      m2.move(vec3(0, 0, -0.2));
-    }
+    plane.rotate(vec3(0, 0, 1), 2);
+    //if (i < samples /2) {
+    //  m2.rotate(vec3(0, 1, 0), rotation / samples);
+    //}
+    //else {
+    //  m2.move(vec3(0, 0, -0.2));
+    //}
   }
 
 

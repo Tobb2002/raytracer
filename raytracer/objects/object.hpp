@@ -38,6 +38,8 @@ class Object {
 
   virtual void transform(mat4 transformation);
 
+  vec3 origin_to_virtual(vec3 point);
+  vec3 virtual_to_origin(vec3 point);
 
  protected:
   vec3 _origin_start;
@@ -60,8 +62,8 @@ class Object {
 
   void transform_point(mat4 transformation, vec3 *point);
 
-  vec3 origin_to_virtual(vec3 point);
-  vec3 virtual_to_origin(vec3 point);
+
+  void calculate_direction(vec3 direction);
 
  private:
   void initialize_matrices(void);
