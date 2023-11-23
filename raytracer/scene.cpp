@@ -49,9 +49,11 @@ vec3 Scene::calculate_phong(vec3 point,
 
   surface_normal = glm::normalize(surface_normal);
 
+  vec3 v = camera_ray.get_direction();
+  
   float spec_factor = 1.4;
   float diffuse_factor = 0.7;
-  float ambient_factor = 0.2;
+  float ambient_factor = 0.4;
 
   float pow_m = 5;
 
@@ -63,7 +65,6 @@ vec3 Scene::calculate_phong(vec3 point,
     ray_to_light.move_into_dir(0.01);
 
     vec3 light_direction = ray_to_light.get_direction();
-    vec3 v = camera_ray.get_direction();
 
     float ndotl = glm::dot(surface_normal, light_direction);
 

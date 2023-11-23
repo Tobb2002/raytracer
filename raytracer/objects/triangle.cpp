@@ -133,4 +133,5 @@ void Triangle::transform(mat4 transformation) {
   for (int i = 0; i < 3; i++) {
     transform_point(transformation, &_p[i]);
   }
+  _normal = calculate_normal();
 }

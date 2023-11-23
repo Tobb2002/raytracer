@@ -23,38 +23,44 @@ void trace_object(Object *object);
 
 
 int main(void) {
-  Mesh m = Mesh("data/input/bunny_scaled.obj", vec3(1.2, -4.8, -10));
-  Mesh m2 = Mesh("data/input/test copy.obj", vec3(-4, -4, -17));
+  //Mesh m = Mesh("data/input/bunny_scaled.obj", vec3(1.2, -4.8, -10));
+  Mesh m2 = Mesh("data/input/test copy.obj", vec3(-2, -4, -17));
   Plane plane = Plane(vec3(0, -4, 0), vec3(0, 1, 0), vec3(0, 1, 0));
-  m.rotate(vec3(0, 1, 0), 90);
-  m.print_bounding_box();
   Plane plane2 = Plane(vec3(0, 0, -50), vec3(0, 0, -1), vec3(0, 0.5, 1));
   Pointlight light = Pointlight(vec3(-2, -2, -16), 100);
-  Pointlight light1 = Pointlight(vec3(5, 2, 1), 100);
+  Pointlight light1 = Pointlight(vec3(5, 8, 1), 250);
   Pointlight light2 = Pointlight(vec3(-1.8, 2, 0), 100);
 
   Scene scene = Scene(vec3(0, 100, 200));
 
-  scene.get_camera()->set_resolution(100, 100);
+  scene.get_camera()->set_resolution(500, 500);
   scene.get_camera()->set_sensor_size(1, 1);
 
   //scene.add_light(&light);
   scene.add_light(&light1);
-  scene.add_light(&light2);
-  scene.add_object(&m);
+  //scene.add_light(&light2);
+  //scene.add_object(&m);
   scene.add_object(&m2);
   scene.add_object(&plane);
   //scene.add_object(&plane2);
 
   // generate animation
   float rotation = 360;
-  float steps = 5;
+  float samples = 20;
+
+  for (int i = 0; i < samples; i++) {
+    std::cout << "Sample (" << i + 1 << " of " << samples << ")\n";
+    Image out = scene.trace_image();
+    char filename[50];
+    sprintf(filename, "data/output/animation/bunny%d.ppm", i);
+    out.write_to_file(filename);
+    m2.rotate(vec3(0, 1, 0), rotation / samples);
+  }
 
 
 
-  Image img = scene.trace_image();
-
-  img.write_to_file("data/output/mesh.ppm");
+  //Image img = scene.trace_image();
+  //img.write_to_file("data/output/mesh.ppm");
 
   return 0;
 }
