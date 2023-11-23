@@ -53,7 +53,7 @@ vec3 Scene::calculate_phong(vec3 point,
   
   float spec_factor = 1.4;
   float diffuse_factor = 0.7;
-  float ambient_factor = 0.3;
+  float ambient_factor = 0.25;
 
   float pow_m = 5;
 
@@ -77,7 +77,7 @@ vec3 Scene::calculate_phong(vec3 point,
 
     float rdotv = glm::dot(r, v);
 
-    vec3 l_material;
+    vec3 l_material = vec3(0, 0, 0);
 
     vec3 l_ambient = material * ambient_factor;
     vec3 l_diffuse = diffuse_factor * material;
@@ -92,13 +92,10 @@ vec3 Scene::calculate_phong(vec3 point,
     }
     // only ad the ones which are not blocked
     if (!check_intersection(ray_to_light, light->get_distance(point))) {
-      l_material = l_ambient + l_diffuse + l_specular;
-    }
-    else {
-      l_material = l_ambient;
+      l_material = l_diffuse + l_specular;
     }
 
-    vec3 l_cam = incoming_light * ndotl * l_material;
+    vec3 l_cam = incoming_light * ndotl * l_material + incoming_light * l_ambient;
     res_color += vec3(glm::round(l_cam.x),
                       glm::round(l_cam.y),
                       glm::round(l_cam.z));
