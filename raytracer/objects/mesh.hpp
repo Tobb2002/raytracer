@@ -36,5 +36,6 @@ class Mesh : public Object{
   vec3 _origin;
   Box _bounding_box;
 
+  void update_bounding_box(Triangle * t);
   void read_from_obj(std::string input_file);
 };

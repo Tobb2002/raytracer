@@ -74,17 +74,22 @@ Intersection Mesh::intersect(Ray ray) {
   return intersection;
 }
 
+void Mesh::update_bounding_box(Triangle * t) {
+  _bounding_box.update_min_max(t->get_min_bounding(),
+                               t->get_max_bounding());
+}
+
 void Mesh::transform(mat4 transformation) {
   Object::transform(transformation);
 
   _bounding_box.transform(transformation);
 
-  _triangles[0].print();
   for (size_t i = 0; i < _triangles.size(); i++) {
     Triangle *t = &_triangles[i];
     t->transform(transformation);
+    // check if t is outside of bounding box
+    update_bounding_box(t);
   }
-  _triangles[0].print();
 }
 
 void Mesh::read_from_obj(std::string inputfile) {
@@ -94,8 +99,6 @@ void Mesh::read_from_obj(std::string inputfile) {
 
   std::string err;
   std::string warn;
-
-  std::cout << "testen" << glm::to_string(_origin) << "\n";
 
   bool ret = tinyobj::LoadObj(&attrib, &shapes,
                               &materials, &warn,
@@ -117,9 +120,6 @@ void Mesh::read_from_obj(std::string inputfile) {
 
   _size = shapes[0].mesh.num_face_vertices.size();
 
-  // initialize values for bounding box
-  vec3 box_min = vec3(FLT_MAX);
-  vec3 box_max = vec3(-FLT_MAX);
 
   size_t index_offset = 0;
   for (int f = 0; f < _size; f++) {
@@ -147,40 +147,17 @@ void Mesh::read_from_obj(std::string inputfile) {
 
       // insert point into triangle_points
       triangle_points[v] = vec3(vx +_origin.x, vy + _origin.y, vz + _origin.z);
-
-      // update bounding box values
-      // min values
-      if (triangle_points[v].x < box_min.x) {
-        box_min.x = triangle_points[v].x;
-      }
-      if (triangle_points[v].y < box_min.y) {
-        box_min.y = triangle_points[v].y;
-      }
-      if (triangle_points[v].z < box_min.z) {
-        box_min.z = triangle_points[v].z;
-      }
-      // max values
-      if (triangle_points[v].x > box_max.x) {
-        box_max.x = triangle_points[v].x;
-      }
-      if (triangle_points[v].y > box_max.y) {
-        box_max.y = triangle_points[v].y;
-      }
-      if (triangle_points[v].z > box_max.z) {
-        box_max.z = triangle_points[v].z;
-      }
     }
     // make triangle and add to triangles
     _triangles.push_back(Triangle(triangle_points, vec3(1, 0, 0)));
 
-    index_offset += fv;
+    // update bounding box values
+    update_bounding_box(&_triangles.back());
 
+    index_offset += fv;
     // per-face material
     // shapes[s].mesh.material_ids[f];
   }
-  // set bounding box values
-  _bounding_box.set_min_max(box_min, box_max);
-
   _origin = _bounding_box.get_middle();
   _mat_translation = glm::translate(_mat_translation, _origin);
 

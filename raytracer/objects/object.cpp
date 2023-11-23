@@ -106,9 +106,9 @@ void Object::rotate(vec3 axis, float degree) {
   mat4 rot = glm::rotate(glm::mat4(1.0), glm::radians(degree), axis);
 
   // move to origin -> rotate -> move back
-  //transform(_mat_inv_translation);
-  transform(_mat_inv_translation * rot * _mat_translation);
-  //transform(_mat_translation);
+  transform(_mat_inv_translation);
+  transform(rot);
+  transform(_mat_translation);
 
   _mat_rotation = _mat_rotation * rot;
 

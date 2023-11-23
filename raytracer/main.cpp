@@ -20,16 +20,14 @@ using glm::vec3;
 
 void trace_object(Object *object);
 
+
+
 int main(void) {
   Mesh m = Mesh("data/input/bunny_scaled.obj", vec3(1.2, -4.8, -10));
   Mesh m2 = Mesh("data/input/test copy.obj", vec3(-4, -4, -17));
   Plane plane = Plane(vec3(0, -4, 0), vec3(0, 1, 0), vec3(0, 1, 0));
-  //plane.move(vec3(0,-3,0));
-  m.print();
-  m.print_matrices();
-  m.rotate(vec3(1, 0, 0), 5);
-  m.print();
-  m.print_matrices();
+  m.rotate(vec3(0, 1, 0), 90);
+  m.print_bounding_box();
   Plane plane2 = Plane(vec3(0, 0, -50), vec3(0, 0, -1), vec3(0, 0.5, 1));
   Pointlight light = Pointlight(vec3(-2, -2, -16), 100);
   Pointlight light1 = Pointlight(vec3(5, 2, 1), 100);
@@ -47,6 +45,12 @@ int main(void) {
   scene.add_object(&m2);
   scene.add_object(&plane);
   //scene.add_object(&plane2);
+
+  // generate animation
+  float rotation = 360;
+  float steps = 5;
+
+
 
   Image img = scene.trace_image();
 

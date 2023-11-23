@@ -89,6 +89,30 @@ void Triangle::set_color(vec3 color) {
   _color = color;
 }
 
+vec3 Triangle::get_min_bounding(void) {
+  vec3 min = vec3(MAXFLOAT);
+  for (int i = 0; i<3; i++) {
+    for (int j = 0; j < 3; j++) {
+      if (_p[i][j] < min[j]) {
+        min[j] = _p[i][j];
+      }
+    }
+  }
+  return min;
+}
+
+vec3 Triangle::get_max_bounding(void) {
+  vec3 max = vec3(-MAXFLOAT);
+  for (int i = 0; i<3; i++) {
+    for (int j = 0; j < 3; j++) {
+      if (_p[i][j] > max[j]) {
+        max[j] = _p[i][j];
+      }
+    }
+  }
+  return max;
+}
+
 void Triangle::print() {
   std::cout << "----Triangle---- " <<  std::endl;
   for (int i = 0; i < 3; i++) {

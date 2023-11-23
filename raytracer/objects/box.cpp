@@ -8,8 +8,8 @@
 
 
 Box::Box() {
-  _min = vec3(0, 0, 0);
-  _max = vec3(0, 0, 0);
+  _min = vec3(FLT_MAX);
+  _max = vec3(-FLT_MAX);
 }
 Box::Box(vec3 min, vec3 max) {
   set_min_max(min, max);
@@ -20,6 +20,30 @@ void Box::set_min_max(vec3 min, vec3 max) {
   _max = max;
 
   ensure_min_max();
+}
+
+// update min and max values if nessesary.
+void Box::update_min_max(vec3 min, vec3 max) {
+  // update min
+  if (min.x < _min.x) {
+    _min.x = min.x;
+  }
+  if (min.y < _min.y) {
+    _min.y = min.y;
+  }
+  if (min.z < _min.z) {
+    _min.z = min.z;
+  }
+  // update max
+  if (max.x > _max.x) {
+    _max.x = max.x;
+  }
+  if (max.y > _max.y) {
+    _max.y = max.y;
+  }
+  if (max.z > _max.z) {
+    _max.z = max.z;
+  }
 }
 
 void Box::move(vec3 vec) {
@@ -103,4 +127,6 @@ void Box::transform(mat4 transformation) {
 
   transform_point(transformation, &_min);
   transform_point(transformation, &_max);
+
+  ensure_min_max();
 }

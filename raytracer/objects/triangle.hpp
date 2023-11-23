@@ -26,6 +26,9 @@ class Triangle : public Object{
   vec3 get_normal();
   void set_color(vec3 color);
 
+  vec3 get_min_bounding(void);
+  vec3 get_max_bounding(void);
+
   void print();
  private:
   vec3 _p[3];

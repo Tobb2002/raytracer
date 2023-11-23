@@ -20,6 +20,7 @@ class Box : public Object{
   Box();
   Box(vec3 min, vec3 max);
   void set_min_max(vec3 min, vec3 max);
+  void update_min_max(vec3 min, vec3 max);
   bool intersect_bool(Ray ray);
 
   vec3 get_middle(void);
