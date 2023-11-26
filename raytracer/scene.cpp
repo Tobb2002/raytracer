@@ -8,7 +8,7 @@
 
 // initialize Scene
 Scene::Scene(vec3 standart_color) {
-  _standart_color = standart_color;
+  _standart_light = standart_color;
 }
 
 size_t Scene::add_light(Pointlight *light) {
@@ -42,7 +42,7 @@ bool Scene::check_intersection(Ray ray, float t_max) {
 
 // rendering functions
 vec3 Scene::calculate_phong(vec3 point,
-                     vec3 material,
+                     Material material,
                      vec3 surface_normal,
                      Ray camera_ray) {
   vec3 res_color = vec3(0, 0, 0);
@@ -51,12 +51,6 @@ vec3 Scene::calculate_phong(vec3 point,
 
   vec3 v = camera_ray.get_direction();
   
-  float spec_factor = 1.4;
-  float diffuse_factor = 0.7;
-  float ambient_factor = 0.25;
-
-  float pow_m = 5;
-
   // calculate light for all lightsources
   for (Pointlight *light : _lights) {
     vec3 incoming_light = light->get_color();
@@ -79,16 +73,16 @@ vec3 Scene::calculate_phong(vec3 point,
 
     vec3 l_material = vec3(0, 0, 0);
 
-    vec3 l_ambient = material * ambient_factor;
-    vec3 l_diffuse = diffuse_factor * material;
+    vec3 l_ambient = material.color * material.ambient;
+    vec3 l_diffuse = material.diffuse * material.color;
     
     vec3 l_specular = vec3(0, 0, 0);
     if (rdotv > 0) {
-      l_specular = spec_factor * (vec3(1, 1, 1) * glm::pow(rdotv, pow_m));
+      l_specular = material.specular * (vec3(1, 1, 1) * glm::pow(rdotv, material.pow_m));
     }
     else {
       rdotv *= -1;
-      l_specular = spec_factor * (vec3(1, 1, 1) * glm::pow(rdotv, pow_m));
+      l_specular = material.specular * (vec3(1, 1, 1) * glm::pow(rdotv, material.pow_m));
     }
     // only ad the ones which are not blocked
     if (!check_intersection(ray_to_light, light->get_distance(point))) {
@@ -106,11 +100,12 @@ vec3 Scene::calculate_phong(vec3 point,
 
 vec3 Scene::get_color(Ray ray) {
   // calculate object intersections
+  Material material;
   Intersection best_intersection = {false,
                                     MAXFLOAT,
                                     vec3(0, 0, 0),
                                     vec3(0, 0, 0),
-                                    vec3(0, 0, 0)};
+                                    material};
   
   // find closest intersection in Scene
   for (Object *object : _objects) {
@@ -123,15 +118,15 @@ vec3 Scene::get_color(Ray ray) {
     }
   }
   if (best_intersection.found && best_intersection.t > 0) {
-    vec3 color = calculate_phong(best_intersection.point,
-                    best_intersection.light,
+    vec3 light = calculate_phong(best_intersection.point,
+                    best_intersection.material,
                     best_intersection.normal,
                     ray);
 
-    return color;
+    return light;
   }
   else {
-    return _standart_color;
+    return _standart_light;
   }
 }
 

@@ -20,7 +20,8 @@ Object::Object() {
 }
 
 Intersection Object::intersect(Ray ray) {
-  return {false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0)};
+  Material material;
+  return {false, 0, vec3(0, 0, 0), vec3(0, 0, 0), material};
 }
 bool Object::intersect_bool(Ray ray, float t_max) {
   Intersection i = intersect(ray);

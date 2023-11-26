@@ -25,7 +25,7 @@ void trace_object(Object *object);
 
 int main(void) {
   //Mesh m = Mesh("data/input/bunny_scaled.obj", vec3(1.2, -4.8, -10));
-  Mesh m2 = Mesh("data/input/test copy.obj", vec3(-2, -4, -17));
+  Mesh m2 = Mesh("data/input/test copy.obj", vec3(-2, -4, -17), {.color=vec3(1, 0, 0)});
   Plane plane = Plane(vec3(-2, -4, -17), vec3(0, 1, 0), {.color=vec3(1 ,1 ,1)}, {.color=vec3(0.6, 0.6, 0.6)});
   //Plane plane2 = Plane(vec3(0, 0, -50), vec3(0, 0, -1), vec3(0, 0.5, 1));
   Pointlight light = Pointlight(vec3(-2, -2, -16), 100);
