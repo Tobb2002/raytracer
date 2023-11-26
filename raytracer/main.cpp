@@ -14,6 +14,7 @@
 #include "objects/box.hpp"
 #include "objects/plane.hpp"
 #include "scene.hpp"
+#include "objects/material.hpp"
 
 
 using glm::vec3;
@@ -68,6 +69,8 @@ int main(void) {
     //  m2.move(vec3(0, 0, -0.2));
     //}
   }
+
+  // test material struct
 
 
 

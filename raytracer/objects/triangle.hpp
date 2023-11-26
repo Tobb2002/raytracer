@@ -7,13 +7,14 @@
 #include <glm/glm.hpp>
 #include "ray.hpp"
 #include "object.hpp"
+#include "material.hpp"
 
 using glm::vec3;
 
 class Triangle : public Object{
  public:
   Triangle();
-  Triangle(vec3 points[3], vec3 color);
+  Triangle(vec3 points[3], Material material);
 
   Intersection intersect(Ray ray) override;
 
@@ -22,9 +23,8 @@ class Triangle : public Object{
   void transform(mat4 transformation) override;
 
   // getters
-  vec3 get_color();
   vec3 get_normal();
-  void set_color(vec3 color);
+  void set_material(Material material);
 
   vec3 get_min_bounding(void);
   vec3 get_max_bounding(void);
@@ -32,7 +32,7 @@ class Triangle : public Object{
   void print();
  private:
   vec3 _p[3];
-  vec3 _color;
+  Material _material;
   vec3 _normal;
 
   vec3 calculate_normal(void);

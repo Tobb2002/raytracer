@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 
 #include "ray.hpp"
+#include "material.hpp"
 
 using glm::vec3;
 using glm::vec4;
@@ -18,7 +19,7 @@ struct Intersection {
   float t;
   vec3 point;
   vec3 normal;
-  vec3 light;
+  Material material;
 };
 
 class Object {
@@ -46,8 +47,6 @@ class Object {
   vec3 _direction_start;
   vec3 _origin; // standart 0,0,0
   vec3 _direction; // standart 0,0,1
-
-  vec3 _color;
 
   // transformation
   mat4 _mat_translation;

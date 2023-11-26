@@ -13,15 +13,14 @@ Triangle::Triangle() {
     _p[i] = vec3(0, 0, 0);
   }
   _normal = vec3(0, 0, 0);
-  _color = vec3(0, 0, 0);
 }
 
-Triangle::Triangle(vec3 points[3], vec3 color) {
+Triangle::Triangle(vec3 points[3], Material material) {
   for (int i = 0; i < 3; i++) {
     _p[i] = points[i];
   }
   _normal = calculate_normal();
-  _color = color;
+  _material = material;
 }
 
 vec3 Triangle::calculate_normal(void) {
@@ -69,7 +68,7 @@ Intersection Triangle::intersect(Ray ray) {
     found = false;
   }
 
-  Intersection i = {found, res[0], ray.get_point(res[0]), _normal, _color};
+  Intersection i = {found, res[0], ray.get_point(res[0]), _normal, _material};
 
   return i;
 }
@@ -80,13 +79,10 @@ void Triangle::move(vec3 vec) {
   }
 }
 
-vec3 Triangle::get_color() {
-  return _color;
-}
 vec3 Triangle::get_normal() { return _normal; }
 
-void Triangle::set_color(vec3 color) {
-  _color = color;
+void Triangle::set_material(Material material) {
+  _material = material;
 }
 
 vec3 Triangle::get_min_bounding(void) {
@@ -118,7 +114,7 @@ void Triangle::print() {
   for (int i = 0; i < 3; i++) {
     std::cout << "p" << i << ": " << glm::to_string(_p[i]) << std::endl;
   }
-  std::cout << "color: " << glm::to_string(_color) << std::endl;
+  std::cout << "color: " << glm::to_string(_material.color) << std::endl;
   std::cout << "normal: " << glm::to_string(_normal) << std::endl;
   std::cout << "---------------- " <<  std::endl;
 }
