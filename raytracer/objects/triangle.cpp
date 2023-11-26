@@ -80,10 +80,9 @@ void Triangle::move(vec3 vec) {
 }
 
 vec3 Triangle::get_normal() { return _normal; }
+Material Triangle::get_material(void) { return _material; }
 
-void Triangle::set_material(Material material) {
-  _material = material;
-}
+void Triangle::set_material(Material material) { _material = material; }
 
 vec3 Triangle::get_min_bounding(void) {
   vec3 min = vec3(MAXFLOAT);

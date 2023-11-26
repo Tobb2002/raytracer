@@ -13,6 +13,7 @@
 class Mesh : public Object{
  public:
   Mesh(std::string input_file, vec3 origin);
+  Mesh(std::string input_file, vec3 origin, Material material);
   ~Mesh();
 
   void print_triangles(void);
@@ -35,6 +36,8 @@ class Mesh : public Object{
   int _size;
   vec3 _origin;
   Box _bounding_box;
+
+  Material _material;
 
   void update_bounding_box(Triangle * t);
   void read_from_obj(std::string input_file);

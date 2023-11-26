@@ -24,6 +24,7 @@ class Triangle : public Object{
 
   // getters
   vec3 get_normal();
+  Material get_material(void);
   void set_material(Material material);
 
   vec3 get_min_bounding(void);

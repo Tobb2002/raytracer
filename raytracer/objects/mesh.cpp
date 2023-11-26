@@ -12,6 +12,11 @@ Mesh::Mesh(std::string input_file, vec3 origin) {
   _origin = origin;
   read_from_obj(input_file); // read file with origin as offset
 }
+Mesh::Mesh(std::string input_file, vec3 origin, Material material) {
+  _origin = origin;
+  _material = material;
+  read_from_obj(input_file); // read file with origin as offset
+}
 
 Mesh::~Mesh() {}
 
@@ -69,7 +74,7 @@ Intersection Mesh::intersect(Ray ray) {
                                t_min,
                                ray.get_point(t_min),
                                triangle_best.get_normal(),
-                               triangle_best.get_color()};
+                               triangle_best.get_material()};
 
   return intersection;
 }
@@ -149,7 +154,7 @@ void Mesh::read_from_obj(std::string inputfile) {
       triangle_points[v] = vec3(vx +_origin.x, vy + _origin.y, vz + _origin.z);
     }
     // make triangle and add to triangles
-    _triangles.push_back(Triangle(triangle_points, vec3(1, 0, 0)));
+    _triangles.push_back(Triangle(triangle_points, _material));
 
     // update bounding box values
     update_bounding_box(&_triangles.back());
