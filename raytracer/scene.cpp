@@ -97,7 +97,7 @@ vec3 Scene::calculate_phong(vec3 point,
       if (color.x == -1) {
         color = vec3(0, 0, 0);
       }
-      l_cam = l_cam * (1- material.mirror) += color;
+      l_cam = (l_cam * (1 - material.mirror)) + (color * material.mirror);
     }
     res_color += vec3(glm::round(l_cam.x),
                       glm::round(l_cam.y),

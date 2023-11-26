@@ -24,9 +24,9 @@ void trace_object(Object *object);
 
 
 int main(void) {
-  //Mesh m = Mesh("data/input/bunny_scaled.obj", vec3(1.2, -4.8, -10));
-  Mesh m2 = Mesh("data/input/test copy.obj", vec3(-2, -4, -17), {.color=vec3(1, 0, 0)});
-  Plane plane = Plane(vec3(-2, -4, -17), vec3(0, 1, 0), {.color=vec3(1 ,1 ,1), .mirror=0.1}, {.color=vec3(0.6, 0.6, 0.6), .mirror=0.1});
+  Mesh m = Mesh("data/input/bunny_scaled.obj", vec3(1.2, -4.8, -10), {.color=vec3(0,1,0), .mirror=0.9});
+  Mesh m2 = Mesh("data/input/test copy.obj", vec3(-2, -4, -17), {.color=vec3(1, 0, 0), .mirror=0.3});
+  Plane plane = Plane(vec3(-2, -4, -17), vec3(0, 1, 0), {.color=vec3(1 ,1 ,1)}, {.color=vec3(0.6, 0.6, 0.6)});
   //Plane plane2 = Plane(vec3(0, 0, -50), vec3(0, 0, -1), vec3(0, 0.5, 1));
   Pointlight light = Pointlight(vec3(-2, -2, -16), 100);
   Pointlight light1 = Pointlight(vec3(8, 8, 1), 250);
@@ -34,7 +34,7 @@ int main(void) {
 
   Scene scene = Scene(vec3(0, 100, 200));
 
-  scene.get_camera()->set_resolution(500, 500);
+  scene.get_camera()->set_resolution(250, 250);
   scene.get_camera()->set_sensor_size(1, 1);
 
   //scene.add_light(&light);
