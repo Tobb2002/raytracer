@@ -18,7 +18,7 @@ struct Intersection {
   float t;
   vec3 point;
   vec3 normal;
-  vec3 color;
+  vec3 light;
 };
 
 class Object {

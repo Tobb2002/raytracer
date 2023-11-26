@@ -124,7 +124,7 @@ vec3 Scene::get_color(Ray ray) {
   }
   if (best_intersection.found && best_intersection.t > 0) {
     vec3 color = calculate_phong(best_intersection.point,
-                    best_intersection.color,
+                    best_intersection.light,
                     best_intersection.normal,
                     ray);
 
