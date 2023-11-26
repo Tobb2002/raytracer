@@ -13,14 +13,14 @@ using glm::vec3;
 class Plane : public Object{
  public:
   Plane();
-  Plane(vec3 pos, vec3 normal, vec3 color);
-  Plane(vec3 pos, vec3 normal, vec3 color1, vec3 color2);
+  Plane(vec3 pos, vec3 normal, Material material);
+  Plane(vec3 pos, vec3 normal, Material material1, Material material2);
 
   Intersection intersect(Ray ray) override;
 
   void print(void) override;
 
-  vec3 get_color(vec3 point);
+  Material get_material(vec3 point);
 
   // transformations
 
@@ -29,8 +29,8 @@ class Plane : public Object{
 
  private:
   vec3 _normal;
-  vec3 _color;
-  vec3 _color2;
+  Material _material;
+  Material _material2;
 
 
   bool _two_colored;
