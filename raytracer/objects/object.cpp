@@ -106,7 +106,6 @@ void Object::transform_matrices(mat4 transformation) {
 
 void Object::transform(mat4 transformation) {
   transform_point(transformation, &_origin);
-  //transform_point(transformation, &_direction);
 }
 
 // rotate x,y,z degree around the respective axes.
@@ -116,10 +115,11 @@ void Object::rotate(vec3 axis, float degree) {
 
   // move to origin -> rotate -> move back
   transform(_mat_translation * rot * _mat_inv_translation);
-
-  //_mat_rotation = glm::rotate(_mat_rotation, glm::radians(degree), axis);
-  _mat_rotation = rot * _mat_rotation;
+  // transform direction vector
   transform_point(rot, &_direction);
+
+  // update rotation matrices
+  _mat_rotation = rot * _mat_rotation;
   calculate_inverse_mat();
 }
 

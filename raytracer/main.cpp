@@ -46,8 +46,8 @@ int main(void) {
   //scene.add_object(&plane2);
 
   // generate animation
-  float rotation = 90;
-  float samples = 10;
+  float rotation = 260;
+  float samples = 20;
 
   for (int i = 0; i < samples; i++) {
     std::cout << "Sample (" << i + 1 << " of " << samples << ")\n";
@@ -56,13 +56,14 @@ int main(void) {
     sprintf(filename, "data/output/animation/sample%d.ppm", i);
     out.write_to_file(filename);
 
-    // motion
-    //plane.rotate(vec3(0, 0, 1), rotation/samples);
-    m2.rotate(vec3(0, 0, 1), rotation/samples);
-    plane.move(vec3(1, 0, 0));
-    
     plane.print();
     plane.print_matrices();
+
+    // motion
+    plane.rotate(vec3(1, 0, 0), rotation/samples);
+    //m2.rotate(vec3(0, 0, 1), rotation/samples);
+    //plane.move(vec3(1, 0, 0));
+    
   }
 
   // test material struct

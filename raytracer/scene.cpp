@@ -67,7 +67,7 @@ vec3 Scene::calculate_phong(vec3 point,
       ndotl = glm::dot(surface_normal, ray_to_light.get_direction());
     }
 
-    vec3 r = 2 * ndotl * (surface_normal - light_direction);
+    vec3 r = 2 * ndotl * surface_normal - light_direction;
 
     float rdotv = glm::dot(r, v);
 
@@ -111,7 +111,11 @@ Ray Scene::generate_reflection_ray(vec3 point,
                                    vec3 normal,
                                    vec3 viewer_direction) {
   viewer_direction *= -1;
-  vec3 dir = 2 * glm::dot(viewer_direction, normal) * (normal - viewer_direction);
+  float vdotn = glm::dot(viewer_direction, normal);
+  if (vdotn < 0) {
+  std::cout << vdotn << "\n";
+  }
+  vec3 dir = 2 * vdotn * normal - viewer_direction;
 
   Ray res = Ray(point, dir);
   res.move_into_dir(0.01);
@@ -146,6 +150,7 @@ vec3 Scene::get_color(Ray ray) {
     return light;
   }
   else {
+    // didn't hit any object
     return vec3(-1);
   }
 }
