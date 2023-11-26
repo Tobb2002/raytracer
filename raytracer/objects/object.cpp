@@ -85,13 +85,12 @@ void Object::move(vec3 a) {
                 vec4(0, 1, 0, 0),
                 vec4(0, 0, 1, 0),
                 vec4(a, 1));
-  _mat_translation = _mat_translation * t;
 
   // calculate new origin
-  std::cout << glm::to_string(_origin) << "\n";
-  _origin = t * vec4(_origin, 1);
-  std::cout << glm::to_string(_origin) << "\n";
-
+  //_origin = t * vec4(_origin, 1);
+  transform(t);
+  _mat_translation = _mat_translation * t;
+  calculate_inverse_mat();
 }
 
 void Object::transform_point(mat4 transformation, vec3 *point) {

@@ -47,7 +47,7 @@ int main(void) {
 
   // generate animation
   float rotation = 90;
-  float samples = 3;
+  float samples = 10;
 
   for (int i = 0; i < samples; i++) {
     std::cout << "Sample (" << i + 1 << " of " << samples << ")\n";
@@ -57,17 +57,12 @@ int main(void) {
     out.write_to_file(filename);
 
     // motion
-    plane.rotate(vec3(0, 0, 1), rotation/samples);
+    //plane.rotate(vec3(0, 0, 1), rotation/samples);
     m2.rotate(vec3(0, 0, 1), rotation/samples);
-    //plane.move(vec3(1, 0, 0));
+    plane.move(vec3(1, 0, 0));
+    
+    plane.print();
     plane.print_matrices();
-    //m2.print_matrices();
-    //if (i < samples /2) {
-    //  m2.rotate(vec3(0, 1, 0), rotation / samples);
-    //}
-    //else {
-    //  m2.move(vec3(0, 0, -0.2));
-    //}
   }
 
   // test material struct
