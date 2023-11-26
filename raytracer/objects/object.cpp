@@ -97,9 +97,16 @@ void Object::transform_point(mat4 transformation, vec3 *point) {
   *point =  transformation * vec4(*point, 1);
 }
 
+void Object::transform_matrices(mat4 transformation) {
+  _mat_translation = transformation * _mat_translation;
+  _mat_rotation = transformation * _mat_rotation;
+
+  calculate_inverse_mat();
+}
+
 void Object::transform(mat4 transformation) {
   transform_point(transformation, &_origin);
-  transform_point(transformation, &_direction);
+  //transform_point(transformation, &_direction);
 }
 
 // rotate x,y,z degree around the respective axes.
@@ -108,12 +115,11 @@ void Object::rotate(vec3 axis, float degree) {
   mat4 rot = glm::rotate(glm::mat4(1.0), glm::radians(degree), axis);
 
   // move to origin -> rotate -> move back
-  transform(_mat_inv_translation);
-  transform(rot);
-  transform(_mat_translation);
+  transform(_mat_translation * rot * _mat_inv_translation);
 
-  _mat_rotation = _mat_rotation * rot;
-
+  //_mat_rotation = glm::rotate(_mat_rotation, glm::radians(degree), axis);
+  _mat_rotation = rot * _mat_rotation;
+  transform_point(rot, &_direction);
   calculate_inverse_mat();
 }
 
@@ -125,7 +131,7 @@ vec3 Object::origin_to_virtual(vec3 point) {
 }
 
 vec3 Object::virtual_to_origin(vec3 point) {
-  mat4 transform = _mat_inv_rotation;
+  mat4 transform = _mat_inv_rotation * _mat_inv_translation;
   vec3 res = point;
   transform_point(transform, &res);
   return res;
@@ -143,12 +149,6 @@ void Object::calculate_direction(vec3 new_dir) {
   if (axis.x == 0 && axis.y == 0 && axis.z == 0) {
     axis = vec3(0, 1, 0);
   }
-
-  std::cout << "ndir: " << glm::to_string(new_dir) << "\n";
-  std::cout << "dir: " << glm::to_string(_direction) << "\n";
-
-  std::cout << "deg: " << degree << "\n";
-  std::cout << "axis: " << glm::to_string(axis) << "\n";
 
   _mat_rotation = glm::rotate(_mat_rotation, degree, axis);
   calculate_inverse_mat();

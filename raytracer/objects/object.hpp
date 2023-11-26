@@ -59,6 +59,7 @@ class Object {
   mat4 _mat_inv_scale;
 
   void calculate_inverse_mat(void);
+  void transform_matrices(mat4 transformation);
 
   void transform_point(mat4 transformation, vec3 *point);
 

@@ -15,10 +15,6 @@ Plane::Plane() {
 
 Plane::Plane(vec3 position, vec3 normal, vec3 color) {
   calculate_direction(normal);
-  std::cout << "dir = " << glm::to_string(_direction) << " \n";
-  std::cout << "normal = " << glm::to_string(normal) << " \n";
-
-  print_matrices();
 
   _origin = position;
   _mat_translation = glm::translate(_mat_translation, position);
@@ -28,13 +24,10 @@ Plane::Plane(vec3 position, vec3 normal, vec3 color) {
   _two_colored = true;
 
   calculate_inverse_mat();
+  print_matrices();
 }
 Plane::Plane(vec3 position, vec3 normal, vec3 color1, vec3 color2) {
   calculate_direction(normal);
-  std::cout << "dir = " << glm::to_string(_direction) << " \n";
-  std::cout << "normal = " << glm::to_string(normal) << " \n";
-
-  print_matrices();
 
   _origin = position;
   _mat_translation = glm::translate(_mat_translation, position);
@@ -63,7 +56,8 @@ Intersection Plane::intersect(Ray ray) {
 vec3 Plane::get_color(vec3 point) {
   // calculate the point relative to not transformed matrix
   //vec3 point_origin_mod = virtual_to_origin(point);
-  vec3 point_origin_mod = glm::mod(virtual_to_origin(point), 4.f);
+  vec3 point_origin = virtual_to_origin(point);
+  vec3 point_origin_mod = glm::mod(point_origin, 4.f);
 
   //std::cout << "point" << glm::to_string(point) << "\n";
   //std::cout << "point_or_mod" << glm::to_string(point_origin_mod) << "\n";
@@ -74,6 +68,10 @@ vec3 Plane::get_color(vec3 point) {
     return _color;
   }
   // return diffrent colors for x,y specific values
+  if ((point_origin.x < 0.1 && point_origin.x > -0.1) ||
+      (point_origin.y < 0.1 && point_origin.y > -0.1)) {
+    return vec3(0, 1, 0);
+  }
   if ((point_origin_mod.x < 2 &&
       point_origin_mod.y < 2)
       ||
@@ -101,6 +99,7 @@ void Plane::print(void) {
 void Plane::transform(mat4 transformation) {
   Object::transform(transformation);
 
-  transform_point(transformation, &_normal);
+  _normal = _direction;
+  //transform_point(transformation, &_normal);
 
 }

@@ -20,7 +20,7 @@ checkstyle:
 run: compile
 	./build/main
 
-animation: run
+animation:
 	ffmpeg -framerate 25 -start_number 0 -i data/output/animation/sample%d.ppm -vcodec mpeg4 data/output/finished/animation.avi
 
 files = main ray triangle camera image mesh pointlight box plane scene object objloader

@@ -41,6 +41,15 @@ void Image::delete_matrix() {
 }
 
 void Image::set_pixel(point pixel, vec3 color) {
+  // check if color is valid
+  for (int i = 0; i < 3; i++) {
+    if (color[i] < 0) {
+      color[i] = 0;
+    }
+    if (color[i] > 255) {
+      color[i] = 255;
+    }
+  }
   _matrix[pixel.x][pixel.y] = color;
 }
 
