@@ -90,12 +90,32 @@ vec3 Scene::calculate_phong(vec3 point,
     }
 
     vec3 l_cam = incoming_light * ndotl * l_material + incoming_light * l_ambient;
+
+    // perfect mirror
+    if (material.mirror > 0) {
+      vec3 color = get_color(generate_reflection_ray(point, surface_normal, v));
+      if (color.x == -1) {
+        color = vec3(0, 0, 0);
+      }
+      l_cam = l_cam * (1- material.mirror) += color;
+    }
     res_color += vec3(glm::round(l_cam.x),
                       glm::round(l_cam.y),
                       glm::round(l_cam.z));
   }
 
   return res_color;
+}
+
+Ray Scene::generate_reflection_ray(vec3 point,
+                                   vec3 normal,
+                                   vec3 viewer_direction) {
+  viewer_direction *= -1;
+  vec3 dir = 2 * glm::dot(viewer_direction, normal) * (normal - viewer_direction);
+
+  Ray res = Ray(point, dir);
+  res.move_into_dir(0.01);
+  return res;
 }
 
 vec3 Scene::get_color(Ray ray) {
@@ -126,7 +146,7 @@ vec3 Scene::get_color(Ray ray) {
     return light;
   }
   else {
-    return _standart_light;
+    return vec3(-1);
   }
 }
 
@@ -154,7 +174,11 @@ Image Scene::trace_image() {
       }
 
       // get color from ray
-      image.set_pixel({x, y}, get_color(_camera.get_ray({x, y})));
+      vec3 color = get_color(_camera.get_ray({x, y}));
+      if (color.x == -1){
+        color = _standart_light;
+      }
+      image.set_pixel({x, y}, color);
     }
   }
   return image;

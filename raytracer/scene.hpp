@@ -36,6 +36,8 @@ class Scene {
 
   vec3 _standart_light;
 
+  Ray generate_reflection_ray(vec3 point, vec3 normal, vec3 viewer_direction);
+
   vec3 calculate_phong(vec3 point,
                        Material material,
                        vec3 surface_normal,
