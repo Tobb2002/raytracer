@@ -14,8 +14,8 @@ struct Material {
 
   float diffuse = 0.7;
   float ambient = 0.25;
-  float specular = 1.4;
-  float pow_m = 5;
+  float specular = 0.9;
+  float pow_m = 2;
 
   float mirror = 0; 
 };

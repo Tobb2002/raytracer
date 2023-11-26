@@ -29,7 +29,7 @@ int main(void) {
   Plane plane = Plane(vec3(-2, -4, -17), vec3(0, 1, 0), {.color=vec3(1 ,1 ,1)}, {.color=vec3(0.6, 0.6, 0.6)});
   //Plane plane2 = Plane(vec3(0, 0, -50), vec3(0, 0, -1), vec3(0, 0.5, 1));
   Pointlight light = Pointlight(vec3(-2, -2, -16), 100);
-  Pointlight light1 = Pointlight(vec3(8, 8, 1), 250);
+  Pointlight light1 = Pointlight(vec3(8, 3, 1), 250);
   Pointlight light2 = Pointlight(vec3(-1.8, 2, 0), 100);
 
   Scene scene = Scene(vec3(0, 100, 200));
@@ -46,7 +46,7 @@ int main(void) {
   //scene.add_object(&plane2);
 
   // generate animation
-  float rotation = 260;
+  float rotation = 90;
   float samples = 20;
 
   for (int i = 0; i < samples; i++) {
@@ -60,7 +60,7 @@ int main(void) {
     plane.print_matrices();
 
     // motion
-    plane.rotate(vec3(1, 0, 0), rotation/samples);
+    plane.rotate(vec3(0, 1, 0), rotation/samples);
     //m2.rotate(vec3(0, 0, 1), rotation/samples);
     //plane.move(vec3(1, 0, 0));
     
