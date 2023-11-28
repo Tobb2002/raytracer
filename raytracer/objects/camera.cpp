@@ -25,6 +25,11 @@ void Camera::set_resolution(float resolution_x, float resolution_y) {
   _aspect_ratio = resolution_x / resolution_y;
 }
 
+void Camera::set_resolution(float resolution_xy) {
+  _resolution = vec2(resolution_xy, resolution_xy);
+  _aspect_ratio = 1;
+}
+
 // geters
 vec2 Camera::get_resolution() {
   return _resolution;

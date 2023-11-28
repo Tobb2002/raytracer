@@ -18,6 +18,7 @@ class Camera {
   // getters
   vec2 get_resolution();
   void set_resolution(float resolution_x, float resolution_y);
+  void set_resolution(float resolution_xy);
 
   // setters
   void set_sensor_size(float x, float y);

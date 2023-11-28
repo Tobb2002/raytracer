@@ -112,9 +112,6 @@ Ray Scene::generate_reflection_ray(vec3 point,
                                    vec3 viewer_direction) {
   viewer_direction *= -1;
   float vdotn = glm::dot(viewer_direction, normal);
-  if (vdotn < 0) {
-  std::cout << vdotn << "\n";
-  }
   vec3 dir = 2 * vdotn * normal - viewer_direction;
 
   Ray res = Ray(point, dir);
