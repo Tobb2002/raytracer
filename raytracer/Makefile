@@ -15,8 +15,15 @@ directory:
 clean:
 	rm -rf obj/* bin/*
 
+# recursive wildcard function
+rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
+
+# get all source files
+source_cpp = $(call rwildcard, src, *.cpp)
+source_hpp = $(call rwildcard, src, *.hpp)
+
 checkstyle:
-	cclint --filter=-bin/include,-bin/header_guard *.hpp *.cpp objects/*.hpp objects/*.cpp
+	cclint --filter=-build/include,-build/header_guard $(source_cpp) $(source_hpp)
 
 run: compile
 	./bin/main
