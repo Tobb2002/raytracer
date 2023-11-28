@@ -6,31 +6,66 @@
 
 #include <glm/gtx/string_cast.hpp>
 
-// initialize Scene
+/**
+ * @brief Construct a new Scene:: Scene object
+ * 
+ * @param standart_color Color of a pixel that retrieves
+ * no light from the scene.
+ */
 Scene::Scene(vec3 standart_color) {
   _standart_light = standart_color;
 }
 
+/**
+ * @brief Add a Pointlight to the scene.
+ * 
+ * @param light
+ * @return size_t id of light.
+ */
 size_t Scene::add_light(Pointlight *light) {
   _lights.push_back(light);
   return _lights.size() -1;
 }
 
+/**
+ * @brief Add a Object to scene.
+ * 
+ * @param object
+ * @return size_t id of Object.
+ */
 size_t Scene::add_object(Object *object) {
   _objects.push_back(object);
   return _objects.size() -1;
 }
 
 
-// get elements from scene
+/**
+ * @brief Get pointer to the camera in the scene.
+ * 
+ * @return Camera* 
+ */
 Camera *Scene::get_camera(void) {
   return &_camera;
 }
 
+/**
+ * @brief Get pointer to object in the scene.
+ * 
+ * @param id id of the Object
+ * @return Object* 
+ */
 Object *Scene::get_object(size_t id) {
   return _objects.at(id);
 }
 
+/**
+ * @brief Check if a Ray intersects with an Object in the Scene.
+ * 
+ * @param ray
+ * @param t_max maximum length of ray to check.
+ * @return true if intersection found
+ * @return false else
+ */
 bool Scene::check_intersection(Ray ray, float t_max) {
   for (Object *object : _objects) {
     if (object->intersect_bool(ray, t_max)) {
@@ -40,118 +75,13 @@ bool Scene::check_intersection(Ray ray, float t_max) {
   return false;
 }
 
-// rendering functions
-vec3 Scene::calculate_phong(vec3 point,
-                     Material material,
-                     vec3 surface_normal,
-                     Ray camera_ray) {
-  vec3 res_color = vec3(0, 0, 0);
+/***** Functions for Rendering *****/
 
-  surface_normal = glm::normalize(surface_normal);
-
-  vec3 v = camera_ray.get_direction();
-  
-  // calculate light for all lightsources
-  for (Pointlight *light : _lights) {
-    vec3 incoming_light = light->get_color();
-
-    Ray ray_to_light = Ray(point, light->get_light_direction(point));
-    ray_to_light.move_into_dir(0.01);
-
-    vec3 light_direction = ray_to_light.get_direction();
-
-    float ndotl = glm::dot(surface_normal, light_direction);
-
-    if (ndotl < 0) {
-      surface_normal *= -1;
-      ndotl = glm::dot(surface_normal, ray_to_light.get_direction());
-    }
-
-    vec3 r = 2 * ndotl * surface_normal - light_direction;
-
-    float rdotv = glm::dot(r, v);
-
-    vec3 l_material = vec3(0, 0, 0);
-
-    vec3 l_ambient = material.color * material.ambient;
-    vec3 l_diffuse = material.diffuse * material.color;
-    
-    vec3 l_specular = vec3(0, 0, 0);
-    if (rdotv > 0) {
-      l_specular = material.specular * (vec3(1, 1, 1) * glm::pow(rdotv, material.pow_m));
-    }
-    else {
-      rdotv *= -1;
-      l_specular = material.specular * (vec3(1, 1, 1) * glm::pow(rdotv, material.pow_m));
-    }
-    // only ad the ones which are not blocked
-    if (!check_intersection(ray_to_light, light->get_distance(point))) {
-      l_material = l_diffuse + l_specular;
-    }
-
-    vec3 l_cam = incoming_light * ndotl * l_material + incoming_light * l_ambient;
-
-    // perfect mirror
-    if (material.mirror > 0) {
-      vec3 color = get_color(generate_reflection_ray(point, surface_normal, v));
-      if (color.x == -1) {
-        color = vec3(0, 0, 0);
-      }
-      l_cam = (l_cam * (1 - material.mirror)) + (color * material.mirror);
-    }
-    res_color += vec3(glm::round(l_cam.x),
-                      glm::round(l_cam.y),
-                      glm::round(l_cam.z));
-  }
-
-  return res_color;
-}
-
-Ray Scene::generate_reflection_ray(vec3 point,
-                                   vec3 normal,
-                                   vec3 viewer_direction) {
-  viewer_direction *= -1;
-  float vdotn = glm::dot(viewer_direction, normal);
-  vec3 dir = 2 * vdotn * normal - viewer_direction;
-
-  Ray res = Ray(point, dir);
-  res.move_into_dir(0.01);
-  return res;
-}
-
-vec3 Scene::get_color(Ray ray) {
-  // calculate object intersections
-  Material material;
-  Intersection best_intersection = {false,
-                                    MAXFLOAT,
-                                    vec3(0, 0, 0),
-                                    vec3(0, 0, 0),
-                                    material};
-  
-  // find closest intersection in Scene
-  for (Object *object : _objects) {
-    Intersection intersect = object->intersect(ray);
-
-    if (intersect.found) {
-      if (intersect.t < best_intersection.t) {
-        best_intersection = intersect;
-      }
-    }
-  }
-  if (best_intersection.found && best_intersection.t > 0) {
-    vec3 light = calculate_phong(best_intersection.point,
-                    best_intersection.material,
-                    best_intersection.normal,
-                    ray);
-
-    return light;
-  }
-  else {
-    // didn't hit any object
-    return vec3(-1);
-  }
-}
-
+/**
+ * @brief Render an Image of the Scene.
+ * 
+ * @return Image rendered image.
+ */
 Image Scene::trace_image() {
   Image image = Image(_camera.get_resolution().x,
                       _camera.get_resolution().y);
@@ -176,12 +106,148 @@ Image Scene::trace_image() {
       }
 
       // get color from ray
-      vec3 color = get_color(_camera.get_ray({x, y}));
-      if (color.x == -1){
+      vec3 color = get_light(_camera.get_ray({x, y}));
+      if (color.x == -1) {
         color = _standart_light;
       }
       image.set_pixel({x, y}, color);
     }
   }
   return image;
+}
+
+/**
+ * @brief Calculate light reflected from a surface.
+ * 
+ * @param point From which light is preceved
+ * @param material Material of the surface at the given point.
+ * @param surface_normal Normal of the surface.
+ * @param ray Ray to which the light get's transported.
+ * @return vec3 amount of light transported in direction of ray.
+ */
+vec3 Scene::calculate_light(
+    vec3 point,
+    Material material,
+    vec3 surface_normal,
+    Ray ray) {
+  vec3 res_color = vec3(0, 0, 0);
+
+  surface_normal = glm::normalize(surface_normal);
+
+  vec3 v = ray.get_direction();
+
+  // calculate light for all lightsources
+  for (Pointlight *light : _lights) {
+    vec3 incoming_light = light->get_color();
+
+    Ray ray_to_light = Ray(point, light->get_light_direction(point));
+    ray_to_light.move_into_dir(0.01);
+
+    vec3 light_direction = ray_to_light.get_direction();
+
+    float ndotl = glm::dot(surface_normal, light_direction);
+
+    if (ndotl < 0) {
+      surface_normal *= -1;
+      ndotl = glm::dot(surface_normal, ray_to_light.get_direction());
+    }
+
+    vec3 r = 2 * ndotl * surface_normal - light_direction;
+
+    float rdotv = glm::dot(r, v);
+
+    vec3 l_material = vec3(0, 0, 0);
+
+    vec3 l_ambient = material.color * material.ambient;
+    vec3 l_diffuse = material.diffuse * material.color;
+
+    vec3 l_specular = vec3(0, 0, 0);
+    if (rdotv > 0) {
+      l_specular = material.specular *
+          (vec3(1, 1, 1) * glm::pow(rdotv, material.pow_m));
+    } else {
+      rdotv *= -1;
+      l_specular = material.specular * (vec3(1, 1, 1) *
+          glm::pow(rdotv, material.pow_m));
+    }
+    // only ad the ones which are not blocked
+    if (!check_intersection(ray_to_light, light->get_distance(point))) {
+      l_material = l_diffuse + l_specular;
+    }
+
+    vec3 l_cam = incoming_light * ndotl *
+        l_material + incoming_light * l_ambient;
+
+    // perfect mirror
+    if (material.mirror > 0) {
+      vec3 color = get_light(generate_reflection_ray(point, surface_normal, v));
+      if (color.x == -1) {
+        color = vec3(0, 0, 0);
+      }
+      l_cam = (l_cam * (1 - material.mirror)) + (color * material.mirror);
+    }
+    res_color += vec3(glm::round(l_cam.x),
+                      glm::round(l_cam.y),
+                      glm::round(l_cam.z));
+  }
+
+  return res_color;
+}
+
+/**
+ * @brief Generate a ray into a reflection direction.
+ * 
+ * @param point Point where the light get's reflected.
+ * @param normal Normal of the reflecting surface.
+ * @param viewer_direction direction to which the
+ * light get's reflected.
+ * @return Ray 
+ */
+Ray Scene::generate_reflection_ray(
+    vec3 point,
+    vec3 normal,
+    vec3 viewer_direction) {
+  viewer_direction *= -1;
+  float vdotn = glm::dot(viewer_direction, normal);
+  vec3 dir = 2 * vdotn * normal - viewer_direction;
+
+  Ray res = Ray(point, dir);
+  res.move_into_dir(0.01);
+  return res;
+}
+
+/// @brief Calculates light transport a long a ray in the scene.
+/// @param ray
+/// @return amount of light reflected to direction of ray.
+vec3 Scene::get_light(Ray ray) {
+  // calculate object intersections
+  Material material;
+  Intersection best_intersection = {
+      false,
+      MAXFLOAT,
+      vec3(0, 0, 0),
+      vec3(0, 0, 0),
+      material};
+  // find closest intersection in Scene
+  for (Object *object : _objects) {
+    Intersection intersect = object->intersect(ray);
+
+    if (intersect.found) {
+      if (intersect.t < best_intersection.t) {
+        best_intersection = intersect;
+      }
+    }
+  }
+  if (best_intersection.found && best_intersection.t > 0) {
+    vec3 light = calculate_light(
+        best_intersection.point,
+        best_intersection.material,
+        best_intersection.normal,
+        ray);
+
+    return light;
+  } else {
+    // didn't hit any object
+    return vec3(-1);
+  }
 }

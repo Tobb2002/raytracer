@@ -10,6 +10,10 @@
 
 using glm::vec3;
 
+
+/**
+ * @brief Object to render a plane.
+ */
 class Plane : public Object{
  public:
   Plane();

@@ -13,32 +13,37 @@
 
 class Scene {
  public:
-  Scene(vec3 standart_color);
+  explicit Scene(vec3 standart_color);
 
-  // add objects
+  /***** Adding things to scene *****/
+
   size_t add_light(Pointlight *light);
   size_t add_object(Object *object);
 
-  // get objects to manipulate them
+  /***** Getters *****/
+
   Camera *get_camera(void);
   Object *get_object(size_t id);
 
-  vec3 get_color(Ray ray);
+  vec3 get_light(Ray ray);
 
 
-  // rendering functions
+  /***** Rendering *****/
+
   Image trace_image();
 
  private:
   std::vector<Pointlight*> _lights;
   std::vector<Object*> _objects;
+
   Camera _camera;
 
+  /// @brief light if a ray hit's nothing
   vec3 _standart_light;
 
   Ray generate_reflection_ray(vec3 point, vec3 normal, vec3 viewer_direction);
 
-  vec3 calculate_phong(vec3 point,
+  vec3 calculate_light(vec3 point,
                        Material material,
                        vec3 surface_normal,
                        Ray camera_ray);
