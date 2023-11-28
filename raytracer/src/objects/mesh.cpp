@@ -18,7 +18,7 @@
  */
 Mesh::Mesh(std::string input_file, vec3 origin) {
   _origin = origin;
-  read_from_obj(input_file); // read file with origin as offset
+  read_from_obj(input_file);  // read file with origin as offset
 }
 
 /**
@@ -31,7 +31,7 @@ Mesh::Mesh(std::string input_file, vec3 origin) {
 Mesh::Mesh(std::string input_file, vec3 origin, Material material) {
   _origin = origin;
   _material = material;
-  read_from_obj(input_file); // read file with origin as offset
+  read_from_obj(input_file);  // read file with origin as offset
 }
 
 Mesh::~Mesh() {}

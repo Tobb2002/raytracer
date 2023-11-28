@@ -10,8 +10,6 @@
 using glm::vec4;
 
 Object::Object() {
-  _origin_start = vec3(0, 0, 0);
-  _direction_start = vec3(0, 0, 1);
   _origin = vec3(0, 0, 0);
   _direction = vec3(0, 0, 1);
 
@@ -69,7 +67,8 @@ void Object::print_matrices(void) {
   std::cout << "-----Matrix-----\n";
   std::cout << "translation:\n" << glm::to_string(_mat_translation) << "\n";
   std::cout << "rotation:\n" << glm::to_string(_mat_rotation) << "\n";
-  std::cout << "inv translation:\n" << glm::to_string(_mat_inv_translation) << "\n";
+  std::cout << "inv translation:\n" << glm::to_string(_mat_inv_translation) <<
+      "\n";
   std::cout << "inv rotation:\n" << glm::to_string(_mat_inv_rotation) << "\n";
   std::cout << "----------------\n";
 }
@@ -96,9 +95,9 @@ void Object::initialize_matrices(void) {
  */
 void Object::calculate_inverse_mat(void) {
   // translation T^-1(t) = T(-t)
-  _mat_inv_translation =  mat4(vec4(1, 0, 0,0),
-                               vec4(0, 1, 0,0),
-                               vec4(0, 0, 1,0),
+  _mat_inv_translation =  mat4(vec4(1, 0, 0, 0),
+                               vec4(0, 1, 0, 0),
+                               vec4(0, 0, 1, 0),
                                vec4(_mat_translation[3][0] * -1,
                                     _mat_translation[3][1] * -1,
                                     _mat_translation[3][2] * -1,
@@ -106,7 +105,7 @@ void Object::calculate_inverse_mat(void) {
   // rotation R^-1 = transpose(Rx)
   _mat_inv_rotation = glm::transpose(_mat_rotation);
   // scale S^-1 = S(1/s)
-  //_mat_inv_scale = glm::compScale
+  // _mat_inv_scale = glm::compScale
 }
 
 /**
@@ -164,7 +163,7 @@ void Object::transform(mat4 transformation) {
  * @param degree Angle to rotate.
  */
 void Object::rotate(vec3 axis, float degree) {
-  axis = glm::normalize(axis); // recommended for glm library
+  axis = glm::normalize(axis);  // recommended for glm library
   mat4 rot = glm::rotate(glm::mat4(1.0), glm::radians(degree), axis);
 
   // move to origin -> rotate -> move back
@@ -211,11 +210,12 @@ vec3 Object::virtual_to_origin(vec3 point) {
  */
 void Object::calculate_direction(vec3 new_dir) {
   vec3 axis = glm::cross(_direction, new_dir);
-  
-  float degree = glm::acos(glm::dot(new_dir, _direction) / glm::length(new_dir) * glm::length(_direction));
+
+  float degree = glm::acos(glm::dot(new_dir, _direction) /
+      glm::length(new_dir) * glm::length(_direction));
 
   // if new_dir points to exactly th oposite direction axis = 0, 0, 0
-  // TODO check if this is right or nonsense
+  // TODO(tobi) check if this is right or nonsense
   if (axis.x == 0 && axis.y == 0 && axis.z == 0) {
     axis = vec3(0, 1, 0);
   }

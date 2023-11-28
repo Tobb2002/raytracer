@@ -19,10 +19,6 @@
 
 using glm::vec3;
 
-void trace_object(Object *object);
-
-
-
 int main(void) {
   Mesh m = Mesh("data/input/bunny_scaled.obj", vec3(1.2, -4.8, -18), {.color=vec3(0,1,0)});
   Mesh m2 = Mesh("data/input/test copy.obj", vec3(-2, -4, -17), {.color=vec3(1, 0, 0), .mirror=0.3});
@@ -65,11 +61,6 @@ int main(void) {
     //plane.move(vec3(1, 0, 0));
     
   }
-
-  // test material struct
-
-
-
   //Image img = scene.trace_image();
   //img.write_to_file("data/output/mesh.ppm");
 

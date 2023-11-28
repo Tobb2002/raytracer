@@ -90,7 +90,7 @@ void Triangle::set_material(Material material) { _material = material; }
 
 vec3 Triangle::get_min_bounding(void) {
   vec3 min = vec3(MAXFLOAT);
-  for (int i = 0; i<3; i++) {
+  for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       if (_p[i][j] < min[j]) {
         min[j] = _p[i][j];
@@ -102,7 +102,7 @@ vec3 Triangle::get_min_bounding(void) {
 
 vec3 Triangle::get_max_bounding(void) {
   vec3 max = vec3(-MAXFLOAT);
-  for (int i = 0; i<3; i++) {
+  for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       if (_p[i][j] > max[j]) {
         max[j] = _p[i][j];

@@ -32,6 +32,7 @@ class Triangle : public Object{
   vec3 get_max_bounding(void);
 
   void print();
+
  private:
   vec3 _p[3];
   Material _material;

@@ -30,5 +30,5 @@ struct Material {
   float pow_m = 2;
 
   /// @brief factor for mirroring material.
-  float mirror = 0; 
+  float mirror = 0;
 };

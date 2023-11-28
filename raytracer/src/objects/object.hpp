@@ -36,7 +36,7 @@ struct Intersection {
 class Object {
  public:
   Object();
-  
+
   /***** Intersections *****/
 
   virtual Intersection intersect(Ray ray);
@@ -57,10 +57,8 @@ class Object {
   vec3 virtual_to_origin(vec3 point);
 
  protected:
-  vec3 _origin_start;
-  vec3 _direction_start;
-  vec3 _origin; // standart 0,0,0
-  vec3 _direction; // standart 0,0,1
+  vec3 _origin;  // standart 0,0,0
+  vec3 _direction;  // standart 0,0,1
 
   /***** Transformations *****/
 
