@@ -5,6 +5,12 @@
 #include "image.hpp"
 #include <fstream>
 
+/**
+ * @brief Construct a new Image:: Image object
+ * 
+ * @param resolution_x set's the image width.
+ * @param resolution_y set's the image height.
+ */
 Image::Image(int resolution_x, int resolution_y) {
   _resolution[0] = resolution_x;
   _resolution[1] = resolution_y;
@@ -17,7 +23,54 @@ Image::~Image() {
   delete_matrix();
 }
 
-// matrix operations
+
+/**
+ * @brief Set color value for a specific pixel.
+ * 
+ * @param pixel pixel cordinate as {x, y}.
+ * @param color new color value.
+ */
+void Image::set_pixel(point pixel, vec3 color) {
+  // check if color is valid
+  for (int i = 0; i < 3; i++) {
+    if (color[i] < 0) {
+      color[i] = 0;
+    }
+    if (color[i] > 255) {
+      color[i] = 255;
+    }
+  }
+  _matrix[pixel.x][pixel.y] = color;
+}
+
+/**
+ * @brief Write image to filesystem
+ * 
+ * @param filename Path of outputfile.
+ */
+void Image::write_to_file(std::string filename) {
+  // initialise File
+  std::ofstream file(filename);
+
+  // File header
+  file << "P3\n" << _resolution[0] << " " << _resolution[1] << "\n255\n";
+
+  // Picture Content
+  for (int y = _resolution[1]-1; y >= 0; y--) {
+    for (int x = 0; x < _resolution[0]; x++) {
+      vec3 color = _matrix[x][y];
+      file << static_cast<int>(color[0]) << " "
+           << static_cast<int>(color[1]) << " "
+           << static_cast<int>(color[2]) << "\n";
+    }
+  }
+}
+
+/**
+ * @brief initialize the image matrix.
+ * 
+ * @param standart_color start pixel value.
+ */
 void Image::initialize_matrix(vec3 standart_color) {
   _matrix = new vec3* [_resolution[0]];
   for (int i = 0; i < _resolution[0]; i++) {
@@ -38,42 +91,4 @@ void Image::delete_matrix() {
     delete[] _matrix[i];
   }
   delete[] _matrix;
-}
-
-void Image::set_pixel(point pixel, vec3 color) {
-  // check if color is valid
-  for (int i = 0; i < 3; i++) {
-    if (color[i] < 0) {
-      color[i] = 0;
-    }
-    if (color[i] > 255) {
-      color[i] = 255;
-    }
-  }
-  _matrix[pixel.x][pixel.y] = color;
-}
-
-void Image::write_to_file(std::string filename) {
-  /**
-   * Function that outputs given Picture in ppm format.
-   * Parameters:
-   *  picture: <type>
-   *  location: <string>
-   */
-
-  // initialise File
-  std::ofstream file(filename);
-
-  // File header
-  file << "P3\n" << _resolution[0] << " " << _resolution[1] << "\n255\n";
-
-  // Picture Content
-  for (int y = _resolution[1]-1; y >= 0; y--) {
-    for (int x = 0; x < _resolution[0]; x++) {
-      vec3 color = _matrix[x][y];
-      file << static_cast<int>(color[0]) << " "
-           << static_cast<int>(color[1]) << " "
-           << static_cast<int>(color[2]) << "\n";
-    }
-  }
 }

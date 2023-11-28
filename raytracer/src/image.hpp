@@ -15,6 +15,12 @@ struct point {
   int y;
 };
 
+/**
+ * @brief Datatype for handeling image data.
+ * 
+ * This Class handles images of different resolutions
+ * and can write these to the file system as ppm files.
+ */
 class Image {
  public:
   Image(int resolution_x, int resolution_y);
