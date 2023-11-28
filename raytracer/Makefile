@@ -26,7 +26,6 @@ animation:
 
 docs:
 	doxygen doxygen.conf
-	xdg-open documentation/html/index.html
 
 files = main ray triangle camera image mesh pointlight box plane scene object objloader object_factory
 
