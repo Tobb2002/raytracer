@@ -13,15 +13,16 @@ class Camera {
  public:
   Camera();
   Camera(float resolution_x, float resolution_y);
-  Ray get_ray(vec2 pixel);
 
   // getters
   vec2 get_resolution();
-  void set_resolution(float resolution_x, float resolution_y);
-  void set_resolution(float resolution_xy);
+
+  Ray get_ray(vec2 pixel);
 
   // setters
   void set_sensor_size(float x, float y);
+  void set_resolution(float resolution_x, float resolution_y);
+  void set_resolution(float resolution_xy);
 
  private:
   const vec3 _origin = vec3(0, 0, 0);
