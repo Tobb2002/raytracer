@@ -7,6 +7,10 @@
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+/**
+ * @brief Construct a new Triangle:: Triangle object
+ * 
+ */
 Triangle::Triangle() {
   // initialize trianlge with all points zero.
   for (int i = 0; i < 3; i++) {

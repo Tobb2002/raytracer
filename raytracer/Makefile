@@ -6,43 +6,44 @@ FLAGS = -Wall -O -g -fsanitize=address
 # tasks
 all: compile
 
-compile: build build/main
+compile: directory bin/main
 
-build:
-	mkdir -p build
+directory:
+	mkdir -p obj
+	mkdir -p bin
 
 clean:
-	rm -rf build
+	rm -rf obj/* bin/*
 
 checkstyle:
-	cclint --filter=-build/include,-build/header_guard *.hpp *.cpp objects/*.hpp objects/*.cpp
+	cclint --filter=-bin/include,-bin/header_guard *.hpp *.cpp objects/*.hpp objects/*.cpp
 
 run: compile
-	./build/main
+	./bin/main
 
 animation:
 	ffmpeg -framerate 25 -start_number 0 -i data/output/animation/sample%d.ppm -vcodec mpeg4 data/output/finished/animation.avi
 
 files = main ray triangle camera image mesh pointlight box plane scene object objloader object_factory
 
-targets = $(addsuffix .o,$(addprefix build/,$(files)))
+targets = $(addsuffix .o,$(addprefix obj/,$(files)))
 
 # linke everything
-build/main: $(targets)
-	$(CC) $(FLAGS) -o build/main $(targets)
+bin/main: $(targets)
+	$(CC) $(FLAGS) -o bin/main $(targets)
 
 # main
-build/main.o: main.cpp
-	$(CC) $(FLAGS) -c main.cpp -o build/main.o
+obj/main.o: src/main.cpp
+	$(CC) $(FLAGS) -c src/main.cpp -o obj/main.o
 
 # modules
-build/%.o: %.cpp %.hpp
+obj/%.o: src/%.cpp src/%.hpp
 	$(CC) $(FLAGS) -c $< -o $@
 
 #objects
-build/%.o: objects/%.cpp objects/%.hpp
+obj/%.o: src/objects/%.cpp src/objects/%.hpp
 	$(CC) $(FLAGS) -c $< -o $@
 
 # lib obj
-build/objloader.o: objects/lib/objloader.cpp objects/lib/objloader.hpp
+obj/objloader.o: src/objects/lib/objloader.cpp src/objects/lib/objloader.hpp
 	$(CC) $(FLAGS) -c $< -o $@

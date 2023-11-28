@@ -11,6 +11,7 @@
 
 using glm::vec3;
 
+
 class Triangle : public Object{
  public:
   Triangle();

@@ -3,6 +3,8 @@
 
 # cpp
 build
+bin
+obj
 
 # files
 *.ppm
