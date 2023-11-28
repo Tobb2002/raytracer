@@ -11,10 +11,22 @@ Box::Box() {
   _min = vec3(FLT_MAX);
   _max = vec3(-FLT_MAX);
 }
+/**
+ * @brief Construct a new Box:: Box object
+ * 
+ * @param min vec3 defines min corner.
+ * @param max vec3 defines max corner.
+ */
 Box::Box(vec3 min, vec3 max) {
   set_min_max(min, max);
 }
 
+/**
+ * @brief Set new position and size for the box.
+ * 
+ * @param min vec3 defines min corner.
+ * @param max vec3 defines max corner.
+ */
 void Box::set_min_max(vec3 min, vec3 max) {
   _min = min;
   _max = max;
@@ -22,27 +34,22 @@ void Box::set_min_max(vec3 min, vec3 max) {
   ensure_min_max();
 }
 
-// update min and max values if nessesary.
+/**
+ * @brief Update values of min max if nessecary.
+ * 
+ * @param min new possible min value.
+ * @param max new possible min value.
+ */
 void Box::update_min_max(vec3 min, vec3 max) {
-  // update min
-  if (min.x < _min.x) {
-    _min.x = min.x;
-  }
-  if (min.y < _min.y) {
-    _min.y = min.y;
-  }
-  if (min.z < _min.z) {
-    _min.z = min.z;
-  }
-  // update max
-  if (max.x > _max.x) {
-    _max.x = max.x;
-  }
-  if (max.y > _max.y) {
-    _max.y = max.y;
-  }
-  if (max.z > _max.z) {
-    _max.z = max.z;
+  for (int i = 0; i < 3; i++) {
+    // update min
+    if (min[i] < _min[i]) {
+      _min[i] = min[i];
+    }
+    // update max
+    if (max[i] > _max[i]) {
+      _max[i] = max[i];
+    }
   }
 }
 
@@ -58,30 +65,36 @@ void Box::print(void) {
   std::cout << "---------------\n";
 }
 
+/**
+ * @brief Get middle point of the Box.
+ * 
+ * @return vec3 
+ */
 vec3 Box::get_middle(void) {
   return (_min + _max) * 0.5f;
 }
 
+/**
+ * @brief Ensure that all the min values are smaller than the max values.
+ * 
+ */
 void Box::ensure_min_max(void) {
-  // ensure that all values in min are smaller than the values in max
-  if (_min.x > _max.x) {
-    float tmp = _min.x;
-    _min.x = _max.x;
-    _max.x = tmp;
-  }
-  if (_min.y > _max.y) {
-    float tmp = _min.y;
-    _min.y = _max.y;
-    _max.y = tmp;
-  }
-  if (_min.z > _max.z) {
-    float tmp = _min.z;
-    _min.z = _max.z;
-    _max.z = tmp;
+  for (int i = 0; i < 3; i++) {
+    if (_min[i] > _max[i]) {
+      float tmp = _min[i];
+      _min[i] = _max[i];
+      _max[i] = tmp;
+    }
   }
 }
 
-// checks if a ray intersects a box
+/**
+ * @brief Check for intersection with ray.
+ * 
+ * @param ray ray to check for intersection.
+ * @return true if intersection found.
+ * @return false else.
+ */
 bool Box::intersect_bool(Ray ray) {
   interval tx = {(_min.x - ray.get_origin().x) / ray.get_direction().x,
                 (_max.x - ray.get_origin().x) / ray.get_direction().x};
