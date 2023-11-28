@@ -8,10 +8,26 @@
 #include <glm/gtx/string_cast.hpp>
 
 
+/**
+ * @brief Construct a new Mesh:: Mesh object
+ * 
+ * @param input_file ppm file to generate mesh.
+ * @param origin point to place the mesh.
+ * 
+ * The Mesh will use the standart Material.
+ */
 Mesh::Mesh(std::string input_file, vec3 origin) {
   _origin = origin;
   read_from_obj(input_file); // read file with origin as offset
 }
+
+/**
+ * @brief Construct a new Mesh:: Mesh object
+ * 
+ * @param input_file ppm file to generate mesh.
+ * @param origin point to place the mesh.
+ * @param material set material of mesh.
+ */
 Mesh::Mesh(std::string input_file, vec3 origin, Material material) {
   _origin = origin;
   _material = material;
@@ -20,18 +36,56 @@ Mesh::Mesh(std::string input_file, vec3 origin, Material material) {
 
 Mesh::~Mesh() {}
 
+/***** Print DEBUG information *****/
+
+/**
+ * @brief Print information about mesh.
+ */
+void Mesh::print(void) {
+  Object::print();
+  std::cout << "------mesh------\n";
+  std::cout << "origin: " << glm::to_string(_origin) << "\n";
+  print_bounding_box();
+}
+
+/**
+ * @brief Print all triangles of the mesh.
+ * 
+ */
 void Mesh::print_triangles(void) {
   for (int i = 0; i < _size; i++) {
     _triangles[i].print();
   }
 }
 
+/**
+ * @brief Print information about Boundingbox.
+ */
+void Mesh::print_bounding_box(void) {
+  _bounding_box.print();
+}
+
+/***** Getters *****/
+
+/**
+ * @brief Get number of triangles in mesh.
+ * 
+ * @return int 
+ */
 int Mesh::get_size(void) { return _size; }
 
+/**
+ * @brief Get a specific Triangle from the mesh.
+ * 
+ * @param i id of that triangle.
+ * @return Triangle 
+ */
 Triangle Mesh::get_triangle(int i) {
   Triangle t = _triangles.at(i);
   return t;
 }
+
+/***** Transformations *****/
 
 void Mesh::move(vec3 vec) {
   for (size_t i = 0; i < _triangles.size(); i++) {
@@ -41,16 +95,35 @@ void Mesh::move(vec3 vec) {
   _bounding_box.move(vec);
 }
 
-void Mesh::print(void) {
-  Object::print();
-  std::cout << "------mesh------\n";
-  std::cout << "origin: " << glm::to_string(_origin) << "\n";
-  print_bounding_box();
+/**
+ * @brief Transform mesh (all triangles).
+ * 
+ * @param transformation transformation matrix.
+ */
+void Mesh::transform(mat4 transformation) {
+  Object::transform(transformation);
+
+  _bounding_box.transform(transformation);
+
+  for (size_t i = 0; i < _triangles.size(); i++) {
+    Triangle *t = &_triangles[i];
+    t->transform(transformation);
+    // check if t is outside of bounding box
+    update_bounding_box(t);
+  }
 }
 
-void Mesh::print_bounding_box(void) {
-  _bounding_box.print();
+/**
+ * @brief Check if Triangle is in bounding box and update if not.
+ * 
+ * @param t Triangle to check.
+ */
+void Mesh::update_bounding_box(Triangle * t) {
+  _bounding_box.update_min_max(t->get_min_bounding(),
+                               t->get_max_bounding());
 }
+
+/***** Functions *****/
 
 Intersection Mesh::intersect(Ray ray) {
   // calculate the intersection with the smallest value for t
@@ -79,24 +152,13 @@ Intersection Mesh::intersect(Ray ray) {
   return intersection;
 }
 
-void Mesh::update_bounding_box(Triangle * t) {
-  _bounding_box.update_min_max(t->get_min_bounding(),
-                               t->get_max_bounding());
-}
+/***** File input *****/
 
-void Mesh::transform(mat4 transformation) {
-  Object::transform(transformation);
-
-  _bounding_box.transform(transformation);
-
-  for (size_t i = 0; i < _triangles.size(); i++) {
-    Triangle *t = &_triangles[i];
-    t->transform(transformation);
-    // check if t is outside of bounding box
-    update_bounding_box(t);
-  }
-}
-
+/**
+ * @brief read triangles from objfile.
+ * 
+ * @param inputfile path to obj file.
+ */
 void Mesh::read_from_obj(std::string inputfile) {
   tinyobj::attrib_t attrib;
   std::vector<tinyobj::shape_t> shapes;

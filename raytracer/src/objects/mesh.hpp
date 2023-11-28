@@ -16,23 +16,26 @@ class Mesh : public Object{
   Mesh(std::string input_file, vec3 origin, Material material);
   ~Mesh();
 
+  /***** Print Debug information *****/
   void print_triangles(void);
   void print_bounding_box(void);
   void print(void) override;
-  int get_size(void);
 
-  // transformations
+  /***** Transformations *****/
   void move(vec3 vec) override;
-
   void transform(mat4 transformation) override;
 
 
+  /***** getters *****/
+  int get_size(void);
   Triangle get_triangle(int i);
+
+  /***** Functions *****/
   Intersection intersect(Ray ray) override;
 
  private:
-  bool _triangle_exists;
   std::vector<Triangle> _triangles;
+  bool _triangle_exists;
   int _size;
   vec3 _origin;
   Box _bounding_box;

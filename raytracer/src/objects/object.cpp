@@ -14,15 +14,32 @@ Object::Object() {
   _direction_start = vec3(0, 0, 1);
   _origin = vec3(0, 0, 0);
   _direction = vec3(0, 0, 1);
-  // initialize transformation matrices
+
   initialize_matrices();
   calculate_inverse_mat();
 }
 
+/**
+ * @brief Calculate intersection with a Ray.
+ * 
+ * @param ray 
+ * @return Intersection 
+ * 
+ * This function should be overriden by inheriting Objects.
+ */
 Intersection Object::intersect(Ray ray) {
   Material material;
   return {false, 0, vec3(0, 0, 0), vec3(0, 0, 0), material};
 }
+
+/**
+ * @brief Check if Ray intersects.
+ * 
+ * @param ray 
+ * @param t_max maximum length of Ray to check.
+ * @return true if Ray intersects.
+ * @return false else
+ */
 bool Object::intersect_bool(Ray ray, float t_max) {
   Intersection i = intersect(ray);
 
@@ -33,10 +50,20 @@ bool Object::intersect_bool(Ray ray, float t_max) {
   return false;
 }
 
+/***** Print DEBUG information *****/
+
+/**
+ * @brief Print all important information of the Object.
+ * 
+ * This function should be ovveridden by inheriting objects.
+ */
 void Object::print(void) {
   std::cout << "-----Object-----\n";
 }
 
+/**
+ * @brief Print all the transformation matrices.
+ */
 void Object::print_matrices(void) {
   std::cout << "-----Object-----\n";
   std::cout << "-----Matrix-----\n";
@@ -51,6 +78,9 @@ void Object::print_matrices(void) {
  * Transformation
  */
 
+/**
+ * @brief Initialize transformation matrices to identity matrices.
+ */
 void Object::initialize_matrices(void) {
   // matrices should be identity matrix at beginning.
   _mat_translation = glm::mat4(1.0);
@@ -61,6 +91,9 @@ void Object::initialize_matrices(void) {
 }
 
 
+/**
+ * @brief calculate the inverse for all transformation matrices.
+ */
 void Object::calculate_inverse_mat(void) {
   // translation T^-1(t) = T(-t)
   _mat_inv_translation =  mat4(vec4(1, 0, 0,0),
@@ -76,8 +109,10 @@ void Object::calculate_inverse_mat(void) {
   //_mat_inv_scale = glm::compScale
 }
 
-/*
- * Moves the object and all it's components along the vector a.
+/**
+ * @brief Move Object.
+ * 
+ * @param a vector to move the object.
  */
 void Object::move(vec3 a) {
   std::cout << "moving object\n";
@@ -86,17 +121,26 @@ void Object::move(vec3 a) {
                 vec4(0, 0, 1, 0),
                 vec4(a, 1));
 
-  // calculate new origin
-  //_origin = t * vec4(_origin, 1);
   transform(t);
   _mat_translation = _mat_translation * t;
   calculate_inverse_mat();
 }
 
+/**
+ * @brief Transform a point.
+ * 
+ * @param transformation transformation matrix.
+ * @param point Point to be transformed.
+ */
 void Object::transform_point(mat4 transformation, vec3 *point) {
   *point =  transformation * vec4(*point, 1);
 }
 
+/**
+ * @brief Apply transformation to transformation matrices.
+ * 
+ * @param transformation
+ */
 void Object::transform_matrices(mat4 transformation) {
   _mat_translation = transformation * _mat_translation;
   _mat_rotation = transformation * _mat_rotation;
@@ -104,11 +148,21 @@ void Object::transform_matrices(mat4 transformation) {
   calculate_inverse_mat();
 }
 
+/**
+ * @brief Apply transformation to Object.
+ * 
+ * @param transformation 
+ */
 void Object::transform(mat4 transformation) {
   transform_point(transformation, &_origin);
 }
 
-// rotate x,y,z degree around the respective axes.
+/**
+ * @brief Rotate Object around it's own origin.
+ * 
+ * @param axis Axis for the rotation.
+ * @param degree Angle to rotate.
+ */
 void Object::rotate(vec3 axis, float degree) {
   axis = glm::normalize(axis); // recommended for glm library
   mat4 rot = glm::rotate(glm::mat4(1.0), glm::radians(degree), axis);
@@ -123,6 +177,12 @@ void Object::rotate(vec3 axis, float degree) {
   calculate_inverse_mat();
 }
 
+/**
+ * @brief Calculate corresponding point in world with transformation matrices applied.
+ * 
+ * @param point 
+ * @return vec3 
+ */
 vec3 Object::origin_to_virtual(vec3 point) {
   mat4 transform = _mat_translation * _mat_rotation;
   vec3 res = point;
@@ -130,6 +190,12 @@ vec3 Object::origin_to_virtual(vec3 point) {
   return res;
 }
 
+/**
+ * @brief Calculate corresponding point without transformations applied.
+ * 
+ * @param point 
+ * @return vec3 
+ */
 vec3 Object::virtual_to_origin(vec3 point) {
   mat4 transform = _mat_inv_rotation * _mat_inv_translation;
   vec3 res = point;
@@ -137,9 +203,13 @@ vec3 Object::virtual_to_origin(vec3 point) {
   return res;
 }
 
-// updates rotation matrix and sets new direction
+
+/**
+ * @brief Set new direction and update rotation matrix.
+ * 
+ * @param new_dir
+ */
 void Object::calculate_direction(vec3 new_dir) {
-  // TODO implement
   vec3 axis = glm::cross(_direction, new_dir);
   
   float degree = glm::acos(glm::dot(new_dir, _direction) / glm::length(new_dir) * glm::length(_direction));
