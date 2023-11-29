@@ -43,9 +43,21 @@ class Scene {
 
   Ray generate_reflection_ray(vec3 point, vec3 normal, vec3 viewer_direction);
 
-  vec3 calculate_light(vec3 point,
-                       Material material,
-                       vec3 surface_normal,
-                       Ray camera_ray);
+  vec3 calculate_light(
+      vec3 point,
+      Material material,
+      vec3 surface_normal,
+      Ray camera_ray);
+  vec3 get_phong(
+      Pointlight *light,
+      Material material,
+      vec3 point,
+      vec3 normal,
+      vec3 viewing_direction);
+  vec3 get_mirroring_light(
+      Material material,
+      vec3 point,
+      vec3 normal,
+      vec3 viewing_direction);
   bool check_intersection(Ray ray, float t_max);
 };

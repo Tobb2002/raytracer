@@ -117,6 +117,89 @@ Image Scene::trace_image() {
 }
 
 /**
+ * @brief Caluclate phong wiht diffuse, specular and ambient light.
+ * 
+ * @param light Lightsource to get light from.
+ * @param material
+ * @param point Point where light get's reflected.
+ * @param normal surface normal at given point.
+ * @param viewing_direction 
+ * @return vec3 
+ */
+vec3 Scene::get_phong(
+    Pointlight *light,
+    Material material,
+    vec3 point,
+    vec3 normal,
+    vec3 viewing_direction) {
+  vec3 incoming_light = light->get_color();
+
+  Ray ray_to_light = Ray(point, light->get_light_direction(point));
+  ray_to_light.move_into_dir(0.01);
+
+  vec3 light_direction = ray_to_light.get_direction();
+
+  float ndotl = glm::dot(normal, light_direction);
+
+  if (ndotl < 0) {
+    normal *= -1;
+    ndotl = glm::dot(normal, ray_to_light.get_direction());
+  }
+
+  vec3 r = 2 * ndotl * normal - light_direction;
+
+  float rdotv = glm::dot(r, viewing_direction);
+
+  vec3 l_material = vec3(0, 0, 0);
+
+  vec3 l_ambient = material.color * material.ambient;
+  vec3 l_diffuse = material.diffuse * material.color;
+
+  vec3 l_specular = vec3(0, 0, 0);
+  if (rdotv > 0) {
+    l_specular = material.specular *
+        (vec3(1, 1, 1) * glm::pow(rdotv, material.pow_m));
+  } else {
+    rdotv *= -1;
+    l_specular = material.specular * (vec3(1, 1, 1) *
+        glm::pow(rdotv, material.pow_m));
+  }
+  // only ad the ones which are not blocked
+  if (!check_intersection(ray_to_light, light->get_distance(point))) {
+    l_material = l_diffuse + l_specular;
+  }
+
+  return incoming_light * ndotl *
+      l_material + incoming_light * l_ambient;
+}
+
+/**
+ * @brief Calculate the light reflection if material was perfect mirror.
+ * 
+ * @param material  returns nothing if material.mirror = 0.
+ * @param point point on which light get's reflected.
+ * @param normal normal of reflecting surface
+ * @param viewing_direction direction of the viewer.
+ * @return vec3
+ */
+vec3 Scene::get_mirroring_light(
+    Material material,
+    vec3 point,
+    vec3 normal,
+    vec3 viewing_direction) {
+  // perfect mirror
+  vec3 color = vec3(0, 0, 0);
+  if (material.mirror > 0) {
+    color = get_light(
+        generate_reflection_ray(point, normal, viewing_direction));
+    if (color.x == -1) {
+      color = vec3(0, 0, 0);
+    }
+  }
+  return color;
+}
+
+/**
  * @brief Calculate light reflected from a surface.
  * 
  * @param point From which light is preceved
@@ -130,68 +213,24 @@ vec3 Scene::calculate_light(
     Material material,
     vec3 surface_normal,
     Ray ray) {
-  vec3 res_color = vec3(0, 0, 0);
+
+  vec3 res_light = vec3(0, 0, 0);
 
   surface_normal = glm::normalize(surface_normal);
-
   vec3 v = ray.get_direction();
 
   // calculate light for all lightsources
   for (Pointlight *light : _lights) {
-    vec3 incoming_light = light->get_color();
+    vec3 phong_light = get_phong(
+        light, material, point, surface_normal, v);
+    vec3 mirror_light = get_mirroring_light(
+        material, point, surface_normal, v);
 
-    Ray ray_to_light = Ray(point, light->get_light_direction(point));
-    ray_to_light.move_into_dir(0.01);
-
-    vec3 light_direction = ray_to_light.get_direction();
-
-    float ndotl = glm::dot(surface_normal, light_direction);
-
-    if (ndotl < 0) {
-      surface_normal *= -1;
-      ndotl = glm::dot(surface_normal, ray_to_light.get_direction());
-    }
-
-    vec3 r = 2 * ndotl * surface_normal - light_direction;
-
-    float rdotv = glm::dot(r, v);
-
-    vec3 l_material = vec3(0, 0, 0);
-
-    vec3 l_ambient = material.color * material.ambient;
-    vec3 l_diffuse = material.diffuse * material.color;
-
-    vec3 l_specular = vec3(0, 0, 0);
-    if (rdotv > 0) {
-      l_specular = material.specular *
-          (vec3(1, 1, 1) * glm::pow(rdotv, material.pow_m));
-    } else {
-      rdotv *= -1;
-      l_specular = material.specular * (vec3(1, 1, 1) *
-          glm::pow(rdotv, material.pow_m));
-    }
-    // only ad the ones which are not blocked
-    if (!check_intersection(ray_to_light, light->get_distance(point))) {
-      l_material = l_diffuse + l_specular;
-    }
-
-    vec3 l_cam = incoming_light * ndotl *
-        l_material + incoming_light * l_ambient;
-
-    // perfect mirror
-    if (material.mirror > 0) {
-      vec3 color = get_light(generate_reflection_ray(point, surface_normal, v));
-      if (color.x == -1) {
-        color = vec3(0, 0, 0);
-      }
-      l_cam = (l_cam * (1 - material.mirror)) + (color * material.mirror);
-    }
-    res_color += vec3(glm::round(l_cam.x),
-                      glm::round(l_cam.y),
-                      glm::round(l_cam.z));
+    res_light = (phong_light * (1 - material.mirror)) +
+        (mirror_light * material.mirror);
   }
 
-  return res_color;
+  return glm::round(res_light);
 }
 
 /**
