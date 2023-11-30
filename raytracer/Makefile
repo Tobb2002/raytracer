@@ -30,7 +30,7 @@ run: compile
 	./bin/main
 
 animation:
-	ffmpeg -framerate 25 -start_number 0 -i data/output/animation/sample%d.ppm -vcodec mpeg4 data/output/finished/animation.avi
+	ffmpeg -framerate 25 -start_number 0 -i data/output/animation/sample%d.ppm -vcodec jpeg2000 data/output/finished/animation.avi
 
 docs:
 	doxygen doxygen.conf
