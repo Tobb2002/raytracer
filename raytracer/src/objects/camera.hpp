@@ -5,6 +5,7 @@
 
 #include <glm/glm.hpp>
 #include "ray.hpp"
+#include "transform.hpp"
 
 using glm::vec3;
 using glm::vec2;
@@ -28,6 +29,8 @@ class Camera {
   void rotate(vec3 axis, float degree);
   void move(vec3 a);
 
+  Transformation get_view_transform(void);
+
  private:
   const vec3 _origin = vec3(0, 0, 0);
   const vec3 _direction = vec3(0, 0, -1);
@@ -38,4 +41,8 @@ class Camera {
 
   vec2 pixel_to_image_pos(vec2 pixel);
   vec3 image_to_world(vec2 pos_image);
+
+  /***** Transformation *****/
+
+  Transform _transform;
 };

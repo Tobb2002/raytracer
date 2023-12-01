@@ -27,6 +27,8 @@ class Scene {
 
   vec3 get_light(Ray ray);
 
+  void update_view_transform(void);
+
 
   /***** Rendering *****/
 
@@ -42,6 +44,7 @@ class Scene {
   vec3 _standart_light;
 
   Ray generate_reflection_ray(vec3 point, vec3 normal, vec3 viewer_direction);
+
 
   vec3 calculate_light(
       vec3 point,

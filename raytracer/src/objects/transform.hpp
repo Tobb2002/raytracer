@@ -10,6 +10,11 @@
 
 using glm::vec3, glm::vec4, glm::mat4;
 
+struct Transformation{
+  mat4 mat = glm::mat4(1.0);
+  mat4 inv = glm::mat4(1.0);
+};
+
 class Transform {
  public:
 
@@ -21,6 +26,9 @@ class Transform {
 
   void calculate_inverse_mat(void);
   void transform_point(mat4 transformation, vec3 *point);
+
+  mat4 get_combined(void);
+  mat4 get_combined_inv(void);
 
   vec3 origin_to_virtual(vec3 point);
   vec3 virtual_to_origin(vec3 point);

@@ -41,8 +41,8 @@ int main(void) {
   scene.add_light(&light1);
   // scene.add_light(&light2);
   // scene.add_object(&m);
-  scene.add_object(&m2);
   scene.add_object(&plane);
+  scene.add_object(&m2);
   // scene.add_object(&plane2);
 
   // generate animation
@@ -58,9 +58,13 @@ int main(void) {
 
     // motion
     // plane.rotate(vec3(0, 1, 0), rotation/samples);
+
     plane.rotate(vec3(1, 0, 0), rotation/samples);
     m2.rotate(vec3(1, 0, 0), rotation/samples);
-    // plane.move(vec3(1, 0, 0));
+    m2.move(vec3(0.1, 0, 0));
+    // scene.get_camera()->rotate(vec3(0, 1, 0), -5);
+    // scene.update_view_transform();
+    //plane.move(vec3(1, 0, 0));
   }
   return 0;
 }

@@ -87,6 +87,12 @@ void Object::apply_transform(mat4 transformation) {
   _transform.transform_point(transformation, &_origin);
 }
 
+void Object::update_view_transform(Transformation view_transform) {
+  apply_transform(_view_transform.inv);
+  _view_transform = view_transform;
+  apply_transform(_view_transform.mat);
+}
+
 /**
  * @brief Rotate Object around it's own origin.
  * 
@@ -95,10 +101,6 @@ void Object::apply_transform(mat4 transformation) {
  */
 void Object::rotate(vec3 axis, float degree) {
   transform(_transform.add_rotation(axis, degree));
-  
-  // TODO remove when plane updatet
-  mat4 rot = glm::rotate(glm::mat4(1.0), glm::radians(degree), axis);
-  _transform.transform_point(rot, &_direction);
 }
 
 void Object::transform(mat4 t) {

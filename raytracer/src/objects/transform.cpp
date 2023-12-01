@@ -82,6 +82,14 @@ void Transform::transform_point(mat4 transformation, vec3 *point) {
   *point =  transformation * vec4(*point, 1);
 }
 
+mat4 Transform::get_combined(void) {
+  return _mat.translation * _mat.rotation;
+}
+
+mat4 Transform::get_combined_inv(void) {
+  return _mat_inv.rotation * _mat.translation;
+}
+
 vec3 Transform::origin_to_virtual(vec3 point) {
   mat4 transform = _mat.translation * _mat.rotation;
   vec3 res = point;

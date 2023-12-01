@@ -255,6 +255,13 @@ Ray Scene::generate_reflection_ray(
   return res;
 }
 
+void Scene::update_view_transform(void) {
+  Transformation view_transform = _camera.get_view_transform();
+  for (Object * object: _objects) {
+    object->update_view_transform(view_transform);
+  }
+}
+
 /// @brief Calculates light transport a long a ray in the scene.
 /// @param ray
 /// @return amount of light reflected to direction of ray.

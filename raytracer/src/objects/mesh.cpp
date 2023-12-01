@@ -87,14 +87,6 @@ Triangle Mesh::get_triangle(int i) {
 
 /***** Transformations *****/
 
-void Mesh::move(vec3 vec) {
-  for (size_t i = 0; i < _triangles.size(); i++) {
-    Triangle *t = &_triangles[i];
-    t->move(vec);
-  }
-  _bounding_box.move(vec);
-}
-
 /**
  * @brief Transform mesh (all triangles).
  * 

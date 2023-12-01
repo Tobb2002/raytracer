@@ -129,6 +129,20 @@ vec3 Camera::image_to_world(vec2 pos_image) {
 /***** Transformations *****/
 
 void Camera::move(vec3 a) {
+  _transform.add_translation(a);
+}
+
+/**
+ * @brief returns inverse of camera transformation.
+ * 
+ * @return Transformation 
+ */
+Transformation Camera::get_view_transform(void) {
+  Transformation t = {
+      _transform.get_combined_inv(),
+      _transform.get_combined()};
+  return t;
 }
 void Camera::rotate(vec3 axis, float degree) {
+  _transform.add_rotation(axis, degree);
 }

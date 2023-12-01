@@ -56,6 +56,8 @@ class Object {
   void transform(mat4 transformation);
   virtual void apply_transform(mat4 transformation);
 
+  void update_view_transform(Transformation view_transform);
+
 
  protected:
   vec3 _origin;  // standart 0,0,0
