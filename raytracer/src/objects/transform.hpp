@@ -26,6 +26,7 @@ class Transform {
 
   void calculate_inverse_mat(void);
   void transform_point(mat4 transformation, vec3 *point);
+  vec3 transform_point(mat4 t, vec3 point);
 
   mat4 get_combined(void);
   mat4 get_combined_inv(void);

@@ -59,11 +59,15 @@ int main(void) {
     // motion
     // plane.rotate(vec3(0, 1, 0), rotation/samples);
 
-    plane.rotate(vec3(1, 0, 0), rotation/samples);
-    m2.rotate(vec3(1, 0, 0), rotation/samples);
-    m2.move(vec3(0.1, 0, 0));
-    // scene.get_camera()->rotate(vec3(0, 1, 0), -5);
-    // scene.update_view_transform();
+    //plane.rotate(vec3(1, 0, 0), rotation/samples);
+    //scene.get_object(1)->rotate(vec3(1, 0, 0), rotation/samples);
+    //m2.rotate(vec3(1, 0, 0), rotation/samples);
+    //m2.move(vec3(0.1, 0, 0));
+    scene.get_camera()->rotate(vec3(0, 1, 0), +5);
+    plane.update_view_transform(scene.get_camera()->get_view_transform());
+    m2.update_view_transform(scene.get_camera()->get_view_transform());
+    plane.print();
+    //scene.update_view_transform();
     //plane.move(vec3(1, 0, 0));
   }
   return 0;
