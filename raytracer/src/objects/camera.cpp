@@ -125,3 +125,10 @@ vec3 Camera::image_to_world(vec2 pos_image) {
 
   return start + p;
 }
+
+/***** Transformations *****/
+
+void Camera::move(vec3 a) {
+}
+void Camera::rotate(vec3 axis, float degree) {
+}

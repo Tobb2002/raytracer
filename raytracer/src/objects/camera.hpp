@@ -24,6 +24,10 @@ class Camera {
   void set_resolution(float resolution_x, float resolution_y);
   void set_resolution(float resolution_xy);
 
+  /***** Transformations *****/
+  void rotate(vec3 axis, float degree);
+  void move(vec3 a);
+
  private:
   const vec3 _origin = vec3(0, 0, 0);
   const vec3 _direction = vec3(0, 0, -1);
