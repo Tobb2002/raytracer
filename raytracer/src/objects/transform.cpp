@@ -37,7 +37,25 @@ mat4 Transform::add_rotation(vec3 axis, float degree) {
   return t;
 }
 
-void Transform::calculate_inverse_mat(void) {
+/**
+ * @brief add a rotation only to rotation matrix.
+ * 
+ * @param axis 
+ * @param degree 
+ */
+mat4 Transform::add_rotation_mat(vec3 axis, float degree) {
+  axis = glm::normalize(axis);  // recommended for glm library
+  mat4 rot = glm::rotate(glm::mat4(1.0), glm::radians(degree), axis);
+
+  // update rotation matrices
+  _mat.rotation = rot * _mat.rotation;
+  calculate_inverse_mat();
+
+  return _mat.rotation;
+}
+
+void Transform::calculate_inverse_mat(void)
+{
   // translation T^-1(t) = T(-t)
   _mat_inv.translation =  mat4(vec4(1, 0, 0, 0),
                                vec4(0, 1, 0, 0),

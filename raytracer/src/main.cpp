@@ -24,8 +24,6 @@ int main(void) {
       vec3(1.2, -4.8, -16), {.color = vec3(0, 1, 0)});
   Mesh m2 = Mesh("data/input/cube.obj",
       vec3(0, -3, -15), {.color = vec3(1, 0, 0), .mirror = 0.3});
-  m2.move(vec3(1, 0, 0));
-  m2.rotate(vec3(0, 1, 0), 25);
   Plane plane = Plane(vec3(-2, -4, -13), vec3(0, 1, 0),
       {.color = vec3(1 , 1, 1), .mirror = 0.0},
       {.color = vec3(0.6, 0.6, 0.6), .mirror = 0.0});
@@ -49,7 +47,7 @@ int main(void) {
 
   // generate animation
   float rotation = 90;
-  float samples = 1;
+  float samples = 10;
 
   for (int i = 0; i < samples; i++) {
     std::cout << "Sample (" << i + 1 << " of " << samples << ")\n";

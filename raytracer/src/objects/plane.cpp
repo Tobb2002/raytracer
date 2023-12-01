@@ -8,8 +8,20 @@
 
 /// @brief Construct a new Plane:: Plane object
 Plane::Plane() {
-  _normal = _direction;
+  _point = vec3(0, 0, 1);
+  calculate_normal();
   _two_colored = false;
+}
+
+void Plane::set_start_position(vec3 position, vec3 normal) {
+  _point = vec3(0, 0, 1);
+  _origin = vec3(0, 0, 0);
+  std::cout << "norm: " << glm::to_string(normal) << "\n";
+  calculate_direction(normal, vec3(0, 0, 1));
+
+  // move to position
+  mat4 t = _transform.add_translation(position);
+  apply_transform(t);
 }
 
 /**
@@ -20,17 +32,12 @@ Plane::Plane() {
  * @param material material of the plane.
  */
 Plane::Plane(vec3 position, vec3 normal, Material material) {
-  calculate_direction(normal);
 
-  _origin = position;
-  _mat_translation = glm::translate(_mat_translation, position);
-  _normal = glm::normalize(normal);
+  set_start_position(position, normal);
+
   _material = material;
   _material2 = material;
   _two_colored = true;
-
-  calculate_inverse_mat();
-  print_matrices();
 }
 
 /**
@@ -47,16 +54,11 @@ Plane::Plane(vec3 position,
     vec3 normal,
     Material material1,
     Material material2) {
-  calculate_direction(normal);
+  set_start_position(position, normal);
 
-  _origin = position;
-  _mat_translation = glm::translate(_mat_translation, position);
-  _normal = glm::normalize(normal);
   _material = material1;
   _material2 = material2;
   _two_colored = true;
-
-  calculate_inverse_mat();
 }
 
 /***** Intersection *****/
@@ -112,6 +114,7 @@ void Plane::print(void) {
   Object::print();
   std::cout << "-----Plane------\n";
   std::cout << "Position: " << glm::to_string(_origin) << "\n";
+  std::cout << "Point: " << glm::to_string(_point) << "\n";
   std::cout << "Normal: " << glm::to_string(_normal) << "\n";
   std::cout << "----------------\n";
 }
@@ -121,5 +124,35 @@ void Plane::print(void) {
 void Plane::apply_transform(mat4 transformation) {
   Object::apply_transform(transformation);
 
-  _normal = _direction;
+  _transform.transform_point(transformation, &_point);
+  calculate_normal();
+}
+
+/**
+ * @brief Set new direction and update rotation matrix.
+ * 
+ * @param new_dir
+ */
+void Plane::calculate_direction(vec3 new_dir, vec3 old_direction) {
+  vec3 axis = glm::cross(old_direction, new_dir);
+
+  float radian = glm::acos(glm::dot(new_dir, old_direction) /
+      glm::length(new_dir) * glm::length(old_direction));
+  
+  float degree = glm::degrees(radian);
+
+  // if new_dir points to exactly th oposite direction axis = 0, 0, 0
+  // TODO(tobi) check if this is right or nonsense
+  if (axis.x == 0 && axis.y == 0 && axis.z == 0) {
+    axis = vec3(0, 1, 0);
+  }
+
+  mat4 t = _transform.add_rotation(axis, degree);
+  std::cout << "t: " << glm::to_string(axis) << "\n";
+  std::cout << "deg: " << degree << "\n";
+  apply_transform(t);
+}
+
+void Plane::calculate_normal() {
+  _normal = glm::normalize(_point - _origin);
 }

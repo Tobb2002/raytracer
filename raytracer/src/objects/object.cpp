@@ -143,26 +143,3 @@ void Object::rotate(vec3 axis, float degree) {
   mat4 rot = glm::rotate(glm::mat4(1.0), glm::radians(degree), axis);
   _transform.transform_point(rot, &_direction);
 }
-
-
-/**
- * @brief Set new direction and update rotation matrix.
- * 
- * @param new_dir
- */
-void Object::calculate_direction(vec3 new_dir) {
-  vec3 axis = glm::cross(_direction, new_dir);
-
-  float degree = glm::acos(glm::dot(new_dir, _direction) /
-      glm::length(new_dir) * glm::length(_direction));
-
-  // if new_dir points to exactly th oposite direction axis = 0, 0, 0
-  // TODO(tobi) check if this is right or nonsense
-  if (axis.x == 0 && axis.y == 0 && axis.z == 0) {
-    axis = vec3(0, 1, 0);
-  }
-
-  _mat_rotation = glm::rotate(_mat_rotation, degree, axis);
-  calculate_inverse_mat();
-  _transform.transform_point(_mat_rotation, &_direction);
-}

@@ -75,8 +75,6 @@ class Object {
 
   void calculate_inverse_mat(void);
 
-  void calculate_direction(vec3 direction);
-
  private:
   void initialize_matrices(void);
 };

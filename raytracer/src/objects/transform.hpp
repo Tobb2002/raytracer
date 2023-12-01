@@ -16,6 +16,9 @@ class Transform {
   mat4 add_translation(vec3 a);
   mat4 add_rotation(vec3 axis, float degree);
 
+  /***** Operations on matrices *****/
+  mat4 add_rotation_mat(vec3 axis, float degree);
+
   void calculate_inverse_mat(void);
   void transform_point(mat4 transformation, vec3 *point);
 

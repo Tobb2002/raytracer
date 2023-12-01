@@ -17,6 +17,7 @@ using glm::vec3;
 class Plane : public Object{
  public:
   Plane();
+  void set_start_position(vec3 position, vec3 normal);
   Plane(vec3 pos, vec3 normal, Material material);
   Plane(vec3 pos, vec3 normal, Material material1, Material material2);
 
@@ -30,12 +31,15 @@ class Plane : public Object{
 
   void apply_transform(mat4 transformation) override;
 
+  void calculate_direction(vec3 new_normal, vec3 old_direction);
 
- private:
+  void calculate_normal(void);
+
+private:
   vec3 _normal;
+  vec3 _point;
   Material _material;
   Material _material2;
-
 
   bool _two_colored;
 };
