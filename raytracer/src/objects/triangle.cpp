@@ -77,12 +77,6 @@ Intersection Triangle::intersect(Ray ray) {
   return i;
 }
 
-void Triangle::move(vec3 vec) {
-  for (int i = 0; i < 3; i++) {
-    _p[i] +=vec;
-  }
-}
-
 vec3 Triangle::get_normal() { return _normal; }
 Material Triangle::get_material(void) { return _material; }
 

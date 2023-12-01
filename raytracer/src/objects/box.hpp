@@ -31,7 +31,6 @@ class Box : public Object{
   vec3 get_middle(void);
 
   // Transformations
-  void move(vec3 vec) override;
   void apply_transform(mat4 transformation) override;
 
   void print(void);

@@ -20,7 +20,6 @@ class Triangle : public Object{
   Intersection intersect(Ray ray) override;
 
   // transformations
-  void move(vec3 vec) override;
   void apply_transform(mat4 transformation) override;
 
   // getters
