@@ -87,7 +87,7 @@ Material Plane::get_material(vec3 point) {
   }
 
   // calculate point relative to standart plane (at origin)
-  vec3 point_origin = virtual_to_origin(point);
+  vec3 point_origin = _transform.virtual_to_origin(point);
   vec3 point_origin_mod = glm::mod(point_origin, 4.f);
 
   // return diffrent colors for x,y specific values
@@ -118,8 +118,8 @@ void Plane::print(void) {
 
 /***** Transformation *****/
 
-void Plane::transform(mat4 transformation) {
-  Object::transform(transformation);
+void Plane::apply_transform(mat4 transformation) {
+  Object::apply_transform(transformation);
 
   _normal = _direction;
 }

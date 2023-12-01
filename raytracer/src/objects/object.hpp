@@ -9,6 +9,7 @@
 
 #include "ray.hpp"
 #include "material.hpp"
+#include "transform.hpp"
 
 using glm::vec3;
 using glm::vec4;
@@ -49,18 +50,20 @@ class Object {
 
   /***** Transformations *****/
 
+// DONE
   virtual void move(vec3 a);
+// DONE
   virtual void rotate(vec3 axis, float degree);
-  virtual void transform(mat4 transformation);
+  virtual void apply_transform(mat4 transformation);
 
-  vec3 origin_to_virtual(vec3 point);
-  vec3 virtual_to_origin(vec3 point);
 
  protected:
   vec3 _origin;  // standart 0,0,0
   vec3 _direction;  // standart 0,0,1
 
   /***** Transformations *****/
+
+  Transform _transform;
 
   mat4 _mat_translation;
   mat4 _mat_rotation;
@@ -71,8 +74,6 @@ class Object {
   mat4 _mat_inv_scale;
 
   void calculate_inverse_mat(void);
-  void transform_matrices(mat4 transformation);
-  void transform_point(mat4 transformation, vec3 *point);
 
   void calculate_direction(vec3 direction);
 

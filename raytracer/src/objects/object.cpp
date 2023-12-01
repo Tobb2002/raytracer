@@ -115,45 +115,19 @@ void Object::calculate_inverse_mat(void) {
  */
 void Object::move(vec3 a) {
   std::cout << "moving object\n";
-  mat4 t = glm::mat4x4(vec4(1, 0, 0, 0),
-                vec4(0, 1, 0, 0),
-                vec4(0, 0, 1, 0),
-                vec4(a, 1));
 
-  transform(t);
-  _mat_translation = _mat_translation * t;
-  calculate_inverse_mat();
+  mat4 t = _transform.add_translation(a);
+  apply_transform(t);
 }
 
-/**
- * @brief Transform a point.
- * 
- * @param transformation transformation matrix.
- * @param point Point to be transformed.
- */
-void Object::transform_point(mat4 transformation, vec3 *point) {
-  *point =  transformation * vec4(*point, 1);
-}
-
-/**
- * @brief Apply transformation to transformation matrices.
- * 
- * @param transformation
- */
-void Object::transform_matrices(mat4 transformation) {
-  _mat_translation = transformation * _mat_translation;
-  _mat_rotation = transformation * _mat_rotation;
-
-  calculate_inverse_mat();
-}
 
 /**
  * @brief Apply transformation to Object.
  * 
  * @param transformation 
  */
-void Object::transform(mat4 transformation) {
-  transform_point(transformation, &_origin);
+void Object::apply_transform(mat4 transformation) {
+  _transform.transform_point(transformation, &_origin);
 }
 
 /**
@@ -163,43 +137,11 @@ void Object::transform(mat4 transformation) {
  * @param degree Angle to rotate.
  */
 void Object::rotate(vec3 axis, float degree) {
-  axis = glm::normalize(axis);  // recommended for glm library
+  apply_transform(_transform.add_rotation(axis, degree));
+  
+  // TODO remove when plane updatet
   mat4 rot = glm::rotate(glm::mat4(1.0), glm::radians(degree), axis);
-
-  // move to origin -> rotate -> move back
-  transform(_mat_translation * rot * _mat_inv_translation);
-  // transform direction vector
-  transform_point(rot, &_direction);
-
-  // update rotation matrices
-  _mat_rotation = rot * _mat_rotation;
-  calculate_inverse_mat();
-}
-
-/**
- * @brief Calculate corresponding point in world with transformation matrices applied.
- * 
- * @param point 
- * @return vec3 
- */
-vec3 Object::origin_to_virtual(vec3 point) {
-  mat4 transform = _mat_translation * _mat_rotation;
-  vec3 res = point;
-  transform_point(transform, &res);
-  return res;
-}
-
-/**
- * @brief Calculate corresponding point without transformations applied.
- * 
- * @param point 
- * @return vec3 
- */
-vec3 Object::virtual_to_origin(vec3 point) {
-  mat4 transform = _mat_inv_rotation * _mat_inv_translation;
-  vec3 res = point;
-  transform_point(transform, &res);
-  return res;
+  _transform.transform_point(rot, &_direction);
 }
 
 
@@ -222,5 +164,5 @@ void Object::calculate_direction(vec3 new_dir) {
 
   _mat_rotation = glm::rotate(_mat_rotation, degree, axis);
   calculate_inverse_mat();
-  transform_point(_mat_rotation, &_direction);
+  _transform.transform_point(_mat_rotation, &_direction);
 }

@@ -8,14 +8,27 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 
-using glm::vec3, glm::vec4, glm::mat4x4;
+using glm::vec3, glm::vec4, glm::mat4;
 
-// scale a given relative to the origin
-vec3 scale(vec3 point, vec3 factor) {
-  vec4 f = vec4(factor, 1);
-  mat4x4 scale_mat = mat4x4(1.f);
+class Transform {
+ public:
 
-  scale_mat[1] = f;
+  mat4 add_translation(vec3 a);
+  mat4 add_rotation(vec3 axis, float degree);
 
-  return scale_mat * f;
-}
+  void calculate_inverse_mat(void);
+  void transform_point(mat4 transformation, vec3 *point);
+
+  vec3 origin_to_virtual(vec3 point);
+  vec3 virtual_to_origin(vec3 point);
+
+ private:
+  struct Matrices {
+    mat4 translation = glm::mat4(1.f);
+    mat4 rotation = glm::mat4(1.f);
+    mat4 scale = glm::mat4(1.f);
+  };
+  
+  Matrices _mat;
+  Matrices _mat_inv;
+};

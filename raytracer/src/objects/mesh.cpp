@@ -100,14 +100,14 @@ void Mesh::move(vec3 vec) {
  * 
  * @param transformation transformation matrix.
  */
-void Mesh::transform(mat4 transformation) {
-  Object::transform(transformation);
+void Mesh::apply_transform(mat4 transformation) {
+  Object::apply_transform(transformation);
 
-  _bounding_box.transform(transformation);
+  _bounding_box.apply_transform(transformation);
 
   for (size_t i = 0; i < _triangles.size(); i++) {
     Triangle *t = &_triangles[i];
-    t->transform(transformation);
+    t->apply_transform(transformation);
     // check if t is outside of bounding box
     update_bounding_box(t);
   }
@@ -226,7 +226,5 @@ void Mesh::read_from_obj(std::string inputfile) {
     // shapes[s].mesh.material_ids[f];
   }
   _origin = _bounding_box.get_middle();
-  _mat_translation = glm::translate(_mat_translation, _origin);
-
-  calculate_inverse_mat();
+  _transform.add_translation(_origin);
 }

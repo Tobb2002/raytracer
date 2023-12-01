@@ -126,11 +126,11 @@ void Triangle::print() {
  * transformation
  */
 
-void Triangle::transform(mat4 transformation) {
-  Object::transform(transformation);
+void Triangle::apply_transform(mat4 transformation) {
+  Object::apply_transform(transformation);
 
   for (int i = 0; i < 3; i++) {
-    transform_point(transformation, &_p[i]);
+    _transform.transform_point(transformation, &_p[i]);
   }
   _normal = calculate_normal();
 }

@@ -23,7 +23,7 @@ class Mesh : public Object{
 
   /***** Transformations *****/
   void move(vec3 vec) override;
-  void transform(mat4 transformation) override;
+  void apply_transform(mat4 transformation) override;
 
 
   /***** getters *****/

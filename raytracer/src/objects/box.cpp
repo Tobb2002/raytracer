@@ -135,11 +135,11 @@ bool Box::intersect_bool(Ray ray) {
   return true;
 }
 
-void Box::transform(mat4 transformation) {
-  Object::transform(transformation);
+void Box::apply_transform(mat4 transformation) {
+  Object::apply_transform(transformation);
 
-  transform_point(transformation, &_min);
-  transform_point(transformation, &_max);
+  _transform.transform_point(transformation, &_min);
+  _transform.transform_point(transformation, &_max);
 
   ensure_min_max();
 }

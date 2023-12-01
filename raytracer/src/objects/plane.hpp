@@ -28,7 +28,7 @@ class Plane : public Object{
 
   // transformations
 
-  void transform(mat4 transformation) override;
+  void apply_transform(mat4 transformation) override;
 
 
  private:

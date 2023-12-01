@@ -24,5 +24,5 @@ void ObjectFactory::new_square_pattern(Object *object,
       // objects = _scene->add_object(object);
     }
   }
-  // transform all objects to final position
+  // apply_transform all objects to final position
 }
