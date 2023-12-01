@@ -12,9 +12,6 @@ using glm::vec4;
 Object::Object() {
   _origin = vec3(0, 0, 0);
   _direction = vec3(0, 0, 1);
-
-  initialize_matrices();
-  calculate_inverse_mat();
 }
 
 /**
@@ -60,53 +57,13 @@ void Object::print(void) {
 }
 
 /**
- * @brief Print all the transformation matrices.
+ * @brief Print all the transformation infos.
  */
 void Object::print_matrices(void) {
-  std::cout << "-----Object-----\n";
-  std::cout << "-----Matrix-----\n";
-  std::cout << "translation:\n" << glm::to_string(_mat_translation) << "\n";
-  std::cout << "rotation:\n" << glm::to_string(_mat_rotation) << "\n";
-  std::cout << "inv translation:\n" << glm::to_string(_mat_inv_translation) <<
-      "\n";
-  std::cout << "inv rotation:\n" << glm::to_string(_mat_inv_rotation) << "\n";
-  std::cout << "----------------\n";
+  _transform.print();
 }
 
-/*
- * Transformation
- */
-
-/**
- * @brief Initialize transformation matrices to identity matrices.
- */
-void Object::initialize_matrices(void) {
-  // matrices should be identity matrix at beginning.
-  _mat_translation = glm::mat4(1.0);
-  _mat_rotation = glm::mat4(1.0);
-  _mat_scale = glm::mat4(1.0);
-
-  calculate_inverse_mat();
-}
-
-
-/**
- * @brief calculate the inverse for all transformation matrices.
- */
-void Object::calculate_inverse_mat(void) {
-  // translation T^-1(t) = T(-t)
-  _mat_inv_translation =  mat4(vec4(1, 0, 0, 0),
-                               vec4(0, 1, 0, 0),
-                               vec4(0, 0, 1, 0),
-                               vec4(_mat_translation[3][0] * -1,
-                                    _mat_translation[3][1] * -1,
-                                    _mat_translation[3][2] * -1,
-                                    1));
-  // rotation R^-1 = transpose(Rx)
-  _mat_inv_rotation = glm::transpose(_mat_rotation);
-  // scale S^-1 = S(1/s)
-  // _mat_inv_scale = glm::compScale
-}
+/***** Transformations *****/
 
 /**
  * @brief Move Object.

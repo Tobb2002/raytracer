@@ -25,6 +25,8 @@ class Transform {
   vec3 origin_to_virtual(vec3 point);
   vec3 virtual_to_origin(vec3 point);
 
+  void print(void);
+
  private:
   struct Matrices {
     mat4 translation = glm::mat4(1.f);

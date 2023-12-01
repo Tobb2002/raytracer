@@ -64,17 +64,4 @@ class Object {
   /***** Transformations *****/
 
   Transform _transform;
-
-  mat4 _mat_translation;
-  mat4 _mat_rotation;
-  mat4 _mat_scale;
-
-  mat4 _mat_inv_translation;
-  mat4 _mat_inv_rotation;
-  mat4 _mat_inv_scale;
-
-  void calculate_inverse_mat(void);
-
- private:
-  void initialize_matrices(void);
 };

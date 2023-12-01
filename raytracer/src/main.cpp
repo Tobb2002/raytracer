@@ -23,7 +23,7 @@ int main(void) {
   Mesh m = Mesh("data/input/bunny_scaled.obj",
       vec3(1.2, -4.8, -16), {.color = vec3(0, 1, 0)});
   Mesh m2 = Mesh("data/input/cube.obj",
-      vec3(0, -3, -15), {.color = vec3(1, 0, 0), .mirror = 0.3});
+      vec3(-2, -4, -13), {.color = vec3(1, 0, 0), .mirror = 0.3});
   Plane plane = Plane(vec3(-2, -4, -13), vec3(0, 1, 0),
       {.color = vec3(1 , 1, 1), .mirror = 0.0},
       {.color = vec3(0.6, 0.6, 0.6), .mirror = 0.0});
@@ -58,7 +58,8 @@ int main(void) {
 
     // motion
     // plane.rotate(vec3(0, 1, 0), rotation/samples);
-    m2.rotate(vec3(0, 1, 0), rotation/samples);
+    plane.rotate(vec3(1, 0, 0), rotation/samples);
+    m2.rotate(vec3(1, 0, 0), rotation/samples);
     // plane.move(vec3(1, 0, 0));
   }
   return 0;

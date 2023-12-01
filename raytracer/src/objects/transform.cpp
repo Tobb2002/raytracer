@@ -3,6 +3,8 @@
  */
 
 #include "transform.hpp"
+#include <glm/gtx/string_cast.hpp>
+#include <iostream>
 
 mat4 Transform::add_translation(vec3 a) {
   mat4 t = glm::mat4x4(vec4(1, 0, 0, 0),
@@ -92,4 +94,14 @@ vec3 Transform::virtual_to_origin(vec3 point) {
   vec3 res = point;
   transform_point(transform, &res);
   return res;
+}
+
+void Transform::print() {
+  std::cout << "---Transform----\n";
+  std::cout << "translation:\n" << glm::to_string(_mat.translation) << "\n";
+  std::cout << "rotation:\n" << glm::to_string(_mat.rotation) << "\n";
+  std::cout << "inv translation:\n" << glm::to_string(_mat_inv.translation) <<
+      "\n";
+  std::cout << "inv rotation:\n" << glm::to_string(_mat_inv.rotation) << "\n";
+  std::cout << "----------------\n";
 }
