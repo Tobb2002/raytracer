@@ -50,10 +50,10 @@ class Object {
 
   /***** Transformations *****/
 
-// DONE
-  virtual void move(vec3 a);
-// DONE
-  virtual void rotate(vec3 axis, float degree);
+  void move(vec3 a);
+  void rotate(vec3 axis, float degree);
+
+  void transform(mat4 transformation);
   virtual void apply_transform(mat4 transformation);
 
 
@@ -64,4 +64,5 @@ class Object {
   /***** Transformations *****/
 
   Transform _transform;
+  Transformation _view_transform;
 };

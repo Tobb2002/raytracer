@@ -74,7 +74,7 @@ void Object::move(vec3 a) {
   std::cout << "moving object\n";
 
   mat4 t = _transform.add_translation(a);
-  apply_transform(t);
+  transform(t);
 }
 
 
@@ -94,9 +94,15 @@ void Object::apply_transform(mat4 transformation) {
  * @param degree Angle to rotate.
  */
 void Object::rotate(vec3 axis, float degree) {
-  apply_transform(_transform.add_rotation(axis, degree));
+  transform(_transform.add_rotation(axis, degree));
   
   // TODO remove when plane updatet
   mat4 rot = glm::rotate(glm::mat4(1.0), glm::radians(degree), axis);
   _transform.transform_point(rot, &_direction);
+}
+
+void Object::transform(mat4 t) {
+  apply_transform(_view_transform.inv);
+  apply_transform(t);
+  apply_transform(_view_transform.mat);
 }
