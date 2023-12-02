@@ -15,11 +15,17 @@ struct Transformation{
   mat4 inv = glm::mat4(1.0);
 };
 
+struct Rotation {
+  vec3 axis;
+  float degree;
+};
+
 class Transform {
  public:
 
   mat4 add_translation(vec3 a);
   mat4 add_rotation(vec3 axis, float degree);
+  mat4 add_rotation(vec3 point, vec3 axis, float degree);
 
   /***** Operations on matrices *****/
   mat4 add_rotation_mat(vec3 axis, float degree);
@@ -30,6 +36,10 @@ class Transform {
 
   mat4 get_combined(void);
   mat4 get_combined_inv(void);
+
+  /***** Calculations *****/
+
+  Rotation calculate_rotation(vec3 dir1, vec3 dir2);
 
   vec3 origin_to_virtual(vec3 point);
   vec3 virtual_to_origin(vec3 point);

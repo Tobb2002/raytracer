@@ -21,8 +21,8 @@ mat4 Transform::add_translation(vec3 a) {
 /**
  * @brief adds_rotation around object origin.
  * 
- * @param axis 
- * @param degree 
+ * @param axis rotation axis.
+ * @param degree degree to rotate.
  * @return mat4 
  */
 mat4 Transform::add_rotation(vec3 axis, float degree) {
@@ -37,6 +37,18 @@ mat4 Transform::add_rotation(vec3 axis, float degree) {
   calculate_inverse_mat();
 
   return t;
+}
+
+/**
+ * @brief Add rotation around a point.
+ * 
+ * @param point point to rotate around.
+ * @param axis Rotation axis
+ * @param degree degree to rotate.
+ * @return mat4 
+ */
+mat4 Transform::add_rotation(vec3 point, vec3 axis, float degree) {
+
 }
 
 /**
@@ -86,15 +98,45 @@ vec3 Transform::transform_point(mat4 t, vec3 point) {
   return t * vec4(point, 1);
 }
 
+/**
+ * @brief Get the combined matrix of current transformation.
+ * 
+ * @return mat4 
+ */
 mat4 Transform::get_combined(void) {
   return _mat.translation * _mat.rotation;
 }
 
+/**
+ * @brief Get the combined inverse matrix of current transformation.
+ * 
+ * @return mat4 
+ */
 mat4 Transform::get_combined_inv(void) {
   return _mat_inv.rotation * _mat.translation;
 }
 
-vec3 Transform::origin_to_virtual(vec3 point) {
+/// @brief Calculate th angle between two directions
+Rotation Transform::calculate_rotation(vec3 dir1, vec3 dir2) {
+  vec3 axis = glm::cross(dir2, dir1);
+
+  // if new_dir points to exactly th oposite direction axis = 0, 0, 0
+  // TODO(tobi) check if this is right or nonsense
+  if (axis.x == 0 && axis.y == 0 && axis.z == 0) {
+    axis = vec3(0, 1, 0);
+  }
+
+  float radian = glm::acos(glm::dot(dir1, dir2) /
+      glm::length(dir1) * glm::length(dir2));
+
+
+  Rotation rot = {axis, glm::degrees(radian)};
+  
+  return rot;
+}
+
+vec3 Transform::origin_to_virtual(vec3 point)
+{
   mat4 transform = _mat.translation * _mat.rotation;
   vec3 res = point;
   transform_point(transform, &res);

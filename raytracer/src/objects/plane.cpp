@@ -134,22 +134,12 @@ void Plane::apply_transform(mat4 transformation) {
  * @param new_dir
  */
 void Plane::calculate_direction(vec3 new_dir, vec3 old_direction) {
-  vec3 axis = glm::cross(old_direction, new_dir);
+  Rotation rot = _transform.calculate_rotation(new_dir, old_direction);
 
-  float radian = glm::acos(glm::dot(new_dir, old_direction) /
-      glm::length(new_dir) * glm::length(old_direction));
-  
-  float degree = glm::degrees(radian);
 
-  // if new_dir points to exactly th oposite direction axis = 0, 0, 0
-  // TODO(tobi) check if this is right or nonsense
-  if (axis.x == 0 && axis.y == 0 && axis.z == 0) {
-    axis = vec3(0, 1, 0);
-  }
-
-  mat4 t = _transform.add_rotation(axis, degree);
-  std::cout << "t: " << glm::to_string(axis) << "\n";
-  std::cout << "deg: " << degree << "\n";
+  mat4 t = _transform.add_rotation(rot.axis, rot.degree);
+  std::cout << "t: " << glm::to_string(rot.axis) << "\n";
+  std::cout << "deg: " << rot.degree << "\n";
   apply_transform(t);
 }
 
