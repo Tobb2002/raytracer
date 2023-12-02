@@ -146,3 +146,7 @@ Transformation Camera::get_view_transform(void) {
 void Camera::rotate(vec3 axis, float degree) {
   _transform.add_rotation(axis, degree);
 }
+
+void Camera::rotate(vec3 point, vec3 axis, float degree) {
+  _transform.add_rotation(point, axis, degree);
+}

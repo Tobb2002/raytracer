@@ -8,7 +8,7 @@
 
 mat4 Transform::add_translation(vec3 a) {
   mat4 t = get_translation_mat(a);
-  _mat.translation = _mat.translation * t;
+  apply_to_mat(&_mat.translation, t);
   calculate_inverse_mat();
 
   return t;
@@ -29,7 +29,7 @@ mat4 Transform::add_rotation(vec3 axis, float degree) {
   mat4 t = _mat.translation * rot * _mat_inv.translation;
 
   // update rotation matrices
-  _mat.rotation = rot * _mat.rotation;
+  apply_to_mat(&_mat.rotation, rot);
   calculate_inverse_mat();
 
   return t;
@@ -129,7 +129,7 @@ mat4 Transform::get_combined(void) {
  * @return mat4 
  */
 mat4 Transform::get_combined_inv(void) {
-  return _mat_inv.rotation * _mat.translation;
+  return _mat_inv.rotation * _mat_inv.translation;
 }
 
 /// @brief Calculate th angle between two directions

@@ -27,6 +27,7 @@ class Camera {
 
   /***** Transformations *****/
   void rotate(vec3 axis, float degree);
+  void rotate(vec3 point, vec3 axis, float degree);
   void move(vec3 a);
 
   Transformation get_view_transform(void);

@@ -24,7 +24,7 @@ int main(void) {
   Mesh m = Mesh("data/input/bunny_scaled.obj",
       vec3(1.2, -4.8, -16), {.color = vec3(0, 1, 0)});
   Mesh m2 = Mesh("data/input/cube.obj",
-      vec3(0, -3, -13), {.color = vec3(1, 0, 0), .mirror = 0.3});
+      vec3(-2, -3, -13), {.color = vec3(1, 0, 0), .mirror = 0.3});
   Plane plane = Plane(origin, vec3(0, 1, 0),
       {.color = vec3(1 , 1, 1), .mirror = 0.0},
       {.color = vec3(0.6, 0.6, 0.6), .mirror = 0.0});
@@ -64,8 +64,9 @@ int main(void) {
     //scene.get_object(1)->rotate(vec3(1, 0, 0), rotation/samples);
     //m2.rotate(vec3(1, 0, 0), rotation/samples);
     //m2.move(vec3(0.1, 0, 0));
-    plane.rotate(vec3(0, -4, -13), vec3(0, 0, 1), rotation/samples);
-    plane.print_matrices();
+    //scene.get_camera()->rotate(origin, vec3(0, 1, 0), rotation/samples);
+    scene.get_camera()->move(vec3(0, 0, -1));
+    scene.update_view_transform();
     //scene.get_camera()->rotate(vec3(0, 1, 0), +5);
     //scene.update_view_transform();
     //scene.update_view_transform();
