@@ -103,6 +103,10 @@ void Object::rotate(vec3 axis, float degree) {
   transform(_transform.add_rotation(axis, degree));
 }
 
+void Object::rotate(vec3 point, vec3 axis, float degree) {
+  transform(_transform.add_rotation(point, axis, degree));
+}
+
 void Object::transform(mat4 t) {
   apply_transform(_view_transform.inv);
   apply_transform(t);

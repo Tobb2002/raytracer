@@ -20,11 +20,12 @@
 using glm::vec3;
 
 int main(void) {
+  vec3 origin = vec3(-2, -4, -13);
   Mesh m = Mesh("data/input/bunny_scaled.obj",
       vec3(1.2, -4.8, -16), {.color = vec3(0, 1, 0)});
   Mesh m2 = Mesh("data/input/cube.obj",
-      vec3(-2, -4, -13), {.color = vec3(1, 0, 0), .mirror = 0.3});
-  Plane plane = Plane(vec3(-2, -4, -13), vec3(0, 1, 0),
+      vec3(0, -3, -13), {.color = vec3(1, 0, 0), .mirror = 0.3});
+  Plane plane = Plane(origin, vec3(0, 1, 0),
       {.color = vec3(1 , 1, 1), .mirror = 0.0},
       {.color = vec3(0.6, 0.6, 0.6), .mirror = 0.0});
   // Plane plane2 = Plane(vec3(0, 0, -50), vec3(0, 0, -1), vec3(0, 0.5, 1));
@@ -63,12 +64,12 @@ int main(void) {
     //scene.get_object(1)->rotate(vec3(1, 0, 0), rotation/samples);
     //m2.rotate(vec3(1, 0, 0), rotation/samples);
     //m2.move(vec3(0.1, 0, 0));
-    scene.get_camera()->rotate(vec3(0, 1, 0), +5);
-    plane.update_view_transform(scene.get_camera()->get_view_transform());
-    m2.update_view_transform(scene.get_camera()->get_view_transform());
-    plane.print();
+    m2.rotate(origin, vec3(0, 1, 0), rotation/samples);
+    //scene.get_camera()->rotate(vec3(0, 1, 0), +5);
+    //scene.update_view_transform();
     //scene.update_view_transform();
     //plane.move(vec3(1, 0, 0));
+
   }
   return 0;
 }

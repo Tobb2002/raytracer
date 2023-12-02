@@ -136,10 +136,7 @@ void Plane::apply_transform(mat4 transformation) {
 void Plane::calculate_direction(vec3 new_dir, vec3 old_direction) {
   Rotation rot = _transform.calculate_rotation(new_dir, old_direction);
 
-
   mat4 t = _transform.add_rotation(rot.axis, rot.degree);
-  std::cout << "t: " << glm::to_string(rot.axis) << "\n";
-  std::cout << "deg: " << rot.degree << "\n";
   apply_transform(t);
 }
 

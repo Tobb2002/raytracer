@@ -52,6 +52,7 @@ class Object {
 
   void move(vec3 a);
   void rotate(vec3 axis, float degree);
+  void rotate(vec3 point, vec3 axis, float degree);
 
   void transform(mat4 transformation);
   virtual void apply_transform(mat4 transformation);

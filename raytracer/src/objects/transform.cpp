@@ -7,11 +7,7 @@
 #include <iostream>
 
 mat4 Transform::add_translation(vec3 a) {
-  mat4 t = glm::mat4x4(vec4(1, 0, 0, 0),
-                vec4(0, 1, 0, 0),
-                vec4(0, 0, 1, 0),
-                vec4(a, 1));
-
+  mat4 t = get_translation_mat(a);
   _mat.translation = _mat.translation * t;
   calculate_inverse_mat();
 
@@ -27,7 +23,7 @@ mat4 Transform::add_translation(vec3 a) {
  */
 mat4 Transform::add_rotation(vec3 axis, float degree) {
   axis = glm::normalize(axis);  // recommended for glm library
-  mat4 rot = glm::rotate(glm::mat4(1.0), glm::radians(degree), axis);
+  mat4 rot = get_rotation_mat({axis, degree});
 
   // move to origin -> rotate -> move back
   mat4 t = _mat.translation * rot * _mat_inv.translation;
@@ -48,7 +44,27 @@ mat4 Transform::add_rotation(vec3 axis, float degree) {
  * @return mat4 
  */
 mat4 Transform::add_rotation(vec3 point, vec3 axis, float degree) {
+  vec3 origin = get_current_origin();
+  vec3 v = origin - point;
+  
+  //calculate rotation
+  mat4 rot = get_rotation_mat({axis, degree});
+  transform_point(rot, &v);
 
+  // calculate translation from world origin
+  mat4 origin_to_pos =
+      get_translation_mat(v) * get_translation_mat(point);
+
+  // update matrices
+  apply_to_mat(&_mat.rotation, rot);
+  apply_to_mat(&_mat.translation, origin_to_pos * _mat_inv.translation);
+  // calculate transformation to move object to new position
+
+  mat4 t = origin_to_pos * rot * _mat_inv.translation;
+
+  calculate_inverse_mat();
+
+  return t;
 }
 
 /**
@@ -59,10 +75,10 @@ mat4 Transform::add_rotation(vec3 point, vec3 axis, float degree) {
  */
 mat4 Transform::add_rotation_mat(vec3 axis, float degree) {
   axis = glm::normalize(axis);  // recommended for glm library
-  mat4 rot = glm::rotate(glm::mat4(1.0), glm::radians(degree), axis);
+  mat4 rot = get_rotation_mat({axis, degree});
 
   // update rotation matrices
-  _mat.rotation = rot * _mat.rotation;
+  apply_to_mat(&_mat.rotation, rot);
   calculate_inverse_mat();
 
   return _mat.rotation;
@@ -158,4 +174,23 @@ void Transform::print() {
       "\n";
   std::cout << "inv rotation:\n" << glm::to_string(_mat_inv.rotation) << "\n";
   std::cout << "----------------\n";
+}
+
+vec3 Transform::get_current_origin(void) {
+  return transform_point(_mat.translation, vec3(0, 0, 0));
+}
+
+mat4 Transform::get_rotation_mat(Rotation rot) {
+  return glm::rotate(glm::mat4(1.0), glm::radians(rot.degree), rot.axis);
+}
+
+mat4 Transform::get_translation_mat(vec3 v) {
+  return glm::mat4x4(vec4(1, 0, 0, 0),
+                vec4(0, 1, 0, 0),
+                vec4(0, 0, 1, 0),
+                vec4(v, 1));
+}
+
+void Transform::apply_to_mat(mat4 *mat, mat4 t) {
+  _mat.rotation = t * *mat;
 }

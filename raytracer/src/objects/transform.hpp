@@ -52,6 +52,12 @@ class Transform {
     mat4 rotation = glm::mat4(1.f);
     mat4 scale = glm::mat4(1.f);
   };
+
+  vec3 get_current_origin(void);
+  mat4 get_rotation_mat(Rotation rot);
+  mat4 get_translation_mat(vec3 v);
+
+  void apply_to_mat(mat4 *mat, mat4 t);
   
   Matrices _mat;
   Matrices _mat_inv;
