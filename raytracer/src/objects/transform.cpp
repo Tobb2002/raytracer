@@ -47,20 +47,20 @@ mat4 Transform::add_rotation(vec3 point, vec3 axis, float degree) {
   vec3 origin = get_current_origin();
   vec3 v = origin - point;
   
-  //calculate rotation
+  // calculate rotation
   mat4 rot = get_rotation_mat({axis, degree});
   transform_point(rot, &v);
 
-  // calculate translation from world origin
+  // calculate translation from world origin to new pos
   mat4 origin_to_pos =
       get_translation_mat(v) * get_translation_mat(point);
+
+  // calculate transformation to move object to new position
+  mat4 t = origin_to_pos * rot * _mat_inv.translation;
 
   // update matrices
   apply_to_mat(&_mat.rotation, rot);
   apply_to_mat(&_mat.translation, origin_to_pos * _mat_inv.translation);
-  // calculate transformation to move object to new position
-
-  mat4 t = origin_to_pos * rot * _mat_inv.translation;
 
   calculate_inverse_mat();
 
@@ -192,5 +192,5 @@ mat4 Transform::get_translation_mat(vec3 v) {
 }
 
 void Transform::apply_to_mat(mat4 *mat, mat4 t) {
-  _mat.rotation = t * *mat;
+  *mat = t * *mat;
 }

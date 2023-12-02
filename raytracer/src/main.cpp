@@ -64,7 +64,8 @@ int main(void) {
     //scene.get_object(1)->rotate(vec3(1, 0, 0), rotation/samples);
     //m2.rotate(vec3(1, 0, 0), rotation/samples);
     //m2.move(vec3(0.1, 0, 0));
-    m2.rotate(origin, vec3(0, 1, 0), rotation/samples);
+    plane.rotate(vec3(0, -4, -13), vec3(0, 0, 1), rotation/samples);
+    plane.print_matrices();
     //scene.get_camera()->rotate(vec3(0, 1, 0), +5);
     //scene.update_view_transform();
     //scene.update_view_transform();
