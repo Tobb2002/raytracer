@@ -260,6 +260,9 @@ void Scene::update_view_transform(void) {
   for (Object * object: _objects) {
     object->update_view_transform(view_transform);
   }
+  for (Pointlight *light: _lights) {
+    light->update_view_transform(view_transform);
+  }
 }
 
 /// @brief Calculates light transport a long a ray in the scene.

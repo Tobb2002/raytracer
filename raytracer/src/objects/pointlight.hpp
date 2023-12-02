@@ -4,10 +4,11 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include "object.hpp"
 
 using glm::vec3;
 
-class Pointlight {
+class Pointlight : public Object {
  public:
   Pointlight(vec3 position, vec3 color);
   Pointlight(vec3 position, float intensity);
@@ -17,6 +18,5 @@ class Pointlight {
   vec3 get_color();
 
  private:
-  vec3 _position;
   vec3 _color;
 };
