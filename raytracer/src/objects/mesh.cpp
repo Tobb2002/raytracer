@@ -4,6 +4,7 @@
 
 #include "mesh.hpp"
 #include "lib/objloader.hpp"
+#include "bvh.hpp"
 
 #include <glm/gtx/string_cast.hpp>
 

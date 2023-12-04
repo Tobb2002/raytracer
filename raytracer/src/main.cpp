@@ -16,6 +16,8 @@
 #include "scene.hpp"
 #include "objects/material.hpp"
 
+#include "objects/bvh.hpp"
+
 
 using glm::vec3;
 
@@ -45,6 +47,9 @@ int main(void) {
   scene.add_object(&plane);
   //scene.add_object(&m2);
   // scene.add_object(&plane2);
+
+  // test bvh parts
+
 
   // generate animation
   float rotation = 90;

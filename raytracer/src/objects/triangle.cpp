@@ -17,6 +17,7 @@ Triangle::Triangle() {
     _p[i] = vec3(0, 0, 0);
   }
   _normal = vec3(0, 0, 0);
+  _middle_point = calculate_middle();
 }
 
 Triangle::Triangle(vec3 points[3], Material material) {
@@ -33,6 +34,11 @@ vec3 Triangle::calculate_normal(void) {
   vec3 v2 = _p[1] - _p[2];
 
   return glm::normalize(glm::cross(v1, v2));
+}
+
+vec3 Triangle::calculate_middle(void) {
+  // TODO(tobi) implement real middle point
+  return _p[0];
 }
 
 // calculate intersection and give back t.
@@ -78,6 +84,7 @@ Intersection Triangle::intersect(Ray ray) {
 }
 
 vec3 Triangle::get_normal() { return _normal; }
+vec3 Triangle::get_pos() { return _middle_point; }
 Material Triangle::get_material(void) { return _material; }
 
 void Triangle::set_material(Material material) { _material = material; }
@@ -126,5 +133,6 @@ void Triangle::apply_transform(mat4 transformation) {
   for (int i = 0; i < 3; i++) {
     _transform.transform_point(transformation, &_p[i]);
   }
+  _transform.transform_point(transformation, &_middle_point);
   _normal = calculate_normal();
 }

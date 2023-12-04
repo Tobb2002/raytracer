@@ -35,7 +35,7 @@ animation:
 docs:
 	doxygen doxygen.conf
 
-files = main ray triangle camera image mesh pointlight box plane scene object objloader object_factory transform
+files = main ray triangle camera image mesh pointlight box plane scene object objloader object_factory transform bvh
 
 targets = $(addsuffix .o,$(addprefix obj/,$(files)))
 

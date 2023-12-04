@@ -24,6 +24,7 @@ class Triangle : public Object{
 
   // getters
   vec3 get_normal();
+  vec3 get_pos();
   Material get_material(void);
   void set_material(Material material);
 
@@ -34,8 +35,10 @@ class Triangle : public Object{
 
  private:
   vec3 _p[3];
+  vec3 _middle_point;
   Material _material;
   vec3 _normal;
 
   vec3 calculate_normal(void);
+  vec3 calculate_middle(void);
 };
