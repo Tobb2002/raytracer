@@ -9,6 +9,7 @@
 #include "triangle.hpp"
 #include "box.hpp"
 #include "object.hpp"
+#include "bvh.hpp"
 
 class Mesh : public Object{
  public:
@@ -39,6 +40,7 @@ class Mesh : public Object{
   int _size;
   vec3 _origin;
   Box _bounding_box;
+  BVH _bvh;
 
   Material _material;
 

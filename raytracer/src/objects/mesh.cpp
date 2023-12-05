@@ -33,6 +33,7 @@ Mesh::Mesh(std::string input_file, vec3 origin, Material material) {
   _origin = origin;
   _material = material;
   read_from_obj(input_file);  // read file with origin as offset
+  _bvh.build_tree(&_triangles);
 }
 
 Mesh::~Mesh() {}
