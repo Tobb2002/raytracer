@@ -120,30 +120,7 @@ void Mesh::update_bounding_box(Triangle * t) {
 /***** Functions *****/
 
 Intersection Mesh::intersect(Ray ray) {
-  // calculate the intersection with the smallest value for t
-  Triangle triangle_best;
-  float t_min = MAXFLOAT;
-  bool found_one = false;
-
-  if (_bounding_box.intersect_bool(ray)) {
-    for (Triangle triangle : _triangles) {
-      Intersection t_i = triangle.intersect(ray);
-
-      if (t_i.found && t_i.t < t_min) {
-        found_one = true;
-        t_min = t_i.t;
-        triangle_best = triangle;
-      }
-    }
-  }
-
-  Intersection intersection = {found_one,
-                               t_min,
-                               ray.get_point(t_min),
-                               triangle_best.get_normal(),
-                               triangle_best.get_material()};
-
-  return intersection;
+  return _bvh.intersect(&ray);
 }
 
 /***** File input *****/
