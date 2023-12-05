@@ -23,8 +23,8 @@ using glm::vec3;
 
 int main(void) {
   vec3 origin = vec3(-2, -4, -13);
-  Mesh m = Mesh("data/input/bunny_scaled.obj",
-      vec3(1.2, -4.8, -10), {.color = vec3(0, 1, 0)});
+  //Mesh m = Mesh("data/input/bunny_scaled.obj",
+  //    vec3(1.2, -4.8, -10), {.color = vec3(0, 1, 0)});
   Mesh m2 = Mesh("data/input/cube.obj",
       vec3(-2, -3, -13), {.color = vec3(1, 0, 0), .mirror = 0.3});
   Plane plane = Plane(origin, vec3(0, 1, 0),
@@ -37,15 +37,15 @@ int main(void) {
 
   Scene scene = Scene(vec3(0, 100, 200));
 
-  scene.get_camera()->set_resolution(100);
+  scene.get_camera()->set_resolution(500);
   scene.get_camera()->set_sensor_size(1, 1);
 
   // scene.add_light(&light);
   scene.add_light(&light1);
   // scene.add_light(&light2);
-  scene.add_object(&m);
+  //scene.add_object(&m);
   scene.add_object(&plane);
-  //scene.add_object(&m2);
+  scene.add_object(&m2);
   // scene.add_object(&plane2);
 
   // test bvh parts

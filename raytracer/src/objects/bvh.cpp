@@ -29,7 +29,11 @@ void BVH::build_tree(std::vector<Triangle> *triangles) {
   _data.tree[0].count = _data.size;
   calculate_max(0);
   calculate_min(0);
-  print_node(0);
+
+  // split nodes recursivley
+  split(0);
+
+  print_node(2);
 }
 
 /**
@@ -40,22 +44,42 @@ void BVH::build_tree(std::vector<Triangle> *triangles) {
  */
 Intersection BVH::intersect(Ray *ray) {
   // check root
-  uint node_id = 0;
-  // if leaf -> update best intersection
+  return intersect_node(0, ray);
+}
 
-  // else check childs
-  //if (intersect_node(node_id, ray)) {
-
-  //}
+/**
+ * @brief recursivley calculate intersection in nodes
+ * 
+ * @param node_id 
+ * @param ray 
+ * @return Intersection 
+ */
+Intersection BVH::intersect_node(uint node_id, Ray *ray) {
   Intersection result;
-  if (intersect_node(node_id, ray)) {
-    result = intersect_leaf(node_id, ray);
+  if (intersect_node_bool(node_id, ray)) {
+    // check if leaf
+    if (_data.tree[node_id].leaf) {
+      result = intersect_leaf(node_id, ray);
+    }
+    else {  // check both leaves
+      update_intersection(&result, intersect_node(node_id*2 +2, ray));
+      update_intersection(&result, intersect_node(node_id*2 +1, ray));
+    }
   }
   return result;
+
 }
 
 
-bool BVH::intersect_node(uint id, Ray *ray) {
+/**
+ * @brief check if hitbox of node has intersection.
+ * 
+ * @param id 
+ * @param ray 
+ * @return true 
+ * @return false 
+ */
+bool BVH::intersect_node_bool(uint id, Ray *ray) {
   Interval tx = {(_data.tree[id].min.x - ray->get_origin().x) / ray->get_direction().x,
                 (_data.tree[id].max.x - ray->get_origin().x) / ray->get_direction().x};
 
@@ -123,6 +147,15 @@ Intersection BVH::intersect_leaf(uint id, Ray *ray) {
   return intersection;
 }
 
+void BVH::update_intersection(Intersection *intersect, Intersection new_intersect) {
+  if (new_intersect.found) {
+    // update intersection if the new one is closer
+    if (new_intersect.t < intersect->t) {
+      *intersect = new_intersect;
+    }
+  }
+}
+
 /// @brief swap Triangle ids in BVH_data.
 void BVH::swap_triangle(uint id1, uint id2) {
   uint tmp = _data.triangle_ids[id1];
@@ -150,17 +183,17 @@ Axis BVH::get_longest_axis(uint node_id) {
  * @return vec3 
  */
 void BVH::calculate_min(uint node_id) {
-  uint i = _data.tree[node_id].first;
-  for (; i < _data.tree[node_id].count; i++) {
-    Triangle t = _data.triangles->at(_data.triangle_ids.at(i));
+  for (uint i = 0; i < _data.tree[node_id].count; i++) {
+    uint index = i + _data.tree[node_id].first;
+    Triangle t = _data.triangles->at(_data.triangle_ids.at(index));
     update_min(&_data.tree[node_id].min, t.get_min_bounding());
   }
 }
 
 void BVH::calculate_max(uint node_id) {
-  uint i = _data.tree[node_id].first;
-  for (; i < _data.tree[node_id].count; i++) {
-    Triangle t = _data.triangles->at(_data.triangle_ids.at(i));
+  for (uint i = 0; i < _data.tree[node_id].count; i++) {
+    uint index = i + _data.tree[node_id].first;
+    Triangle t = _data.triangles->at(_data.triangle_ids.at(index));
     update_max(&_data.tree[node_id].max, t.get_max_bounding());
   }
 }
@@ -202,6 +235,20 @@ void BVH::print_node(uint id) {
   std::cout << "leaf: " << n.leaf << "\n";
   std::cout << "----------------------\n";
 }
+
+void BVH::print_node_triangles(uint id) {
+  BVH_node n = _data.tree[id];
+
+  std::cout << "-------bvh_node_triangles------\n";
+  std::cout << "id: " << id << "\n";
+  for (int i = 0; i < _data.tree[id].count; i++) {
+    Triangle t = _data.triangles->at(_data.triangle_ids.at(i + _data.tree[id].first));
+    t.print();
+  }
+  std::cout << "----------------------\n";
+
+}
+
 bool comp2(BVH_data *data, uint id1, uint id2, Axis axis)
 {
   if (data->triangles->at(data->triangle_ids.at(id1)).get_pos()[static_cast<size_t>(axis)]
@@ -239,6 +286,12 @@ void BVH::sort(uint first, uint count, Axis axis) {
 }
 
 void BVH::split(uint node_id) {
+  print_node(node_id);
+  print_node_triangles(node_id);
+  // check if split is needed
+  if (!(_data.tree[node_id].count > _max_triangles)) {
+    return;
+  }
   Axis axis = get_longest_axis(node_id);
   sort(
     _data.tree[node_id].first,
@@ -260,14 +313,11 @@ void BVH::split(uint node_id) {
   calculate_min(left_id);
   calculate_max(left_id);
 
-  // if initialized corretly not nessecary
-  _data.tree[left_id].leaf = true;
-
   // asing right child
   uint right_id = node_id*2 + 2;
 
   _data.tree[right_id].first =
-    _data.tree[node_id].first + split_point;
+    _data.tree[node_id].first + split_point - 1;
   _data.tree[right_id].count = 
     _data.tree[node_id].count - split_point;
 
@@ -277,12 +327,6 @@ void BVH::split(uint node_id) {
   _data.tree[right_id].leaf = true;
 
   // recursivley split more
-  if (_data.tree[left_id].count > _max_triangles) {
-    _data.tree[left_id].leaf = false;
-    split(left_id);
-  }
-  if (_data.tree[right_id].count > _max_triangles) {
-    _data.tree[right_id].leaf = false;
-    split(right_id);
-  }
+  split(left_id);
+  split(right_id);
 }
