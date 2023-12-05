@@ -30,10 +30,10 @@ void BVH::build_tree(std::vector<Triangle> *triangles) {
   calculate_max(0);
   calculate_min(0);
 
+  std::cout << triangles->size() << "triangles\n";
+  std::cout << _data.triangle_ids.size() << "triangle_ids\n";
   // split nodes recursivley
   split(0);
-
-  print_node(2);
 }
 
 /**
@@ -127,7 +127,7 @@ Intersection BVH::intersect_leaf(uint id, Ray *ray) {
 
 
   uint i = _data.tree[id].first;
-  for (; i < _data.tree[id].count; i++) {
+  for (; i < _data.tree[id].count + _data.tree[id].first; i++) {
     Intersection t_i = _data.triangles->at(_data.triangle_ids.at(i)).intersect(ray);
 
     if (t_i.found && t_i.t < t_min) {
@@ -287,44 +287,60 @@ void BVH::sort(uint first, uint count, Axis axis) {
 
 void BVH::split(uint node_id) {
   print_node(node_id);
-  print_node_triangles(node_id);
   // check if split is needed
   if (!(_data.tree[node_id].count > _max_triangles)) {
     return;
   }
   Axis axis = get_longest_axis(node_id);
-  sort(
-    _data.tree[node_id].first,
-    _data.tree[node_id].count,
-    axis);
+  //sort(
+  //  _data.tree[node_id].first,
+  //  _data.tree[node_id].count,
+  //  axis);
 
   // update node
   _data.tree[node_id].leaf = false;
 
   // point to split id belongs to the right child
-  uint split_point = _data.tree[node_id].count / 2;
+  uint middle_count = _data.tree[node_id].count / 2;
+
+  bool even_amount = false;
+  if (_data.tree[node_id].count % 2 == 0) {
+    even_amount = true;
+  }
   
-  // asing left child
   uint left_id = node_id*2 + 1;
+  uint right_id = node_id*2 + 2;
 
-  _data.tree[left_id].first = _data.tree[node_id].first;
-  _data.tree[left_id].count = split_point;
 
+
+  // if odd assing one more to left child
+  if (even_amount) {
+    // asing left child
+    _data.tree[left_id].first = _data.tree[node_id].first;
+    _data.tree[left_id].count = middle_count;
+
+    // asing right child
+    _data.tree[right_id].first =
+      _data.tree[node_id].first + middle_count;
+    _data.tree[right_id].count = middle_count;
+  }
+  else {  // asing left one more element
+    // asing left child
+    _data.tree[left_id].first = _data.tree[node_id].first;
+    _data.tree[left_id].count = middle_count + 1;
+
+    // asing right child
+    _data.tree[right_id].first =
+      _data.tree[node_id].first + middle_count + 1;
+    _data.tree[right_id].count = middle_count;
+  }
+  
+  // calculate new bounding boxes
   calculate_min(left_id);
   calculate_max(left_id);
 
-  // asing right child
-  uint right_id = node_id*2 + 2;
-
-  _data.tree[right_id].first =
-    _data.tree[node_id].first + split_point - 1;
-  _data.tree[right_id].count = 
-    _data.tree[node_id].count - split_point;
-
   calculate_min(right_id);
   calculate_max(right_id);
-
-  _data.tree[right_id].leaf = true;
 
   // recursivley split more
   split(left_id);
