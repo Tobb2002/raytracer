@@ -18,6 +18,7 @@ class Triangle : public Object{
   Triangle(vec3 points[3], Material material);
 
   Intersection intersect(Ray ray) override;
+  Intersection intersect(Ray *ray);
 
   // transformations
   void apply_transform(mat4 transformation) override;
