@@ -20,13 +20,13 @@ using glm::mat4;
  */
 struct Intersection {
   /// @brief true if Intersection found else false.
-  bool found;
+  bool found = false;
   /// @brief ray at position t gives intersection point.
-  float t;
+  float t = MAXFLOAT;
   /// @brief Point of the intersection.
-  vec3 point;
+  vec3 point = vec3(0, 0, 0);
   /// @brief Normal of the intersecting surface.
-  vec3 normal;
+  vec3 normal = vec3(0, 0, 0);
   /// @brief Material of the interscting surface.
   Material material;
 };
