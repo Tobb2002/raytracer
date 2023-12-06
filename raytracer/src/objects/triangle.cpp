@@ -123,7 +123,7 @@ Intersection Triangle::intersect(Ray ray) {
 }
 
 vec3 Triangle::get_normal() { return _normal; }
-vec3 Triangle::get_pos() { return _middle_point; }
+vec3 Triangle::get_pos() { return calculate_middle(); }
 Material Triangle::get_material(void) { return _material; }
 
 void Triangle::set_material(Material material) { _material = material; }

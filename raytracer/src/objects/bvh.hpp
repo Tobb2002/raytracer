@@ -49,7 +49,7 @@ class BVH {
   Intersection intersect_node(uint node_id, Ray *ray);
   Intersection intersect_leaf(uint id, Ray *ray);
 
-  void update_intersection(Intersection * intersect, Intersection new_intersect);
+  bool update_intersection(Intersection * intersect, Intersection new_intersect);
 
   /// @brief swaps to triangle ids in BVHdata
   void swap_triangle(uint id1, uint id2);
