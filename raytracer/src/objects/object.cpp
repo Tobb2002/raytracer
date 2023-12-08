@@ -71,8 +71,6 @@ void Object::print_matrices(void) {
  * @param a vector to move the object.
  */
 void Object::move(vec3 a) {
-  std::cout << "moving object\n";
-
   mat4 t = _transform.add_translation(a);
   transform(t);
 }

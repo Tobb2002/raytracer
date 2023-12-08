@@ -8,6 +8,8 @@
 #include <boost/lambda/bind.hpp>
 #include <glm/gtx/string_cast.hpp>
 
+#include <chrono>
+
 BVH::BVH() {
 }
 
@@ -53,13 +55,21 @@ Intersection BVH::intersect(Ray *ray) {
  * @return Intersection 
  */
 Intersection BVH::intersect_node(uint node_id, Ray *ray) {
+
+
   Intersection result;
   if (!intersect_node_bool(node_id, ray)) {
     return result;
   }
   // check if leaf
   if (_data.tree[node_id].leaf) {
-    return intersect_leaf(node_id, ray);
+  //std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+  //std::cout << "node_id: " << node_id << "\n";
+  //std::cout << "node_size: " << _data.tree[node_id].count << "\n";
+    Intersection intersect = intersect_leaf(node_id, ray);
+  //std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+  //std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
+    return intersect;
   }
 
   update_intersection(&result, intersect_node(node_id*2 +1, ray));
@@ -176,6 +186,23 @@ Axis BVH::get_longest_axis(uint node_id) {
   return res;
 }
 
+bvh_Box BVH::update_box(uint node_id) {
+  if (_data.tree[node_id].leaf) {
+    calculate_max(node_id);
+    calculate_min(node_id);
+    return {_data.tree[node_id].min ,_data.tree[node_id].max};
+  }
+  bvh_Box left = update_box(node_id*2 +1);
+  bvh_Box right = update_box(node_id*2 +2);
+  update_min(&left.min, right.min);
+  update_max(&left.max, right.max);
+  
+  _data.tree[node_id].min = left.min;
+  _data.tree[node_id].max = left.max;
+
+  return {_data.tree[node_id].min ,_data.tree[node_id].max};
+}
+
 /**
  * @brief Goes throug all triangles in node and calculates min value;
  * 
@@ -256,6 +283,15 @@ void BVH::print_node_triangles(uint id) {
 
 }
 
+/**
+ * @brief recursivley update the bounding boxes bottom up.
+ * 
+ */
+void BVH::update_boxes() {
+  update_box(0);
+
+}
+
 bool comp2(BVH_data *data, uint id1, uint id2, Axis axis)
 {
   if (data->triangles->at(data->triangle_ids.at(id1)).get_pos()[static_cast<size_t>(axis)]
@@ -267,39 +303,34 @@ bool comp2(BVH_data *data, uint id1, uint id2, Axis axis)
 
 void BVH::sort(uint first, uint count, Axis axis) {
   namespace boo = boost::lambda;
-  auto comp_x = boo::bind(&comp2, &_data, boo::_1, boo::_1, X);
-  auto comp_y = boo::bind(&comp2, &_data, boo::_1, boo::_1, Y);
-  auto comp_z = boo::bind(&comp2, &_data, boo::_1, boo::_1, Z);
   switch (axis) {
     case X:
       std::sort(
         _data.triangle_ids.begin() + first,
         _data.triangle_ids.begin() + first + count,
-        comp_x);
+        boo::bind(&comp2, &_data, boo::_1, boo::_1, X));
       break;
     case Y:
       std::sort(
         _data.triangle_ids.begin() + first,
         _data.triangle_ids.begin() + first + count,
-        comp_y);
+        boo::bind(&comp2, &_data, boo::_1, boo::_1, Y));
       break;
     case Z:
       std::sort(
         _data.triangle_ids.begin() + first,
         _data.triangle_ids.begin() + first + count,
-        comp_z);
+        boo::bind(&comp2, &_data, boo::_1, boo::_1, Z));
       break;
   }
 }
 
 void BVH::split(uint node_id) {
-  print_node(node_id);
   // check if split is needed
   if (!(_data.tree[node_id].count > _max_triangles)) {
     return;
   }
   Axis axis = get_longest_axis(node_id);
-  std::cout << axis << "axis\n";
   sort(
     _data.tree[node_id].first,
     _data.tree[node_id].count,

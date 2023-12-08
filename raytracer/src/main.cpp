@@ -37,7 +37,7 @@ int main(void) {
 
   Scene scene = Scene(vec3(0, 100, 200));
 
-  scene.get_camera()->set_resolution(100);
+  scene.get_camera()->set_resolution(200);
   scene.get_camera()->set_sensor_size(1, 1);
 
   // scene.add_light(&light);
@@ -45,7 +45,7 @@ int main(void) {
   // scene.add_light(&light2);
   scene.add_object(&m);
   scene.add_object(&plane);
-  scene.add_object(&m2);
+  //scene.add_object(&m2);
   // scene.add_object(&plane2);
 
   // test bvh parts
@@ -53,7 +53,7 @@ int main(void) {
 
   // generate animation
   float rotation = 90;
-  float samples = 1;
+  float samples = 15;
 
   for (int i = 0; i < samples; i++) {
     std::cout << "Sample (" << i + 1 << " of " << samples << ")\n";
@@ -67,9 +67,9 @@ int main(void) {
 
     //plane.rotate(vec3(1, 0, 0), rotation/samples);
     //scene.get_object(1)->rotate(vec3(1, 0, 0), rotation/samples);
-    //m2.rotate(vec3(1, 0, 0), rotation/samples);
-    //m2.move(vec3(0.1, 0, 0));
-    scene.get_camera()->rotate(origin, vec3(0, 1, 0), rotation/samples);
+    m.rotate(vec3(0, 1, 0), rotation/samples);
+    m.move(vec3(0.1, 0, 0));
+    //scene.get_camera()->rotate(origin, vec3(0, 1, 0), rotation/samples);
     // scene.get_camera()->move(vec3(0, 0, -1));
     scene.update_view_transform();
     //scene.get_camera()->rotate(vec3(0, 1, 0), +5);

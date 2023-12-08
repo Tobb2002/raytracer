@@ -5,6 +5,7 @@
 
 #include <glm/glm.hpp>
 #include <vector>
+#include <array>
 #include "ray.hpp"
 #include "triangle.hpp"
 
@@ -18,6 +19,11 @@ struct Triangle_set {
 struct Interval {
   float min;
   float max;
+};
+
+struct bvh_Box {
+  vec3 min;
+  vec3 max;
 };
 
 /// @brief Axis (X, Y, Z)
@@ -57,6 +63,8 @@ class BVH {
   /// @brief get longest axis of bounding box.
   Axis get_longest_axis(uint node_id);
 
+  bvh_Box update_box(uint node_id);
+
   void calculate_min(uint node_id);
   void calculate_max(uint node_id);
 
@@ -72,7 +80,7 @@ class BVH {
   /// @brief Splits node a long longest axis
   void split(uint node_id);
 
-  uint _max_triangles = 10;
+  uint _max_triangles = 4;
 
  public:
 
@@ -97,5 +105,6 @@ class BVH {
   /***** Transformation *****/
 
   void apply_transform(mat4 t);
+  void update_boxes();
 
 };

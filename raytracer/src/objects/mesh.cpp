@@ -34,10 +34,6 @@ Mesh::Mesh(std::string input_file, vec3 origin, Material material) {
   _material = material;
   read_from_obj(input_file);  // read file with origin as offset
   _bvh.build_tree(&_triangles);
-
-  // for testing
-  //print_triangles();
-  //std::cout << "comp: " << _bvh.comp(3,9, Z) << "\n";
 }
 
 Mesh::~Mesh() {}
@@ -108,8 +104,9 @@ void Mesh::apply_transform(mat4 transformation) {
     Triangle *t = &_triangles[i];
     t->apply_transform(transformation);
     // check if t is outside of bounding box
-    update_bounding_box(t);
+    //update_bounding_box(t);
   }
+  _bvh.update_boxes();
 }
 
 /**
