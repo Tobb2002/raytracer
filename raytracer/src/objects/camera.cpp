@@ -78,7 +78,16 @@ vec2 Camera::get_resolution() {
  * @return Ray 
  */
 Ray Camera::get_ray(vec2 pixel) {
-  vec2 pos_image = pixel_to_image_pos(pixel);
+  vec2 pos_image = pixel_to_image_pos(pixel, vec2(0.5, 0.5));
+  vec3 direction = image_to_world(pos_image);
+  Ray res = Ray(_origin, direction);
+
+  return res;
+}
+
+Ray Camera::get_ray(vec2 pixel, vec2 relative_position, float random_range) {
+  // TODO add randomized range
+  vec2 pos_image = pixel_to_image_pos(pixel, relative_position);
   vec3 direction = image_to_world(pos_image);
   Ray res = Ray(_origin, direction);
 
@@ -93,7 +102,7 @@ Ray Camera::get_ray(vec2 pixel) {
  * @param pixel vec3 to be transformed.
  * @return vec2 position on virtual image.
  */
-vec2 Camera::pixel_to_image_pos(vec2 pixel) {
+vec2 Camera::pixel_to_image_pos(vec2 pixel, vec2 relative_pos) {
   // check if pixel is valid
   if (pixel.x < 0 ||
       pixel.y < 0 ||
@@ -103,8 +112,8 @@ vec2 Camera::pixel_to_image_pos(vec2 pixel) {
   }
 
   vec2 res = vec2(
-    0.5 * _pixel_size.x + _pixel_size.x * pixel.x,
-    0.5 * _pixel_size.y + _pixel_size.y * pixel.y);
+    relative_pos.x * _pixel_size.x + _pixel_size.x * pixel.x,
+    relative_pos.y * _pixel_size.y + _pixel_size.y * pixel.y);
 
   return res;
 }

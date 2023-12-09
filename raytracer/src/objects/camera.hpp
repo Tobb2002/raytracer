@@ -19,6 +19,7 @@ class Camera {
   vec2 get_resolution();
 
   Ray get_ray(vec2 pixel);
+  Ray get_ray(vec2 pixel, vec2 relative_position, float random_range);
 
   // setters
   void set_sensor_size(float x, float y);
@@ -40,7 +41,7 @@ class Camera {
   vec2 _pixel_size;
   float _aspect_ratio;
 
-  vec2 pixel_to_image_pos(vec2 pixel);
+  vec2 pixel_to_image_pos(vec2 pixel, vec2 relative_pos);
   vec3 image_to_world(vec2 pos_image);
 
   /***** Transformation *****/

@@ -37,8 +37,10 @@ int main(void) {
 
   Scene scene = Scene(vec3(0, 100, 200));
 
-  scene.get_camera()->set_resolution(200);
+  scene.get_camera()->set_resolution(500);
   scene.get_camera()->set_sensor_size(1, 1);
+
+  scene.set_aliasing(4);
 
   // scene.add_light(&light);
   scene.add_light(&light1);
@@ -53,7 +55,7 @@ int main(void) {
 
   // generate animation
   float rotation = 90;
-  float samples = 15;
+  float samples = 1;
 
   for (int i = 0; i < samples; i++) {
     std::cout << "Sample (" << i + 1 << " of " << samples << ")\n";

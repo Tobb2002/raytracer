@@ -14,6 +14,7 @@
  */
 Scene::Scene(vec3 standart_color) {
   _standart_light = standart_color;
+  set_aliasing(1);
 }
 
 /**
@@ -38,6 +39,32 @@ size_t Scene::add_object(Object *object) {
   return _objects.size() -1;
 }
 
+/**
+ * @brief set number of rays to calculate per pixel
+ * 
+ * @param rays_per_pixel default: 1 possible values: (1, 2, 4)
+ */
+void Scene::set_aliasing(uint rays_per_pixel) {
+  _aliasing_positions.clear();
+  switch(rays_per_pixel) {
+    case 1:
+      _aliasing_positions.push_back(vec2(0.5, 0.5));
+      break;
+    case 2:
+      _aliasing_positions.push_back(vec2(0.25, 0.25));
+      _aliasing_positions.push_back(vec2(0.75, 0.75));
+      break;
+    case 4:
+      _aliasing_positions.push_back(vec2(0.25, 0.25));
+      _aliasing_positions.push_back(vec2(0.25, 0.75));
+      _aliasing_positions.push_back(vec2(0.75, 0.25));
+      _aliasing_positions.push_back(vec2(0.75, 0.75));
+      break;
+    default:
+      throw std::runtime_error("No Valid value for aliasing.");
+      break;
+  }
+}
 
 /**
  * @brief Get pointer to the camera in the scene.
@@ -106,8 +133,18 @@ Image Scene::trace_image() {
       }
 
       // get color from ray
-      vec3 color = get_light(_camera.get_ray({x, y}));
-      if (color.x == -1) {
+      vec3 color = vec3(0, 0, 0);
+      bool hit = false;
+      for (int i = 0; i < _aliasing_positions.size(); i++) {
+        vec3 light = get_light(_camera.get_ray({x, y}, _aliasing_positions.at(i), 0.0));
+          
+        if (light.x != -1) {
+          hit = true;
+          light *= 1.f /_aliasing_positions.size();
+          color += light;
+        }
+      }
+      if (!hit) {
         color = _standart_light;
       }
       image.set_pixel({x, y}, color);

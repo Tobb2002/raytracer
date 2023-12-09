@@ -20,6 +20,10 @@ class Scene {
   size_t add_light(Pointlight *light);
   size_t add_object(Object *object);
 
+  /***** Change Scene Settings *****/
+
+  void set_aliasing(uint rays_per_pixel);
+
   /***** Getters *****/
 
   Camera *get_camera(void);
@@ -42,6 +46,7 @@ class Scene {
 
   /// @brief light if a ray hit's nothing
   vec3 _standart_light;
+  std::vector<vec2> _aliasing_positions;
 
   Ray generate_reflection_ray(vec3 point, vec3 normal, vec3 viewer_direction);
 
