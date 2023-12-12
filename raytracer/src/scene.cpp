@@ -263,7 +263,7 @@ vec3 Scene::calculate_light(
     vec3 mirror_light = get_mirroring_light(
         material, point, surface_normal, v);
 
-    res_light = (phong_light * (1 - material.mirror)) +
+    res_light += (phong_light * (1 - material.mirror)) +
         (mirror_light * material.mirror);
   }
 
