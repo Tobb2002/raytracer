@@ -136,7 +136,7 @@ Image Scene::trace_image() {
       vec3 color = vec3(0, 0, 0);
       bool hit = false;
       for (int i = 0; i < _aliasing_positions.size(); i++) {
-        vec3 light = get_light(_camera.get_ray({x, y}, _aliasing_positions.at(i), 0.0));
+        vec3 light = get_light(_camera.get_ray({x, y}, _aliasing_positions.at(i), 0.2));
           
         if (light.x != -1) {
           hit = true;
