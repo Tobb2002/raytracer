@@ -1,0 +1,55 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.1 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global}
+    \entry{stroud:2013}{book}{}
+      \name{author}{2}{}{%
+        {{hash=a40c297c65d5f5080901c0a563e6a963}{%
+           family={Stroud},
+           familyi={S\bibinitperiod},
+           given={K.A.},
+           giveni={K\bibinitperiod}}}%
+        {{hash=ff727baddf10d205a0aa04a89ce4a2cc}{%
+           family={Booth},
+           familyi={B\bibinitperiod},
+           given={D.J.},
+           giveni={D\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Macmillan International Higher Education}%
+      }
+      \strng{namehash}{78e5b5c279b555d1680042b3341f7372}
+      \strng{fullhash}{78e5b5c279b555d1680042b3341f7372}
+      \strng{bibnamehash}{78e5b5c279b555d1680042b3341f7372}
+      \strng{authorbibnamehash}{78e5b5c279b555d1680042b3341f7372}
+      \strng{authornamehash}{78e5b5c279b555d1680042b3341f7372}
+      \strng{authorfullhash}{78e5b5c279b555d1680042b3341f7372}
+      \field{sortinit}{1}
+      \field{sortinithash}{50c6687d7fc80f50136d75228e3c59ba}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Engineering mathematics}
+      \field{year}{2013}
+      \true{nocite}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
