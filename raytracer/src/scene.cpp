@@ -60,6 +60,13 @@ void Scene::set_aliasing(uint rays_per_pixel) {
       _aliasing_positions.push_back(vec2(0.75, 0.25));
       _aliasing_positions.push_back(vec2(0.75, 0.75));
       break;
+    case 5:
+      _aliasing_positions.push_back(vec2(0.25, 0.25));
+      _aliasing_positions.push_back(vec2(0.25, 0.75));
+      _aliasing_positions.push_back(vec2(0.75, 0.25));
+      _aliasing_positions.push_back(vec2(0.75, 0.75));
+      _aliasing_positions.push_back(vec2(0, 0));
+      break;
     default:
       throw std::runtime_error("No Valid value for aliasing.");
       break;
@@ -134,18 +141,14 @@ Image Scene::trace_image() {
 
       // get color from ray
       vec3 color = vec3(0, 0, 0);
-      bool hit = false;
       for (int i = 0; i < _aliasing_positions.size(); i++) {
         vec3 light = get_light(_camera.get_ray({x, y}, _aliasing_positions.at(i), 0.2));
           
-        if (light.x != -1) {
-          hit = true;
-          light *= 1.f /_aliasing_positions.size();
-          color += light;
+        if (light.x == -1) {
+          light = _standart_light;
         }
-      }
-      if (!hit) {
-        color = _standart_light;
+        light *= 1.f /_aliasing_positions.size();
+        color += light;
       }
       image.set_pixel({x, y}, color);
     }
