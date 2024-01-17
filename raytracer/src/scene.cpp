@@ -327,7 +327,7 @@ vec3 Scene::get_light(Ray ray) {
       }
     }
   }
-  if (best_intersection.found && best_intersection.t > 0) {
+  if (best_intersection.found) {
     vec3 light = calculate_light(
         best_intersection.point,
         best_intersection.material,
@@ -335,8 +335,7 @@ vec3 Scene::get_light(Ray ray) {
         ray);
 
     return light;
-  } else {
-    // didn't hit any object
-    return vec3(-1);
   }
+  // didn't hit any object
+  return vec3(-1);
 }
