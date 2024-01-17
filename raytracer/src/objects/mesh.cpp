@@ -154,49 +154,52 @@ void Mesh::read_from_obj(std::string inputfile) {
   // shapes.size() number of objects
   // shapes[s].mesh.num_face_vertices.size() -> number of triangle
 
-  if (shapes.size() != 1) {
-    throw std::runtime_error("only support one mesh per obj at the moment");
-  }
-
-  _size = shapes[0].mesh.num_face_vertices.size();
+  std::cout << "shapes:" << shapes.size() << "\n";
 
 
-  size_t index_offset = 0;
-  for (int f = 0; f < _size; f++) {
-    int fv = shapes[0].mesh.num_face_vertices[f];
+  for (int s = 0; s < shapes.size(); s++) {
 
-    // Loop over vertices of one Triangle
-    vec3 triangle_points[3];
-    for (int v = 0; v < fv; v++) {
-      // access to vertex
-      tinyobj::index_t idx = shapes[0].mesh.indices[index_offset + v];
-      tinyobj::real_t vx = attrib.vertices[3*idx.vertex_index+0];
-      tinyobj::real_t vy = attrib.vertices[3*idx.vertex_index+1];
-      tinyobj::real_t vz = attrib.vertices[3*idx.vertex_index+2];
-      /* hier passiert Speicher zugriffsfehler
-      tinyobj::real_t nx = attrib.normals[3*idx.normal_index+0];
-      tinyobj::real_t ny = attrib.normals[3*idx.normal_index+1];
-      tinyobj::real_t nz = attrib.normals[3*idx.normal_index+2];
-      tinyobj::real_t tx = attrib.texcoords[2*idx.texcoord_index+0];
-      tinyobj::real_t ty = attrib.texcoords[2*idx.texcoord_index+1];
-      */
-      // Optional: vertex colors
-      // tinyobj::real_t red = attrib.colors[3*idx.vertex_index+0];
-      // tinyobj::real_t green = attrib.colors[3*idx.vertex_index+1];
-      // tinyobj::real_t blue = attrib.colors[3*idx.vertex_index+2];
+    int size = shapes[s].mesh.num_face_vertices.size();
+    std::cout << "size:" << size << "\n";
 
-      // insert point into triangle_points
-      triangle_points[v] = vec3(vx +_origin.x, vy + _origin.y, vz + _origin.z);
+
+    size_t index_offset = 0;
+    for (int f = 0; f < size; f++) {
+      int fv = shapes[s].mesh.num_face_vertices[f];
+
+      // Loop over vertices of one Triangle
+      vec3 triangle_points[3];
+      for (int v = 0; v < fv; v++) {
+        // access to vertex
+        tinyobj::index_t idx = shapes[0].mesh.indices[index_offset + v];
+        tinyobj::real_t vx = attrib.vertices[3*idx.vertex_index+0];
+        tinyobj::real_t vy = attrib.vertices[3*idx.vertex_index+1];
+        tinyobj::real_t vz = attrib.vertices[3*idx.vertex_index+2];
+        /* hier passiert Speicher zugriffsfehler
+        tinyobj::real_t nx = attrib.normals[3*idx.normal_index+0];
+        tinyobj::real_t ny = attrib.normals[3*idx.normal_index+1];
+        tinyobj::real_t nz = attrib.normals[3*idx.normal_index+2];
+        tinyobj::real_t tx = attrib.texcoords[2*idx.texcoord_index+0];
+        tinyobj::real_t ty = attrib.texcoords[2*idx.texcoord_index+1];
+        */
+        // Optional: vertex colors
+        // tinyobj::real_t red = attrib.colors[3*idx.vertex_index+0];
+        // tinyobj::real_t green = attrib.colors[3*idx.vertex_index+1];
+        // tinyobj::real_t blue = attrib.colors[3*idx.vertex_index+2];
+
+        // insert point into triangle_points
+        triangle_points[v] = vec3(vx +_origin.x, vy + _origin.y, vz + _origin.z);
+      }
+      // make triangle and add to triangles
+      _triangles.push_back(Triangle(triangle_points, _material));
+
+      // update bounding box values
+      update_bounding_box(&_triangles.back());
+
+      index_offset += fv;
+      // per-face material
+      // shapes[s].mesh.material_ids[f];
     }
-    // make triangle and add to triangles
-    _triangles.push_back(Triangle(triangle_points, _material));
-
-    // update bounding box values
-    update_bounding_box(&_triangles.back());
-
-    index_offset += fv;
-    // per-face material
-    // shapes[s].mesh.material_ids[f];
   }
   _origin = _bounding_box.get_middle();
   _transform.add_translation(_origin);
