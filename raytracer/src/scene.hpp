@@ -23,6 +23,7 @@ class Scene {
   /***** Change Scene Settings *****/
 
   void set_aliasing(uint rays_per_pixel);
+  void set_tonemapping_value(float tonemapping_gray);
 
   /***** Getters *****/
 
@@ -46,6 +47,7 @@ class Scene {
 
   /// @brief light if a ray hit's nothing
   vec3 _standart_light;
+  float _tonemapping_gray = 0.8;
   std::vector<vec2> _aliasing_positions;
 
   Ray generate_reflection_ray(vec3 point, vec3 normal, vec3 viewer_direction);
@@ -67,5 +69,6 @@ class Scene {
       vec3 point,
       vec3 normal,
       vec3 viewing_direction);
+  void tonemapping(vec3 *light);
   bool check_intersection(Ray ray, float t_max);
 };

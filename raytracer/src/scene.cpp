@@ -73,6 +73,10 @@ void Scene::set_aliasing(uint rays_per_pixel) {
   }
 }
 
+void Scene::set_tonemapping_value(float tonemapping_gray) {
+  _tonemapping_gray = tonemapping_gray;
+}
+
 /**
  * @brief Get pointer to the camera in the scene.
  * 
@@ -153,6 +157,7 @@ Image Scene::trace_image() {
       image.set_pixel({x, y}, color);
     }
   }
+  image.apply_tonemapping(_tonemapping_gray);
   return image;
 }
 
@@ -237,6 +242,13 @@ vec3 Scene::get_mirroring_light(
     }
   }
   return color;
+}
+
+void Scene::tonemapping(vec3 *light) {
+
+  for (int i = 0; i < 3; i++) {
+    (*light)[i] = (*light)[i] / (1 + (*light)[i]);
+  }
 }
 
 /**

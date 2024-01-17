@@ -63,6 +63,7 @@ int main(void) {
   scene.get_camera()->set_sensor_size(1, 1);
 
   scene.set_aliasing(2);
+  scene.set_tonemapping_value(4);
 
   // scene.add_light(&light);
   //scene.add_light(&light2);
