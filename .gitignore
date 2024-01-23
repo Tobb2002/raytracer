@@ -12,6 +12,7 @@ documentation
 # files
 *.ppm
 
+compile_commands.json
 raytracer/data
 
 test/

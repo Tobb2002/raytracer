@@ -35,6 +35,9 @@ animation:
 docs:
 	doxygen doxygen.conf
 
+compile_commands:
+	compiledb --command-style -o src/compile_commands.json make
+
 files = main ray triangle camera image mesh pointlight box plane scene object objloader object_factory transform bvh light sphere
 
 targets = $(addsuffix .o,$(addprefix obj/,$(files)))
