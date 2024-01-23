@@ -61,6 +61,11 @@ Plane::Plane(vec3 position,
   _two_colored = true;
 }
 
+/***** settings *****/
+void Plane::set_axis(bool enable) {
+  _axis_enable = enable;
+}
+
 /***** Intersection *****/
 
 Intersection Plane::intersect(Ray ray) {
@@ -92,10 +97,12 @@ Material Plane::get_material(vec3 point) {
   vec3 point_origin = _transform.virtual_to_origin(_transform.transform_point(_view_transform.inv, point));
   vec3 point_origin_mod = glm::mod(point_origin, 4.f);
 
-  // return diffrent colors for x,y specific values
-  if ((point_origin.x < 0.1 && point_origin.x > -0.1) ||
-      (point_origin.y < 0.1 && point_origin.y > -0.1)) {
-    return {.color = vec3(0, 1, 0)};
+  // draw axis of worldspace
+  if (_axis_enable) {
+    if ((point_origin.x < 0.1 && point_origin.x > -0.1) ||
+        (point_origin.y < 0.1 && point_origin.y > -0.1)) {
+      return {.color = vec3(0, 1, 0)};
+    }
   }
   if ((point_origin_mod.x < 2 &&
       point_origin_mod.y < 2)

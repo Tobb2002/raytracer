@@ -21,6 +21,9 @@ class Plane : public Object{
   Plane(vec3 pos, vec3 normal, Material material);
   Plane(vec3 pos, vec3 normal, Material material1, Material material2);
 
+  // settings
+  void set_axis(bool enable);
+
   Intersection intersect(Ray ray) override;
 
   void print(void) override;
@@ -42,4 +45,5 @@ private:
   Material _material2;
 
   bool _two_colored;
+  bool _axis_enable = false;
 };

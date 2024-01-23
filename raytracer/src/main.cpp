@@ -29,11 +29,11 @@ int main(void) {
   //    vec3(0, 15, -20), {.color = vec3(0, 1, 0)});
   Mesh m = Mesh("data/input/bunny_scaled.obj",
       vec3(1.2, -4.8, -10), {.color = vec3(0, 1, 0)});
-  Sphere s = Sphere(origin + vec3(-3, 2, 0), 1,{.color = vec3(1, 0, 1)});
+  Sphere s = Sphere(origin + vec3(-2, 2, 1.5), 1,{.color = vec3(1, 0, 1)});
   //Mesh c1 = Mesh("data/input/cube.obj",
   //    vec3(-2, -3, -13), {.color = vec3(1, 0, 0), .mirror = 0.3});
   Mesh c2 = Mesh("data/input/cube.obj",
-      vec3(0, -3, -13), {.color = vec3(1, 0, 0), .mirror = 0.});
+      origin + vec3(2, +1, -0.2), {.color = vec3(1, 0, 0), .mirror = 0.});
   Mesh c3 = Mesh("data/input/cube.obj",
       vec3(-2, 0, -13), {.color = vec3(1, 0, 0), .mirror = 0.});
   //Mesh c4 = Mesh("data/input/cube.obj",
@@ -51,7 +51,7 @@ int main(void) {
       {.color = vec3(0.6, 0.6, 0.6), .mirror = 0.0});
   // Plane plane2 = Plane(vec3(0, 0, -50), vec3(0, 0, -1), vec3(0, 0.5, 1));
   Pointlight light = Pointlight(vec3(-2, -2, -16), 100);
-  Pointlight light1 = Pointlight(vec3(8, 8, -3), 100);
+  Pointlight light1 = Pointlight(vec3(8, 8, -3), 300);
   Pointlight light2 = Pointlight(vec3(-6, 8, 1), 150);
 
   Scene scene = Scene(vec3(0, 100, 200));
@@ -59,19 +59,19 @@ int main(void) {
   std::cout << "Scene size:" << m.get_size() << std::endl;
 
  
-  scene.get_camera()->set_resolution(500);
+  scene.get_camera()->set_resolution(1000);
   scene.get_camera()->set_sensor_size(1, 1);
 
-  scene.set_aliasing(2);
-  scene.set_tonemapping_value(4);
+  scene.set_aliasing(1);
+  scene.set_tonemapping_value(-1);
 
   // scene.add_light(&light);
   //scene.add_light(&light2);
   scene.add_light(&light1);
-  scene.add_light(&light2);
+  //scene.add_light(&light2);
   //scene.add_object(&c2);
   scene.add_object(&s);
-  scene.add_object(&c3);
+  scene.add_object(&c2);
   //scene.add_object(&m);
   s.print();
   //scene.add_object(&c3);
@@ -88,7 +88,8 @@ int main(void) {
 
   for (int i = 0; i < samples; i++) {
     // for aliasing
-    scene.get_camera()->rotate(origin, vec3(0, 1, 0), 20);
+    scene.get_camera()->rotate(origin, vec3(1, 0, 0), -10);
+    scene.get_camera()->rotate(origin, vec3(0, 1, 0), 15);
     scene.update_view_transform();
 
     std::cout << "Sample (" << i + 1 << " of " << samples << ")\n";
