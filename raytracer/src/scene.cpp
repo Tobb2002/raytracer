@@ -73,6 +73,9 @@ void Scene::set_aliasing(uint rays_per_pixel) {
   }
 }
 
+/**
+ * @brief Set value for tonemapping (to disable set to -1)
+ */
 void Scene::set_tonemapping_value(float tonemapping_gray) {
   _tonemapping_gray = tonemapping_gray;
 }
@@ -157,7 +160,9 @@ Image Scene::trace_image() {
       image.set_pixel({x, y}, color);
     }
   }
-  image.apply_tonemapping(_tonemapping_gray);
+  if (_tonemapping_gray > 0) {
+    image.apply_tonemapping(_tonemapping_gray);
+  }
   return image;
 }
 
@@ -184,11 +189,13 @@ vec3 Scene::get_phong(
 
   vec3 light_direction = ray_to_light.get_direction();
 
+  // normal * light_direction
   float ndotl = glm::dot(normal, light_direction);
 
+  // angle less than 90 degrees no light reflected into direction
   if (ndotl < 0) {
     normal *= -1;
-    ndotl = glm::dot(normal, ray_to_light.get_direction());
+    ndotl = 0;
   }
 
   vec3 r = 2 * ndotl * normal - light_direction;
