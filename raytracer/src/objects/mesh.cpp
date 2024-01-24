@@ -7,6 +7,7 @@
 #include "bvh.hpp"
 
 #include <glm/gtx/string_cast.hpp>
+#include <iostream>
 
 
 /**
@@ -156,6 +157,11 @@ void Mesh::read_from_obj(std::string inputfile) {
 
   std::cout << "shapes:" << shapes.size() << "\n";
 
+  // check if texture coordinates available
+  bool texture_available = false;
+  if (attrib.texcoords.size() > 0) {
+    texture_available = true;
+  }
 
   for (int s = 0; s < shapes.size(); s++) {
 
@@ -169,18 +175,27 @@ void Mesh::read_from_obj(std::string inputfile) {
 
       // Loop over vertices of one Triangle
       vec3 triangle_points[3];
+      vec2 triangle_points_uv[3];
       for (int v = 0; v < fv; v++) {
         // access to vertex
         tinyobj::index_t idx = shapes[0].mesh.indices[index_offset + v];
         tinyobj::real_t vx = attrib.vertices[3*idx.vertex_index+0];
         tinyobj::real_t vy = attrib.vertices[3*idx.vertex_index+1];
         tinyobj::real_t vz = attrib.vertices[3*idx.vertex_index+2];
+
+        // texture coordinates
+        tinyobj::real_t tx = -1;
+        tinyobj::real_t ty = -1;
+
+        if (texture_available) {
+          tx = attrib.texcoords[2*idx.texcoord_index+0];
+          ty = attrib.texcoords[2*idx.texcoord_index+1];
+        }
+
         /* hier passiert Speicher zugriffsfehler
         tinyobj::real_t nx = attrib.normals[3*idx.normal_index+0];
         tinyobj::real_t ny = attrib.normals[3*idx.normal_index+1];
         tinyobj::real_t nz = attrib.normals[3*idx.normal_index+2];
-        tinyobj::real_t tx = attrib.texcoords[2*idx.texcoord_index+0];
-        tinyobj::real_t ty = attrib.texcoords[2*idx.texcoord_index+1];
         */
         // Optional: vertex colors
         // tinyobj::real_t red = attrib.colors[3*idx.vertex_index+0];
@@ -189,6 +204,7 @@ void Mesh::read_from_obj(std::string inputfile) {
 
         // insert point into triangle_points
         triangle_points[v] = vec3(vx +_origin.x, vy + _origin.y, vz + _origin.z);
+        triangle_points_uv[v] = vec2(tx, ty);
       }
       // make triangle and add to triangles
       _triangles.push_back(Triangle(triangle_points, _material));

@@ -16,6 +16,7 @@ class Triangle : public Object{
  public:
   Triangle();
   Triangle(vec3 points[3], Material material);
+  Triangle(vec3 points[3], Material material, vec2 uv_coordinates[3]);
 
   Intersection intersect(Ray ray) override;
   Intersection intersect(Ray *ray);
@@ -36,6 +37,8 @@ class Triangle : public Object{
 
  private:
   vec3 _p[3];
+  // _p_uv -1 means no texture loaded
+  vec2 _p_uv[3];
   vec3 _middle_point;
   Material _material;
   vec3 _normal;

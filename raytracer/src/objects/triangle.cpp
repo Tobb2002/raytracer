@@ -15,6 +15,7 @@ Triangle::Triangle() {
   // initialize trianlge with all points zero.
   for (int i = 0; i < 3; i++) {
     _p[i] = vec3(0, 0, 0);
+    _p_uv[i] = vec2(-1, -1);
   }
   _normal = vec3(0, 0, 0);
   _middle_point = calculate_middle();
@@ -23,6 +24,16 @@ Triangle::Triangle() {
 Triangle::Triangle(vec3 points[3], Material material) {
   for (int i = 0; i < 3; i++) {
     _p[i] = points[i];
+    _p_uv[i] = vec2(-1, -1);
+  }
+  _normal = calculate_normal();
+  _material = material;
+}
+
+Triangle::Triangle(vec3 points[3], Material material, vec2 uv_coordinates[3]) {
+  for (int i = 0; i < 3; i++) {
+    _p[i] = points[i];
+    _p_uv[i] = uv_coordinates[i];
   }
   _normal = calculate_normal();
   _material = material;
