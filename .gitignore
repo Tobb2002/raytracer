@@ -13,6 +13,7 @@ documentation
 *.ppm
 
 compile_commands.json
+.cache
 raytracer/data
 
 test/

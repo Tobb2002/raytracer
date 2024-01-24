@@ -9,7 +9,6 @@
 #include "object.hpp"
 #include "material.hpp"
 
-using glm::vec3;
 
 
 class Triangle : public Object{
