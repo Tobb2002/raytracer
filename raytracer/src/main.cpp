@@ -95,8 +95,8 @@ int main(void) {
 
 
   // generate animation
-  float rotation = 90;
-  float samples = 2;
+  float rotation = 180;
+  float samples = 4;
 
   scene.get_camera()->rotate(origin, vec3(1, 0, 0), -10);
   scene.get_camera()->rotate(origin, vec3(0, 1, 0), 15);
