@@ -32,7 +32,7 @@ class Triangle : public Object{
   vec3 get_min_bounding(void);
   vec3 get_max_bounding(void);
 
-  void print();
+  void print() override;
 
  private:
   vec3 _p[3];

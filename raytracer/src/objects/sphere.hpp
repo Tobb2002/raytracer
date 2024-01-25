@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 #include "ray.hpp"
 #include "object.hpp"
+#include "texture.hpp"
 
 using glm::vec3;
 
@@ -19,7 +20,10 @@ class Sphere : public Object{
   Sphere();
   Sphere(vec3 pos, float radius);
   Sphere(vec3 pos, float radius, Material material);
+  Sphere(vec3 pos, float radius, Material material, std::string path_to_file);
+
   void set_start_position(vec3 position, float radius);
+  void enable_texture(bool enable);
 
   Intersection intersect(Ray ray) override;
 
@@ -37,4 +41,6 @@ private:
   vec3 _normal;
   float _radius;
   Material _material;
+  Texture _texture;
+  bool _enable_texture;
 };

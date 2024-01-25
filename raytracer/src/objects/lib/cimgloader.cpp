@@ -2,7 +2,9 @@
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
 
-#pragma once
+#include "cimgloader.hpp"
 
-#include "tiny_obj_loader.h"
 #include "CImg.h"
+
+using namespace cimg_library;
+

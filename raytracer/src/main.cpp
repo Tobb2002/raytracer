@@ -18,18 +18,30 @@
 
 #include "objects/bvh.hpp"
 #include "objects/sphere.hpp"
+#include "objects/texture.hpp"
 
 
 using glm::vec3;
 
 
 int main(void) {
+  
+  Texture texture;
+    //Texture("data/input/earth_uv.png");
+  texture.load_image("data/input/earth_uv.png");
+
+  //texture.show_image();
+
+  vec3 colors = texture.get_color_uv(vec2(0.77,0.77));
+  std::cout << "Farben" << glm::to_string(colors) << "\n";
+
+
   vec3 origin = vec3(0, -4, -13);
   //Mesh m = Mesh("data/input/skull.obj",
   //    vec3(0, 15, -20), {.color = vec3(0, 1, 0)});
   Mesh m = Mesh("data/input/bunny_scaled.obj",
       vec3(1.2, -4.8, -10), {.color = vec3(0, 1, 0)});
-  Sphere s = Sphere(origin + vec3(-2, 2, 1.5), 1,{.color = vec3(1, 0, 1)});
+  Sphere s = Sphere(origin + vec3(-2, 2, 1.5), 1,{.color = vec3(1, 0, 1)}, "data/input/earth_uv.png");
   //Mesh c1 = Mesh("data/input/cube.obj",
   //    vec3(-2, -3, -13), {.color = vec3(1, 0, 0), .mirror = 0.3});
   Mesh c2 = Mesh("data/input/cube.obj",
@@ -59,7 +71,7 @@ int main(void) {
   std::cout << "Scene size:" << m.get_size() << std::endl;
 
  
-  scene.get_camera()->set_resolution(1000);
+  scene.get_camera()->set_resolution(200);
   scene.get_camera()->set_sensor_size(1, 1);
 
   scene.set_aliasing(1);
@@ -84,13 +96,14 @@ int main(void) {
 
   // generate animation
   float rotation = 90;
-  float samples = 1;
+  float samples = 2;
+
+  scene.get_camera()->rotate(origin, vec3(1, 0, 0), -10);
+  scene.get_camera()->rotate(origin, vec3(0, 1, 0), 15);
+  scene.update_view_transform();
 
   for (int i = 0; i < samples; i++) {
     // for aliasing
-    scene.get_camera()->rotate(origin, vec3(1, 0, 0), -10);
-    scene.get_camera()->rotate(origin, vec3(0, 1, 0), 15);
-    scene.update_view_transform();
 
     std::cout << "Sample (" << i + 1 << " of " << samples << ")\n";
     Image out = scene.trace_image();

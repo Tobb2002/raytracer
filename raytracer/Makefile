@@ -1,7 +1,7 @@
 .PHONY: all
 
 CC = g++
-FLAGS = -std=c++2a -Wall -O -g -fsanitize=address
+FLAGS = -std=c++2a -Wall -O -g -fsanitize=address -L/usr/X11R6/lib -lm -lpthread -lX11
 
 # tasks
 all: compile
@@ -38,7 +38,7 @@ docs:
 compile_commands:
 	compiledb --command-style -o src/compile_commands.json make
 
-files = main ray triangle camera image mesh pointlight box plane scene object objloader object_factory transform bvh light sphere
+files = main ray triangle camera image mesh pointlight box plane scene object objloader object_factory transform bvh light sphere texture 
 
 targets = $(addsuffix .o,$(addprefix obj/,$(files)))
 
@@ -59,5 +59,5 @@ obj/%.o: src/objects/%.cpp src/objects/%.hpp | $(BUILDDIRS)
 	$(CC) $(FLAGS) -c $< -o $@
 
 # lib obj
-obj/objloader.o: src/objects/lib/objloader.cpp src/objects/lib/objloader.hpp | $(BUILDDIRS)
+obj/%.o: src/objects/lib/%.cpp src/objects/lib/%.hpp | $(BUILDDIRS)
 	$(CC) $(FLAGS) -c $< -o $@

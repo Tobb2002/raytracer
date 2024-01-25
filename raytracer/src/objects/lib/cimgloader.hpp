@@ -3,6 +3,4 @@
  */
 
 #pragma once
-
-#include "tiny_obj_loader.h"
 #include "CImg.h"
