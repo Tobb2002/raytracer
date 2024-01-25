@@ -120,6 +120,9 @@ int main(void) {
     //c8.rotate(vec3(0, 1, 0), rotation/samples * 2);
     //m.move(vec3(0.1, 0, 0));
     scene.get_camera()->rotate(origin, vec3(0, 1, 0), rotation/samples);
+
+    //s.rotate(vec3(0, 1, 0), rotation/samples);
+    c2.rotate(vec3(0, 1, 0), rotation/samples);
     // scene.get_camera()->move(vec3(0, 0, -1));
     scene.update_view_transform();
     //scene.get_camera()->rotate(vec3(0, 1, 0), +5);

@@ -33,13 +33,15 @@ class Sphere : public Object{
 
   // transformations
 
-  //void apply_transform(mat4 transformation) override;
+  void apply_transform(mat4 transformation) override;
+  vec3 get_direction();
 
   vec3 calculate_normal(vec3 surface_point);
 
 private:
   vec3 _normal;
   float _radius;
+  vec3 _direction_point;
   Material _material;
   Texture _texture;
   bool _enable_texture;

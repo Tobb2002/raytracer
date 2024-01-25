@@ -32,8 +32,10 @@ Sphere::Sphere(vec3 pos, float radius, Material material, std::string path_to_fi
 }
 
 void Sphere::set_start_position(vec3 position, float radius) {
-  _origin = position;
+  _origin = vec3(0, 0, 0);
+  move(position);
   _radius = radius;
+  _direction_point = position + _radius * vec3(0,0,1);
 }
 
 void Sphere::enable_texture(bool enable) {
@@ -76,17 +78,31 @@ void Sphere::print(void) {
 }
 
 Material Sphere::get_material(vec3 point) {
-  point = _transform.virtual_to_origin(point);
   if (_enable_texture) {
-    vec3 n = calculate_normal(point);
+    vec3 n_point = point;
+    // reverse view transform
+    _transform.transform_point(_view_transform.inv, &n_point);
+    // transform sphere back to origin
+    n_point = _transform.virtual_to_origin(n_point);
+    
+    // normalize normal
+    vec3 n = glm::normalize(n_point);
+    
     vec2 point_uv = vec2(atan2(n.x, n.z) / (2*3.141f) + 0.5,
                          -n.y * 0.5 + 0.5);
-    //std::cout << "u: " << point_uv.x << " v: " << point_uv.y << "\n";
     _material.color = _texture.get_color_uv(point_uv);
-    //std::cout << "color:" << glm::to_string(_material.color) << "\n";
   }
 
   return _material;
+}
+
+void Sphere::apply_transform(mat4 transformation) {
+  Object::apply_transform(transformation);
+
+  _transform.transform_point(transformation, &_direction_point);
+}
+vec3 Sphere::get_direction() {
+  return glm::normalize(_direction_point - _origin);
 }
 
 vec3 Sphere::calculate_normal(vec3 surface_point) {

@@ -132,6 +132,11 @@ mat4 Transform::get_combined_inv(void) {
   return _mat_inv.rotation * _mat_inv.translation;
 }
 
+mat4 Transform::get_mat_rotation(void) {
+  return _mat.rotation;
+}
+
+
 /// @brief Calculate th angle between two directions
 Rotation Transform::calculate_rotation(vec3 dir1, vec3 dir2) {
   vec3 axis = glm::cross(dir2, dir1);

@@ -37,6 +37,8 @@ class Transform {
   mat4 get_combined(void);
   mat4 get_combined_inv(void);
 
+  mat4 get_mat_rotation(void);
+
   /***** Calculations *****/
 
   Rotation calculate_rotation(vec3 dir1, vec3 dir2);
