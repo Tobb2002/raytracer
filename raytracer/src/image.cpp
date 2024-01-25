@@ -52,7 +52,7 @@ void Image::apply_tonemapping(float middle_gray) {
 
       float new_luminance = l_p / (1 + l_p);
       //float new_luminance = l_p * (1 + (l_p / (l_white * l_white))) / 1 + l_p;
-      std::cout << get_luminance(_matrix[x][y]) << " : " << new_luminance << "\n";
+      //std::cout << get_luminance(_matrix[x][y]) << " : " << new_luminance << "\n";
   
       apply_luminance(&_matrix[x][y], new_luminance);
     }

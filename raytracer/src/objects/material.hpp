@@ -26,7 +26,7 @@ struct Material {
   float ambient = 0.25;
 
   /// @brief factor for specular material.
-  float specular = 0.9;
+  float specular = 0.7;
   float pow_m = 2;
 
   /// @brief factor for mirroring material.

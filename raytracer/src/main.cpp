@@ -41,7 +41,7 @@ int main(void) {
   //    vec3(0, 15, -20), {.color = vec3(0, 1, 0)});
   Mesh m = Mesh("data/input/bunny_scaled.obj",
       vec3(1.2, -4.8, -10), {.color = vec3(0, 1, 0)});
-  Sphere s = Sphere(origin + vec3(-2, 2, 1.5), 1,{.color = vec3(1, 0, 1)}, "data/input/earth_uv.png");
+  Sphere s = Sphere(origin + vec3(-2, 2, 1.5), 1,{.color = vec3(1, 0, 1), .specular=0.2}, "data/input/earth_uv.png");
   //Mesh c1 = Mesh("data/input/cube.obj",
   //    vec3(-2, -3, -13), {.color = vec3(1, 0, 0), .mirror = 0.3});
   Mesh c2 = Mesh("data/input/cube.obj",
@@ -71,7 +71,7 @@ int main(void) {
   std::cout << "Scene size:" << m.get_size() << std::endl;
 
  
-  scene.get_camera()->set_resolution(200);
+  scene.get_camera()->set_resolution(500);
   scene.get_camera()->set_sensor_size(1, 1);
 
   scene.set_aliasing(1);

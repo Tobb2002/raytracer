@@ -80,7 +80,7 @@ Material Sphere::get_material(vec3 point) {
   if (_enable_texture) {
     vec3 n = calculate_normal(point);
     vec2 point_uv = vec2(atan2(n.x, n.z) / (2*3.141f) + 0.5,
-                         n.y * 0.5 + 0.5);
+                         -n.y * 0.5 + 0.5);
     //std::cout << "u: " << point_uv.x << " v: " << point_uv.y << "\n";
     _material.color = _texture.get_color_uv(point_uv);
     //std::cout << "color:" << glm::to_string(_material.color) << "\n";
