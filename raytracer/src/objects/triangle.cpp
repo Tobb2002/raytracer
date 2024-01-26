@@ -48,7 +48,7 @@ vec3 Triangle::calculate_normal(void) {
 }
 
 vec3 Triangle::calculate_normal_interpolated(vec3 uvw) {
-  return uvw.x * _p_normal[0] + uvw.y * _p_normal[1] + uvw.z * _p_normal[2]; 
+  return glm::normalize((1-uvw.y -uvw.z) * _p_normal[0] + uvw.y * _p_normal[1] + uvw.y * _p_normal[2]); 
 }
 
 vec3 Triangle::calculate_middle(void) {
@@ -78,7 +78,7 @@ Intersection Triangle::intersect(Ray *ray) {
     (glm::dot(glm::cross(d, e[1]), s)),
     (glm::dot(glm::cross(s, e[0]), d)));
 
-  // res: (u,v,w) barycentric coordinates of hit point
+  // res: (w, u, v) barycentric coordinates of hit point
   vec3 res = p1 * p2;
 
   bool found = true;
@@ -93,11 +93,11 @@ Intersection Triangle::intersect(Ray *ray) {
   }
 
   vec3 normal = _normal;
-  if (enable_smooth_normals) {
+  if (_enable_smooth_normals) {
     normal = calculate_normal_interpolated(res);
   }
 
-  Intersection i = {found, res[0], ray->get_point(res[0]), _normal, _material};
+  Intersection i = {found, res[0], ray->get_point(res[0]), normal, _material};
 
   return i;
 }
@@ -108,39 +108,15 @@ Intersection Triangle::intersect(Ray ray) {
    * returns intersection Point beetween ray and trianlge.
    * if intersection is outside of triangle return vec(0,0,0) since that's the camera origin.
    */
+  return intersect(&ray);
+}
 
-  vec3 e[2];
-
-  e[0] = _p[1] - _p[0];
-  e[1] = _p[2] - _p[0];
-
-  vec3 s = ray.get_origin() - _p[0];
-  vec3 d = ray.get_direction();
-
-  float p1 = (
-    1 / (glm::dot(glm::cross(d, e[1]), e[0])));
-
-  vec3 p2 = vec3(
-    (glm::dot(glm::cross(s, e[0]), e[1])),
-    (glm::dot(glm::cross(d, e[1]), s)),
-    (glm::dot(glm::cross(s, e[0]), d)));
-
-  // res = vec(t, b1, b2);
-  vec3 res = p1 * p2;
-
-  bool found = true;
-  // check if intersection is inside triangle and in front of Camera(t >0)
-  if (!(1 - res[1] - res[2] >= 0 &&
-      res[1] >= 0 &&
-      res[2] >= 0 &&
-      res[0] >= 0)) {
-    // return -1 if not
-    found = false;
+// ----- setters ------
+void Triangle::set_vertex_normals(vec3 normals[3]) {
+  _enable_smooth_normals = true;
+  for (int i = 0; i < 3; i++) {
+    _p_normal[i] = normals[i];
   }
-
-  Intersection i = {found, res[0], ray.get_point(res[0]), _normal, _material};
-
-  return i;
 }
 
 vec3 Triangle::get_normal() { return _normal; }

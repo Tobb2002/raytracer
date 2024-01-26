@@ -183,6 +183,7 @@ void Mesh::read_from_obj(std::string inputfile) {
       // Loop over vertices of one Triangle
       vec3 triangle_points[3];
       vec2 triangle_points_uv[3];
+      vec3 triangle_normals[3];
       for (int v = 0; v < fv; v++) {
         // access to vertex
         tinyobj::index_t idx = shapes[0].mesh.indices[index_offset + v];
@@ -200,9 +201,9 @@ void Mesh::read_from_obj(std::string inputfile) {
         }
 
         // vertex normals
-        tinyobj::real_t nx;
-        tinyobj::real_t ny;
-        tinyobj::real_t nz;
+        tinyobj::real_t nx = 0;
+        tinyobj::real_t ny = 0;
+        tinyobj::real_t nz = 0;
 
         if (vertex_normals_available) {
           nx = attrib.normals[3*idx.normal_index+0];
@@ -217,9 +218,14 @@ void Mesh::read_from_obj(std::string inputfile) {
         // insert point into triangle_points
         triangle_points[v] = vec3(vx +_origin.x, vy + _origin.y, vz + _origin.z);
         triangle_points_uv[v] = vec2(tx, ty);
+        triangle_normals[v] = vec3(nx, ny, nz);
       }
       // make triangle and add to triangles
-      _triangles.push_back(Triangle(triangle_points, _material));
+      Triangle t = Triangle(triangle_points, _material);
+      if (vertex_normals_available && _enable_smooth_shading) {
+        t.set_vertex_normals(triangle_normals);
+      }
+      _triangles.push_back(t);
 
       // update bounding box values
       update_bounding_box(&_triangles.back());

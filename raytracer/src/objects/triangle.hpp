@@ -23,6 +23,9 @@ class Triangle : public Object{
   // transformations
   void apply_transform(mat4 transformation) override;
 
+  // setters
+  void set_vertex_normals(vec3 normals[3]);
+
   // getters
   vec3 get_normal();
   vec3 get_pos();
@@ -43,7 +46,7 @@ class Triangle : public Object{
   vec3 _normal;
   // vertex normals
   vec3 _p_normal[3];
-  bool enable_smooth_normals = false;
+  bool _enable_smooth_normals = false;
 
   vec3 calculate_normal(void);
   vec3 calculate_normal_interpolated(vec3 uvw);

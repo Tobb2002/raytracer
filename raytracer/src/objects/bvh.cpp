@@ -146,13 +146,13 @@ Intersection BVH::intersect_leaf(uint id, Ray *ray) {
   }
 
   Triangle triangle_best = _data.triangles->at(_data.triangle_ids.at(best_triangle_id));
-  Intersection intersection = {found_one,
-                               t_min,
-                               ray->get_point(t_min),
-                               triangle_best.get_normal(),
-                               triangle_best.get_material()};
+  //Intersection intersection = {found_one,
+  //                             t_min,
+  //                             ray->get_point(t_min),
+  //                             triangle_best.get_normal(),
+  //                             triangle_best.get_material()};
 
-  return intersection;
+  return triangle_best.intersect(ray);
 }
 
 bool BVH::update_intersection(Intersection *intersect, Intersection new_intersect) {
