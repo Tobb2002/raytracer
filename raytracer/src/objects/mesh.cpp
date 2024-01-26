@@ -163,6 +163,13 @@ void Mesh::read_from_obj(std::string inputfile) {
     texture_available = true;
   }
 
+  // check if vertex normals are available
+  bool vertex_normals_available = false;
+  if (attrib.normals.size() > 0) {
+    vertex_normals_available = true;
+    std::cout << "normals available\n";
+  }
+
   for (int s = 0; s < shapes.size(); s++) {
 
     int size = shapes[s].mesh.num_face_vertices.size();
@@ -192,11 +199,16 @@ void Mesh::read_from_obj(std::string inputfile) {
           ty = attrib.texcoords[2*idx.texcoord_index+1];
         }
 
-        /* hier passiert Speicher zugriffsfehler
-        tinyobj::real_t nx = attrib.normals[3*idx.normal_index+0];
-        tinyobj::real_t ny = attrib.normals[3*idx.normal_index+1];
-        tinyobj::real_t nz = attrib.normals[3*idx.normal_index+2];
-        */
+        // vertex normals
+        tinyobj::real_t nx;
+        tinyobj::real_t ny;
+        tinyobj::real_t nz;
+
+        if (vertex_normals_available) {
+          nx = attrib.normals[3*idx.normal_index+0];
+          ny = attrib.normals[3*idx.normal_index+1];
+          nz = attrib.normals[3*idx.normal_index+2];
+        }
         // Optional: vertex colors
         // tinyobj::real_t red = attrib.colors[3*idx.vertex_index+0];
         // tinyobj::real_t green = attrib.colors[3*idx.vertex_index+1];

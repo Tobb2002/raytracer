@@ -36,12 +36,16 @@ class Triangle : public Object{
 
  private:
   vec3 _p[3];
-  // _p_uv -1 means no texture loaded
+  // vertex texture coordinates _p_uv -1 means no texture loaded
   vec2 _p_uv[3];
   vec3 _middle_point;
   Material _material;
   vec3 _normal;
+  // vertex normals
+  vec3 _p_normal[3];
+  bool enable_smooth_normals = false;
 
   vec3 calculate_normal(void);
+  vec3 calculate_normal_interpolated(vec3 uvw);
   vec3 calculate_middle(void);
 };

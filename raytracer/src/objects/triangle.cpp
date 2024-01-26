@@ -47,6 +47,10 @@ vec3 Triangle::calculate_normal(void) {
   return glm::normalize(glm::cross(v1, v2));
 }
 
+vec3 Triangle::calculate_normal_interpolated(vec3 uvw) {
+  return uvw.x * _p_normal[0] + uvw.y * _p_normal[1] + uvw.z * _p_normal[2]; 
+}
+
 vec3 Triangle::calculate_middle(void) {
   // TODO(tobi) implement real middle point
   return _p[0];
@@ -74,10 +78,11 @@ Intersection Triangle::intersect(Ray *ray) {
     (glm::dot(glm::cross(d, e[1]), s)),
     (glm::dot(glm::cross(s, e[0]), d)));
 
-  // res = vec(t, b1, b2);
+  // res: (u,v,w) barycentric coordinates of hit point
   vec3 res = p1 * p2;
 
   bool found = true;
+
   // check if intersection is inside triangle and in front of Camera(t >0)
   if (!(1 - res[1] - res[2] >= 0 &&
       res[1] >= 0 &&
@@ -85,6 +90,11 @@ Intersection Triangle::intersect(Ray *ray) {
       res[0] >= 0)) {
     // return -1 if not
     found = false;
+  }
+
+  vec3 normal = _normal;
+  if (enable_smooth_normals) {
+    normal = calculate_normal_interpolated(res);
   }
 
   Intersection i = {found, res[0], ray->get_point(res[0]), _normal, _material};
