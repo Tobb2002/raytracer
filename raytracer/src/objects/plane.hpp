@@ -20,6 +20,7 @@ class Plane : public Object{
   void set_start_position(vec3 position, vec3 normal);
   Plane(vec3 pos, vec3 normal, Material material);
   Plane(vec3 pos, vec3 normal, Material material1, Material material2);
+  Plane(vec3 pos, vec3 normal, Material material1, Material material2, vec2 size);
 
   // settings
   void set_axis(bool enable);
@@ -41,9 +42,11 @@ class Plane : public Object{
 private:
   vec3 _normal;
   vec3 _point;
+  vec2 _size;
   Material _material;
   Material _material2;
 
   bool _two_colored;
   bool _axis_enable = false;
+  bool _enable_size = false;
 };

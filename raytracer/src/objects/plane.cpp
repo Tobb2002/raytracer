@@ -60,6 +60,19 @@ Plane::Plane(vec3 position,
   _material2 = material2;
   _two_colored = true;
 }
+Plane::Plane(vec3 position,
+             vec3 normal,
+             Material material1,
+             Material material2,
+             vec2 size) {
+  set_start_position(position, normal);
+
+  _material = material1;
+  _material2 = material2;
+  _two_colored = true;
+  _enable_size = true;
+  _size = size;
+}
 
 /***** settings *****/
 void Plane::set_axis(bool enable) {
@@ -76,8 +89,16 @@ Intersection Plane::intersect(Ray ray) {
   if (t >= 0) {
     found = true;
   }
-  Intersection i = {found, t, ray.get_point(t),
-      _normal, get_material(ray.get_point(t))};
+  vec3 point = ray.get_point(t);
+  vec3 point_origin = _transform.virtual_to_origin(_transform.transform_point(_view_transform.inv, point));
+  if (_enable_size && (point_origin.x > _size.x ||
+      point_origin.x < -_size.x ||
+      point_origin.y > _size.y ||
+      point_origin.y < -_size.y)) {
+    found = false;
+  }
+  Intersection i = {found, t, point,
+      _normal, get_material(point)};
 
   return i;
 }

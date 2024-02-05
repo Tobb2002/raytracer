@@ -64,7 +64,8 @@ int main(void) {
   //    vec3(+2, 0, -17), {.color = vec3(1, 0, 0), .mirror = 0.3});
   Plane plane = Plane(origin_plane, vec3(0, 1, 0),
       {.color = vec3(1 , 1, 1), .mirror = 0.3},
-      {.color = vec3(0.6, 0.6, 0.6), .mirror = 0.3});
+      {.color = vec3(0.6, 0.6, 0.6), .mirror = 0.3},
+                      vec2(10,10));
   plane.set_axis(true);
   // Plane plane2 = Plane(vec3(0, 0, -50), vec3(0, 0, -1), vec3(0, 0.5, 1));
   Pointlight light = Pointlight(origin + vec3(0, 4, 0), 300);
@@ -90,7 +91,7 @@ int main(void) {
   //scene.add_object(&venus);
   //scene.add_object(&mars);
     //
-  scene.add_object(&m); 
+  //scene.add_object(&m); 
   scene.add_object(&plane);
   //scene.add_object(&c1);
 
