@@ -8,6 +8,8 @@
 #include <boost/lambda/bind.hpp>
 #include <glm/gtx/string_cast.hpp>
 
+//#define DEBUG
+
 #include <chrono>
 
 BVH::BVH() {
@@ -25,7 +27,7 @@ void BVH::build_tree(std::vector<Triangle> *triangles) {
 
   _data.triangle_ids.reserve(_data.size);
   for (int i = 0; i < _data.size; i++) {
-    _data.triangle_ids.push_back(_data.size - i -1);
+    _data.triangle_ids.push_back(i);
   }
   // initialize root node
   _data.tree[0].count = _data.size;
@@ -43,6 +45,9 @@ void BVH::build_tree(std::vector<Triangle> *triangles) {
  * @return Intersection 
  */
 Intersection BVH::intersect(Ray *ray) {
+
+  _intersect_count = 0;
+
   // check root
   return intersect_node(0, ray);
 }
@@ -56,19 +61,25 @@ Intersection BVH::intersect(Ray *ray) {
  */
 Intersection BVH::intersect_node(uint node_id, Ray *ray) {
 
-
   Intersection result;
   if (!intersect_node_bool(node_id, ray)) {
     return result;
   }
+
+  _intersect_count += 1;
   // check if leaf
   if (_data.tree[node_id].leaf) {
   //std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
   //std::cout << "node_id: " << node_id << "\n";
   //std::cout << "node_size: " << _data.tree[node_id].count << "\n";
     Intersection intersect = intersect_leaf(node_id, ray);
+
   //std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   //std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
+    #ifdef DEBUG
+    std::cout << "intersect_count: " << _intersect_count << "\n";
+    #endif
+
     return intersect;
   }
 
@@ -128,10 +139,12 @@ bool BVH::intersect_node_bool(uint id, Ray *ray) {
 }
 
 Intersection BVH::intersect_leaf(uint id, Ray *ray) {
+  #ifdef DEBUG
+  std::cout << "id: " << id << "  parent:" << (id -1) /2 << "\n";
+  #endif
   // find best intersection in triangle set
   uint best_triangle_id = 0;
   float t_min = MAXFLOAT;
-  bool found_one = false;
 
 
   uint i = _data.tree[id].first;
@@ -139,7 +152,6 @@ Intersection BVH::intersect_leaf(uint id, Ray *ray) {
     Intersection t_i = _data.triangles->at(_data.triangle_ids.at(i)).intersect(ray);
 
     if (t_i.found && t_i.t < t_min) {
-      found_one = true;
       t_min = t_i.t;
       best_triangle_id = i;
     }
@@ -294,33 +306,37 @@ void BVH::update_boxes() {
 
 bool comp2(BVH_data *data, uint id1, uint id2, Axis axis)
 {
-  if (data->triangles->at(data->triangle_ids.at(id1)).get_pos()[static_cast<size_t>(axis)]
-    < data->triangles->at(data->triangle_ids.at(id2)).get_pos()[static_cast<size_t>(axis)]) {
-      return true;
+  //std::cout << "id1: " << id1 << " id2: " << id2 << "\n";
+  if (data->triangles->at(id1).get_pos()[static_cast<size_t>(axis)]
+    >= data->triangles->at(id2).get_pos()[static_cast<size_t>(axis)]) {
+      return false;
     }
-  return false;
+  return true;
 }
 
 void BVH::sort(uint first, uint count, Axis axis) {
+  //std::cout << _data.triangles->size() << "\n";
+  //std::cout << "first: " << first << " count:" << count << "\n";
+  //std::cout << "comp: " << comp2(&_data, 2,4, X) << "\n";
   namespace boo = boost::lambda;
   switch (axis) {
     case X:
       std::sort(
         _data.triangle_ids.begin() + first,
         _data.triangle_ids.begin() + first + count,
-        boo::bind(&comp2, &_data, boo::_1, boo::_1, X));
+        boo::bind(&comp2, &_data, boo::_1, boo::_2, axis));
       break;
     case Y:
       std::sort(
         _data.triangle_ids.begin() + first,
         _data.triangle_ids.begin() + first + count,
-        boo::bind(&comp2, &_data, boo::_1, boo::_1, Y));
+        boo::bind(&comp2, &_data, boo::_1, boo::_2, axis));
       break;
     case Z:
       std::sort(
         _data.triangle_ids.begin() + first,
         _data.triangle_ids.begin() + first + count,
-        boo::bind(&comp2, &_data, boo::_1, boo::_1, Z));
+        boo::bind(&comp2, &_data, boo::_1, boo::_2, axis));
       break;
   }
 }
@@ -331,10 +347,19 @@ void BVH::split(uint node_id) {
     return;
   }
   Axis axis = get_longest_axis(node_id);
-  sort(
-    _data.tree[node_id].first,
-    _data.tree[node_id].count,
-    axis);
+  
+  uint start = _data.tree[node_id].first;
+  uint count = _data.tree[node_id].count -1;
+
+  //for (uint i : _data.triangle_ids) {
+  //  std::cout << i << ",";
+  //}
+  //std::cout << "\n";
+  sort(start, count, axis);
+  //for (uint i : _data.triangle_ids) {
+  //  std::cout << i << ",";
+  //}
+  //std::cout << "\n";
 
   // update node
   _data.tree[node_id].leaf = false;

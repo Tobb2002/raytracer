@@ -80,7 +80,9 @@ class BVH {
   /// @brief Splits node a long longest axis
   void split(uint node_id);
 
-  uint _max_triangles = 4;
+  uint _max_triangles = 3;
+
+  uint _intersect_count = 0;
 
  public:
 

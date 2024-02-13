@@ -6,6 +6,8 @@
 
 #include <glm/gtx/string_cast.hpp>
 
+//#define DEBUG
+
 /**
  * @brief Construct a new Scene:: Scene object
  * 
@@ -138,6 +140,9 @@ Image Scene::trace_image() {
   std::cout << "rendering\n\n";
   for (int x = 0; x < resolution[0]; x++) {
     for (int y = 0; y < resolution[1]; y++) {
+      #ifdef DEBUG
+      std::cout << "------------- new ray --------------------\n";
+      #endif
       // print progress
       if (x > progress) {
         // erase line and write new progress

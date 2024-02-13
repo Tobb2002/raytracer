@@ -1,7 +1,7 @@
 .PHONY: all
 
 CC = g++
-FLAGS = -std=c++2a -Wall -O -g -fsanitize=address -L/usr/X11R6/lib -lm -lpthread -lX11
+FLAGS = -std=c++2a -Wall -O0 -g -fsanitize=address -L/usr/X11R6/lib -lm -lpthread -lX11
 
 # tasks
 all: compile
