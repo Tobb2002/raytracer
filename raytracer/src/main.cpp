@@ -40,7 +40,7 @@ int main(void) {
   vec3 origin_plane = vec3(0, 0, -18);
   //Mesh m = Mesh("data/input/skull.obj",
   //    vec3(0, 15, -20), {.color = vec3(0, 1, 0)});
-  Mesh m = Mesh("data/input/bunny_smooth.obj",
+  Mesh m = Mesh("data/input/Airplane.obj",
       origin_plane + vec3(0, 0, 0), {.color = vec3(0, 1, 0), .specular=0.2});
   Sphere earth = Sphere(origin + vec3(7, 0, 0), 1,{.color = vec3(1, 0, 1), .specular=0.2}, "data/input/earth_uv.png");
   Sphere venus = Sphere(origin + vec3(4, 0, 0), 1.1,{.color = vec3(1, 0, 1), .specular=0.2}, "data/input/textures/planets/venus.jpg");
@@ -77,7 +77,7 @@ int main(void) {
   std::cout << "Scene size:" << m.get_size() << std::endl;
 
 
-  scene.get_camera()->set_resolution(200);
+  scene.get_camera()->set_resolution(100);
   scene.get_camera()->set_sensor_size(1, 1);
 
   scene.set_aliasing(1);
@@ -100,9 +100,9 @@ int main(void) {
   float samples = 1;
 
   //scene.get_camera()->rotate(origin, vec3(1, 0, 0), -12);
-  //scene.get_camera()->move(vec3(0, 7, 0));
-  //scene.get_camera()->rotate(origin, vec3(1, 0, 0), -15);
-  //scene.update_view_transform();
+  scene.get_camera()->move(vec3(0, 7, 0));
+  scene.get_camera()->rotate(origin, vec3(1, 0, 0), -15);
+  scene.update_view_transform();
 
   for (int i = 0; i < samples; i++) {
     // for aliasing

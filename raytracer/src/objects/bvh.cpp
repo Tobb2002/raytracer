@@ -11,6 +11,7 @@
 //#define DEBUG
 
 #include <chrono>
+#include <iterator>
 
 BVH::BVH() {
 }
@@ -306,12 +307,14 @@ void BVH::update_boxes() {
 
 bool comp2(BVH_data *data, uint id1, uint id2, Axis axis)
 {
-  //std::cout << "id1: " << id1 << " id2: " << id2 << "\n";
+  //std::cout << "id1: " << id1 << " id2: " << id2 << " |  ";
   if (data->triangles->at(id1).get_pos()[static_cast<size_t>(axis)]
-    >= data->triangles->at(id2).get_pos()[static_cast<size_t>(axis)]) {
-      return false;
+    > data->triangles->at(id2).get_pos()[static_cast<size_t>(axis)]) {
+      //std::cout << "false\n";
+      return true;
     }
-  return true;
+  //std::cout << "true\n";
+  return false;
 }
 
 void BVH::sort(uint first, uint count, Axis axis) {
@@ -349,12 +352,17 @@ void BVH::split(uint node_id) {
   Axis axis = get_longest_axis(node_id);
   
   uint start = _data.tree[node_id].first;
-  uint count = _data.tree[node_id].count -1;
+  uint count = _data.tree[node_id].count;
 
+  //std::cout << axis << "\n";
   //for (uint i : _data.triangle_ids) {
   //  std::cout << i << ",";
   //}
   //std::cout << "\n";
+  //if ((start + count - 1 >= _data.size)) {
+  //  print_node(node_id);
+  //  std::cout << "hallooooooooo\n";
+  //}
   sort(start, count, axis);
   //for (uint i : _data.triangle_ids) {
   //  std::cout << i << ",";
@@ -365,7 +373,7 @@ void BVH::split(uint node_id) {
   _data.tree[node_id].leaf = false;
 
   // point to split id belongs to the right child
-  uint middle_count = _data.tree[node_id].count / 2;
+  uint middle_count = floor(_data.tree[node_id].count / 2.f);
 
   bool even_amount = false;
   if (_data.tree[node_id].count % 2 == 0) {
