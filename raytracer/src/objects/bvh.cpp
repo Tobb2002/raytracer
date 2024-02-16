@@ -289,11 +289,11 @@ void BVH::print_node_triangles(uint id) {
   std::cout << "-------bvh_node_triangles------\n";
   std::cout << "id: " << id << "\n";
   for (int i = 0; i < _data.tree[id].count; i++) {
-    Triangle t = _data.triangles->at(_data.triangle_ids.at(i + _data.tree[id].first));
+    Triangle t = 
+      _data.triangles->at(_data.triangle_ids.at(i + _data.tree[id].first));
     t.print();
   }
   std::cout << "----------------------\n";
-
 }
 
 /**
@@ -302,7 +302,6 @@ void BVH::print_node_triangles(uint id) {
  */
 void BVH::update_boxes() {
   update_box(0);
-
 }
 
 bool comp2(BVH_data *data, uint id1, uint id2, Axis axis)
@@ -354,20 +353,20 @@ void BVH::split(uint node_id) {
   uint start = _data.tree[node_id].first;
   uint count = _data.tree[node_id].count;
 
-  //std::cout << axis << "\n";
-  //for (uint i : _data.triangle_ids) {
-  //  std::cout << i << ",";
-  //}
-  //std::cout << "\n";
-  //if ((start + count - 1 >= _data.size)) {
-  //  print_node(node_id);
-  //  std::cout << "hallooooooooo\n";
-  //}
+  // std::cout << axis << "\n";
+  // for (uint i : _data.triangle_ids) {
+  //   std::cout << i << ",";
+  // }
+  // std::cout << "\n";
+  // if ((start + count - 1 >= _data.size)) {
+  //   print_node(node_id);
+  //   std::cout << "hallooooooooo\n";
+  // }
   sort(start, count, axis);
-  //for (uint i : _data.triangle_ids) {
-  //  std::cout << i << ",";
-  //}
-  //std::cout << "\n";
+  // for (uint i : _data.triangle_ids) {
+  //   std::cout << i << ",";
+  // }
+  // std::cout << "\n";
 
   // update node
   _data.tree[node_id].leaf = false;
@@ -379,7 +378,7 @@ void BVH::split(uint node_id) {
   if (_data.tree[node_id].count % 2 == 0) {
     even_amount = true;
   }
-  
+
   uint left_id = node_id*2 + 1;
   uint right_id = node_id*2 + 2;
 
@@ -395,8 +394,7 @@ void BVH::split(uint node_id) {
     _data.tree[right_id].first =
       _data.tree[node_id].first + middle_count;
     _data.tree[right_id].count = middle_count;
-  }
-  else {  // asing left one more element
+  } else {  // asing left one more element
     // asing left child
     _data.tree[left_id].first = _data.tree[node_id].first;
     _data.tree[left_id].count = middle_count + 1;
@@ -406,7 +404,7 @@ void BVH::split(uint node_id) {
       _data.tree[node_id].first + middle_count + 1;
     _data.tree[right_id].count = middle_count;
   }
-  
+
   // calculate new bounding boxes
   calculate_min(left_id);
   calculate_max(left_id);

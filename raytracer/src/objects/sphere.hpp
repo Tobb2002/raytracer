@@ -38,7 +38,7 @@ class Sphere : public Object{
 
   vec3 calculate_normal(vec3 surface_point);
 
-private:
+ private:
   vec3 _normal;
   float _radius;
   vec3 _direction_point;

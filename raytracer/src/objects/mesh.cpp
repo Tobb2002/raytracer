@@ -104,8 +104,6 @@ void Mesh::apply_transform(mat4 transformation) {
   for (size_t i = 0; i < _triangles.size(); i++) {
     Triangle *t = &_triangles[i];
     t->apply_transform(transformation);
-    // check if t is outside of bounding box
-    //update_bounding_box(t);
   }
   _bvh.update_boxes();
 }
@@ -171,7 +169,6 @@ void Mesh::read_from_obj(std::string inputfile) {
   }
 
   for (int s = 0; s < shapes.size(); s++) {
-
     int size = shapes[s].mesh.num_face_vertices.size();
     std::cout << "size:" << size << "\n";
 
@@ -216,7 +213,9 @@ void Mesh::read_from_obj(std::string inputfile) {
         // tinyobj::real_t blue = attrib.colors[3*idx.vertex_index+2];
 
         // insert point into triangle_points
-        triangle_points[v] = vec3(vx +_origin.x, vy + _origin.y, vz + _origin.z);
+        triangle_points[v] = vec3(vx +_origin.x,
+                                  vy + _origin.y,
+                                  vz + _origin.z);
         triangle_points_uv[v] = vec2(tx, ty);
         triangle_normals[v] = vec3(nx, ny, nz);
       }

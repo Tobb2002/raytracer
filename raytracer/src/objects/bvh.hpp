@@ -34,7 +34,7 @@ struct BVH_node {
   vec3 min = vec3(MAXFLOAT);
   vec3 max = vec3(-MAXFLOAT);
   bool leaf = true;
-  uint first = 0; 
+  uint first = 0;
   uint count = 0;
 };
 
@@ -55,7 +55,8 @@ class BVH {
   Intersection intersect_node(uint node_id, Ray *ray);
   Intersection intersect_leaf(uint id, Ray *ray);
 
-  bool update_intersection(Intersection * intersect, Intersection new_intersect);
+  bool update_intersection(Intersection * intersect,
+                           Intersection new_intersect);
 
   /// @brief swaps to triangle ids in BVHdata
   void swap_triangle(uint id1, uint id2);
@@ -85,8 +86,6 @@ class BVH {
   uint _intersect_count = 0;
 
  public:
-
-  
   /***** Functions *****/
 
   BVH();
@@ -108,5 +107,4 @@ class BVH {
 
   void apply_transform(mat4 t);
   void update_boxes();
-
 };

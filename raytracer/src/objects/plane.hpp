@@ -20,7 +20,11 @@ class Plane : public Object{
   void set_start_position(vec3 position, vec3 normal);
   Plane(vec3 pos, vec3 normal, Material material);
   Plane(vec3 pos, vec3 normal, Material material1, Material material2);
-  Plane(vec3 pos, vec3 normal, Material material1, Material material2, vec2 size);
+  Plane(vec3 pos,
+        vec3 normal,
+        Material material1,
+        Material material2,
+        vec2 size);
 
   // settings
   void set_axis(bool enable);
@@ -39,7 +43,7 @@ class Plane : public Object{
 
   void calculate_normal(void);
 
-private:
+ private:
   vec3 _normal;
   vec3 _point;
   vec2 _size;

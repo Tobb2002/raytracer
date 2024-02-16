@@ -8,6 +8,7 @@ Light::Light(vec3 position, vec3 color) {
   _origin = position;
   _color = color;
 }
+
 Light::Light(vec3 position, float intensity) {
   _origin = position;
   _color = vec3(intensity);
@@ -22,3 +23,4 @@ float Light::get_distance(vec3 point) {
 }
 
 vec3 Light::get_color() { return _color; }
+

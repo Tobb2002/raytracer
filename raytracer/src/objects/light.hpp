@@ -20,3 +20,4 @@ class Light : public Object {
  protected:
   vec3 _color;
 };
+

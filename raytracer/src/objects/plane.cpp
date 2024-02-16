@@ -32,7 +32,6 @@ void Plane::set_start_position(vec3 position, vec3 normal) {
  * @param material material of the plane.
  */
 Plane::Plane(vec3 position, vec3 normal, Material material) {
-
   set_start_position(position, normal);
 
   _material = material;
@@ -90,7 +89,8 @@ Intersection Plane::intersect(Ray ray) {
     found = true;
   }
   vec3 point = ray.get_point(t);
-  vec3 point_origin = _transform.virtual_to_origin(_transform.transform_point(_view_transform.inv, point));
+  vec3 point_origin = _transform.virtual_to_origin(
+    _transform.transform_point(_view_transform.inv, point));
   if (_enable_size && (point_origin.x > _size.x ||
       point_origin.x < -_size.x ||
       point_origin.y > _size.y ||
@@ -115,7 +115,9 @@ Material Plane::get_material(vec3 point) {
   }
 
   // calculate point relative to standart plane (at origin)
-  vec3 point_origin = _transform.virtual_to_origin(_transform.transform_point(_view_transform.inv, point));
+  vec3 point_origin =
+    _transform.virtual_to_origin(
+      _transform.transform_point(_view_transform.inv, point));
   vec3 point_origin_mod = glm::mod(point_origin, 4.f);
 
   // draw axis of worldspace

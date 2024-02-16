@@ -41,7 +41,7 @@ class Mesh : public Object{
   vec3 _origin;
   Box _bounding_box;
   BVH _bvh;
-  
+
   bool _enable_smooth_shading = true;
 
   Material _material;

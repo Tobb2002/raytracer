@@ -46,7 +46,7 @@ mat4 Transform::add_rotation(vec3 axis, float degree) {
 mat4 Transform::add_rotation(vec3 point, vec3 axis, float degree) {
   vec3 origin = get_current_origin();
   vec3 v = origin - point;
-  
+
   // calculate rotation
   mat4 rot = get_rotation_mat({axis, degree});
   transform_point(rot, &v);
@@ -84,8 +84,7 @@ mat4 Transform::add_rotation_mat(vec3 axis, float degree) {
   return _mat.rotation;
 }
 
-void Transform::calculate_inverse_mat(void)
-{
+void Transform::calculate_inverse_mat(void) {
   // translation T^-1(t) = T(-t)
   _mat_inv.translation =  mat4(vec4(1, 0, 0, 0),
                                vec4(0, 1, 0, 0),
@@ -150,14 +149,12 @@ Rotation Transform::calculate_rotation(vec3 dir1, vec3 dir2) {
   float radian = glm::acos(glm::dot(dir1, dir2) /
       glm::length(dir1) * glm::length(dir2));
 
-
   Rotation rot = {axis, glm::degrees(radian)};
-  
+
   return rot;
 }
 
-vec3 Transform::origin_to_virtual(vec3 point)
-{
+vec3 Transform::origin_to_virtual(vec3 point) {
   mat4 transform = _mat.translation * _mat.rotation;
   vec3 res = point;
   transform_point(transform, &res);

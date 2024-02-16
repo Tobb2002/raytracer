@@ -6,7 +6,7 @@
 
 #include <glm/gtx/string_cast.hpp>
 
-//#define DEBUG
+// #define DEBUG
 
 /**
  * @brief Construct a new Scene:: Scene object
@@ -48,7 +48,7 @@ size_t Scene::add_object(Object *object) {
  */
 void Scene::set_aliasing(uint rays_per_pixel) {
   _aliasing_positions.clear();
-  switch(rays_per_pixel) {
+  switch (rays_per_pixel) {
     case 1:
       _aliasing_positions.push_back(vec2(0.5, 0.5));
       break;
@@ -154,8 +154,9 @@ Image Scene::trace_image() {
       // get color from ray
       vec3 color = vec3(0, 0, 0);
       for (int i = 0; i < _aliasing_positions.size(); i++) {
-        vec3 light = get_light(_camera.get_ray({x, y}, _aliasing_positions.at(i), 0.2));
-          
+        vec3 light =
+          get_light(_camera.get_ray({x, y}, _aliasing_positions.at(i), 0.2));
+
         if (light.x == -1) {
           light = _standart_light;
         }
@@ -257,7 +258,6 @@ vec3 Scene::get_mirroring_light(
 }
 
 void Scene::tonemapping(vec3 *light) {
-
   for (int i = 0; i < 3; i++) {
     (*light)[i] = (*light)[i] / (1 + (*light)[i]);
   }
@@ -292,7 +292,7 @@ vec3 Scene::calculate_light(
 
     res_light += phong_light;
   }
-  
+
   res_light = (res_light * (1 - material.mirror)) +
       (mirror_light * material.mirror);
 
@@ -323,10 +323,10 @@ Ray Scene::generate_reflection_ray(
 
 void Scene::update_view_transform(void) {
   Transformation view_transform = _camera.get_view_transform();
-  for (Object * object: _objects) {
+  for (Object * object : _objects) {
     object->update_view_transform(view_transform);
   }
-  for (Pointlight *light: _lights) {
+  for (Pointlight *light : _lights) {
     light->update_view_transform(view_transform);
   }
 }

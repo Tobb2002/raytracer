@@ -13,5 +13,4 @@ class Pointlight : public Light {
  public:
   Pointlight(vec3 position, vec3 color);
   Pointlight(vec3 position, float intensity);
-
 };

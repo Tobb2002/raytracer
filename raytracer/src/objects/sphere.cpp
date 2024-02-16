@@ -24,7 +24,10 @@ Sphere::Sphere(vec3 pos, float radius, Material material) {
   _material = material;
 }
 
-Sphere::Sphere(vec3 pos, float radius, Material material, std::string path_to_file) {
+Sphere::Sphere(vec3 pos,
+               float radius,
+               Material material,
+               std::string path_to_file) {
   set_start_position(pos, radius);
   _material = material;
   _enable_texture = true;
@@ -35,7 +38,7 @@ void Sphere::set_start_position(vec3 position, float radius) {
   _origin = vec3(0, 0, 0);
   move(position);
   _radius = radius;
-  _direction_point = position + _radius * vec3(0,0,1);
+  _direction_point = position + _radius * vec3(0, 0, 1);
 }
 
 void Sphere::enable_texture(bool enable) {
@@ -45,7 +48,7 @@ void Sphere::enable_texture(bool enable) {
 Intersection Sphere::intersect(Ray ray) {
   // sphere equation from raytracing in one weekend
   vec3 oc = ray.get_origin() - _origin;
-  //vec3 oc = vec3(0, 0, 0) - _origin;
+
   float a = glm::dot(ray.get_direction(), ray.get_direction());
   float b = 2.f * glm::dot(oc, ray.get_direction());
   float c = glm::dot(oc, oc) - (_radius * _radius);
@@ -84,10 +87,10 @@ Material Sphere::get_material(vec3 point) {
     _transform.transform_point(_view_transform.inv, &n_point);
     // transform sphere back to origin
     n_point = _transform.virtual_to_origin(n_point);
-    
+
     // normalize normal
     vec3 n = glm::normalize(n_point);
-    
+
     vec2 point_uv = vec2(atan2(n.x, n.z) / (2*3.141f) + 0.5,
                          -n.y * 0.5 + 0.5);
     _material.color = _texture.get_color_uv(point_uv);

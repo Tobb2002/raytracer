@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2023 Tobias Vonier. All rights reserved.
+ */
 #include "texture.hpp"
 
 #include <iostream>
@@ -22,9 +25,12 @@ void Texture::load_image(std::string path_to_image) {
 }
 
 vec3 Texture::get_color_absolute(vec2 position_xy) {
-  vec3 colors = vec3((int)_texture(position_xy.x, position_xy.y, 0, 0),
-                     (int)_texture(position_xy.x, position_xy.y, 0,1),
-                     (int)_texture(position_xy.x, position_xy.y, 0,2));
+  vec3 colors = vec3(static_cast<int>(_texture(position_xy.x,
+                                               position_xy.y, 0, 0)),
+                     static_cast<int>(_texture(position_xy.x,
+                                               position_xy.y, 0, 1)),
+                     static_cast<int>(_texture(position_xy.x,
+                                               position_xy.y, 0, 2)));
   return colors;
 }
 
@@ -32,9 +38,12 @@ vec3 Texture::get_color_absolute(vec2 position_xy) {
 vec3 Texture::get_color_uv(vec2 position_uv) {
   position_uv.x = static_cast<int>(position_uv.x * _texture.width());
   position_uv.y = static_cast<int>(position_uv.y * _texture.height());
-  vec3 colors = vec3((int)_texture(position_uv.x, position_uv.y, 0, 0),
-                     (int)_texture(position_uv.x, position_uv.y, 0,1),
-                     (int)_texture(position_uv.x, position_uv.y, 0,2));
+  vec3 colors = vec3(static_cast<int>(_texture(position_uv.x,
+                                               position_uv.y, 0, 0)),
+                     static_cast<int>(_texture(position_uv.x,
+                                               position_uv.y, 0, 1)),
+                     static_cast<int>(_texture(position_uv.x,
+                                               position_uv.y, 0, 2)));
   colors *= 1.f / 255;
   return colors;
 }

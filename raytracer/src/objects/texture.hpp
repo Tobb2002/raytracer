@@ -12,9 +12,9 @@ using glm::vec2, glm::vec3;
 using cimg_library::CImg, cimg_library::CImgDisplay;
 
 class Texture{
-public:
+ public:
   Texture();
-  Texture(std::string path_to_image);
+  explicit Texture(std::string path_to_image);
 
   void show_image(void);
 
@@ -25,6 +25,6 @@ public:
 
   vec2 get_dimensions();
 
-private:
+ private:
   CImg<unsigned char> _texture;
 };

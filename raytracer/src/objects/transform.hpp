@@ -22,7 +22,6 @@ struct Rotation {
 
 class Transform {
  public:
-
   mat4 add_translation(vec3 a);
   mat4 add_rotation(vec3 axis, float degree);
   mat4 add_rotation(vec3 point, vec3 axis, float degree);
@@ -60,7 +59,7 @@ class Transform {
   mat4 get_translation_mat(vec3 v);
 
   void apply_to_mat(mat4 *mat, mat4 t);
-  
+
   Matrices _mat;
   Matrices _mat_inv;
 };
