@@ -40,14 +40,14 @@ int main(void) {
   vec3 origin_plane = vec3(0, 0, -18);
   //Mesh m = Mesh("data/input/skull.obj",
   //    vec3(0, 15, -20), {.color = vec3(0, 1, 0)});
-  Mesh m = Mesh("data/input/Airplane.obj",
+  Mesh m = Mesh("data/input/bunny_smooth.obj",
       origin_plane + vec3(0, 0, 0), {.color = vec3(0, 1, 0), .specular=0.2});
   Sphere earth = Sphere(origin + vec3(7, 0, 0), 1,{.color = vec3(1, 0, 1), .specular=0.2}, "data/input/earth_uv.png");
   Sphere venus = Sphere(origin + vec3(4, 0, 0), 1.1,{.color = vec3(1, 0, 1), .specular=0.2}, "data/input/textures/planets/venus.jpg");
   Sphere mars = Sphere(origin + vec3(9, 0, 0), 0.5,{.color = vec3(1, 0, 1), .specular=0.2}, "data/input/textures/planets/mars.jpg");
   Sphere sun = Sphere(origin + vec3(-16, 0, 0), 15,{.color = vec3(1, 0, 1), .specular=0.2}, "data/input/textures/planets/sonne.jpg");
-  //Mesh c1 = Mesh("data/input/cube.obj",
-  //    origin_plane + vec3(0, 0, 0), {.color = vec3(1, 0, 0), .mirror = 0.3});
+  Mesh c1 = Mesh("data/input/cube.obj",
+      origin_plane + vec3(0, 1, 0), {.color = vec3(1, 0, 0), .mirror = 0.3});
   //Mesh c2 = Mesh("data/input/cube.obj",
   //    origin + vec3(2, +1, -0.2), {.color = vec3(1, 0, 0), .mirror = 0.});
   //Mesh c3 = Mesh("data/input/cube.obj",
@@ -63,8 +63,8 @@ int main(void) {
   //Mesh c8 = Mesh("data/input/cube.obj",
   //    vec3(+2, 0, -17), {.color = vec3(1, 0, 0), .mirror = 0.3});
   Plane plane = Plane(origin_plane, vec3(0, 1, 0),
-      {.color = vec3(1 , 1, 1), .mirror = 0.3},
-      {.color = vec3(0.6, 0.6, 0.6), .mirror = 0.3},
+      {.color = vec3(1 , 1, 1), .specular = 0.2, .mirror = 0.3},
+      {.color = vec3(0.6, 0.6, 0.6), .specular = 0.2, .mirror = 0.3},
                       vec2(100,50));
   //plane.set_axis(true);
   // Plane plane2 = Plane(vec3(0, 0, -50), vec3(0, 0, -1), vec3(0, 0.5, 1));
@@ -77,7 +77,7 @@ int main(void) {
   std::cout << "Scene size:" << m.get_size() << std::endl;
 
 
-  scene.get_camera()->set_resolution(100);
+  scene.get_camera()->set_resolution(300);
   scene.get_camera()->set_sensor_size(1, 1);
 
   scene.set_aliasing(1);
@@ -92,7 +92,23 @@ int main(void) {
   //scene.add_object(&mars);
     //
   scene.add_object(&m); 
-  //scene.add_object(&plane);
+  scene.add_object(&plane);
+
+  // square light
+  uint amount = 5;
+  float ssize = 0.05;
+  float strength = 100;
+
+  //std::vector<Pointlight> square_light;
+  //square_light.reserve(amount * amount);
+  //vec3 orig = origin_plane + vec3(-3, 4, 5);
+  //for (int x = 0; x < amount ; x++) {
+  //  for (int y = 0; y < amount; y++) {
+  //    Pointlight l = Pointlight(orig + vec3(x * ssize, y * ssize, 0), strength / amount);
+  //    square_light.push_back(l);
+  //    scene.add_light(&square_light.at(y));
+  //  }
+  //}
   //scene.add_object(&c1);
 
   // generate animation
@@ -107,7 +123,7 @@ int main(void) {
   for (int i = 0; i < samples; i++) {
     // for aliasing
 
-    std::cout << "Sample (" << i + 1 << " of " << samples << ")\n";
+ 
     Image out = scene.trace_image();
     char filename[50];
     sprintf(filename, "data/output/animation/sample%d.ppm", i);

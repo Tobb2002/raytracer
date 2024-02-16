@@ -135,7 +135,7 @@ Image Scene::trace_image() {
 
 
 
-  float progress_step = 0.05 * resolution[0];
+  float progress_step = 0.01 * resolution[0];
   float progress = 0;
   std::cout << "rendering\n\n";
   for (int x = 0; x < resolution[0]; x++) {
@@ -284,15 +284,17 @@ vec3 Scene::calculate_light(
   vec3 v = ray.get_direction();
 
   // calculate light for all lightsources
+  vec3 mirror_light = get_mirroring_light(
+      material, point, surface_normal, v);
   for (Pointlight *light : _lights) {
     vec3 phong_light = get_phong(
         light, material, point, surface_normal, v);
-    vec3 mirror_light = get_mirroring_light(
-        material, point, surface_normal, v);
 
-    res_light += (phong_light * (1 - material.mirror)) +
-        (mirror_light * material.mirror);
+    res_light += phong_light;
   }
+  
+  res_light = (res_light * (1 - material.mirror)) +
+      (mirror_light * material.mirror);
 
   return glm::round(res_light);
 }

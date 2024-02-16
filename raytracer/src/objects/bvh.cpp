@@ -8,7 +8,7 @@
 #include <boost/lambda/bind.hpp>
 #include <glm/gtx/string_cast.hpp>
 
-//#define DEBUG
+#define DEBUG
 
 #include <chrono>
 #include <iterator>

@@ -15,13 +15,12 @@ void ObjectFactory::new_square_pattern(Object *object,
                                        vec3 position,
                                        vec3 normal) {
   // place all objects in rectangle around origin
-  float step_size =  size / (amount -1);
-  float x = - size / 2;
+  float step_size =  size / amount;
 
   // Object **objects = new Object[size][size];
   for (int x = 0; x < amount; x++) {
     for (int y = 0; y < amount; y++) {
-      // objects = _scene->add_object(object);
+     // _scene->add_object(object);
     }
   }
   // apply_transform all objects to final position
