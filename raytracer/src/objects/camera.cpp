@@ -87,7 +87,7 @@ Ray Camera::get_ray(vec2 pixel) {
 
 Ray Camera::get_ray(vec2 pixel, vec2 relative_position, float random_range) {
   // random value between -1 and 1
-  double rand = ((double) std::rand() / RAND_MAX * 2) -1;
+  double rand = (static_cast<double>(std::rand()) / RAND_MAX * 2) -1;
   vec2 range = vec2(rand * random_range * _pixel_size.x,
                     rand * random_range * _pixel_size.y);
   vec2 pos_image = pixel_to_image_pos(pixel, relative_position + range);

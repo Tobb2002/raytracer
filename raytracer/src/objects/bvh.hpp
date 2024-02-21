@@ -89,7 +89,6 @@ class BVH {
   /***** Functions *****/
 
   BVH();
- // BVH(const BVH &bvh);
   ~BVH();
 
 
@@ -97,8 +96,6 @@ class BVH {
   void set_triangles(std::vector<Triangle> *triangles);
 
   Intersection intersect(Ray *ray);
-
-  bool comp(uint id1, uint id2, Axis axis);
 
   /***** DEBUG *****/
   void print_node(uint id);
