@@ -61,6 +61,7 @@ int main(void) {
   float ssize = 0.05;
   float strength = 100;
 
+
   //std::vector<Pointlight> square_light;
   //square_light.reserve(amount * amount);
   //vec3 orig = origin_plane + vec3(-3, 4, 5);
@@ -77,11 +78,6 @@ int main(void) {
   float rotation = 180;
   float samples = 1;
 
-  //scene.get_camera()->rotate(origin, vec3(1, 0, 0), -12);
-  //scene.get_camera()->move(vec3(0, 7, 0));
-  //scene.get_camera()->rotate(origin, vec3(1, 0, 0), -15);
-  //scene.update_view_transform();
-
   for (int i = 0; i < samples; i++) {
     // for aliasing
 
@@ -92,24 +88,6 @@ int main(void) {
     out.write_to_file(filename);
 
     // motion
-    // plane.rotate(vec3(0, 1, 0), rotation/samples);
-
-    //plane.rotate(vec3(1, 0, 0), rotation/samples);
-    //scene.get_object(1)->rotate(vec3(1, 0, 0), rotation/samples);
-    //c1.rotate(vec3(0, 1, 0), rotation/samples * 2);
-    //c8.rotate(vec3(0, 1, 0), rotation/samples * 2);
-    //m.move(vec3(0.1, 0, 0));
-
-  //  scene.get_camera()->rotate(origin, vec3(0, 1, 0), rotation/samples);
-
-    //s.rotate(vec3(0, 1, 0), rotation/samples);
-    //c2.rotate(vec3(0, 1, 0), rotation/samples);
-    // scene.get_camera()->move(vec3(0, 0, -1));
- //   scene.update_view_transform();
-    //scene.get_camera()->rotate(vec3(0, 1, 0), +5);
-    //scene.update_view_transform();
-    //scene.update_view_transform();
-    //plane.move(vec3(1, 0, 0));
 
   }
   return 0;
