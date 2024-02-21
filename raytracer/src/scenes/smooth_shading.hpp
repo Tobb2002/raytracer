@@ -45,7 +45,7 @@ Scene get_scene() {
 
   scene.add_light(light1);
 
-  scene.add_object(m); 
+  //scene.add_object(m); 
   scene.add_object(plane);
   scene.add_object(earth);
 
@@ -56,18 +56,4 @@ Scene get_scene() {
 
   return scene;
 }
-
-Scene test2() {
-  Scene scene = Scene(vec3(0, 50, 100));
-
-  vec3 origin = vec3(-6, 0, 0);
-  vec3 origin_plane = vec3(0, -2, -18);
-  //Mesh m = Mesh("data/input/skull.obj",
-  //    vec3(0, 15, -20), {.color = vec3(0, 1, 0)});
-  Mesh m = Mesh("data/input/bunny_smooth.obj",
-      origin_plane + vec3(0, -0.8, 0), {.color = vec3(0, 1, 0), .specular=0.2});
-
-  return scene;
-}
-
 

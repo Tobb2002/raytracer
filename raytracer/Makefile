@@ -47,7 +47,7 @@ bin/main: $(targets) | $(BUILDDIRS)
 	$(CC) $(FLAGS) -o bin/main $(targets)
 
 # main
-obj/main.o: src/main.cpp | $(BUILDDIRS)
+obj/main.o: src/main.cpp src/scenes/ | $(BUILDDIRS)
 	$(CC) $(FLAGS) -c src/main.cpp -o obj/main.o
 
 # modules
