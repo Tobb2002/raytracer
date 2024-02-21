@@ -8,34 +8,14 @@
 #include <boost/lambda/bind.hpp>
 #include <glm/gtx/string_cast.hpp>
 
-//#define DEBUG
+BVH::BVH() { }
 
-BVH::BVH() {
-  //_data.size = 1;
-  //_data.tree = new BVH_node[1];
-}
-
-//BVH::BVH(const BVH &bvh) {
-//  //_data.triangles = bvh._data.triangles;
-//  _data.triangle_ids = bvh._data.triangle_ids;
-//  _data.size = bvh._data.size;
-//
-//  _data.tree = bvh._data.tree;
-//
-//  // allocate tree
-//  //_data.tree = new BVH_node[_data.size];
-//  //std::copy(bvh._data.tree, bvh._data.tree + bvh._data.size, _data.tree);
-//}
-
-BVH::~BVH(){
-  //delete[] _data.tree;
-}
+BVH::~BVH() { }
 
 
 void BVH::build_tree(std::vector<Triangle> *triangles) {
   // initialize data structure
   _data.triangles = triangles;
-  //delete[] _data.tree;
 
   // initialize tree with standart nodes
   _data.tree.reserve(_data.triangles->size());
@@ -46,7 +26,6 @@ void BVH::build_tree(std::vector<Triangle> *triangles) {
 
   for (int i = 0; i < _data.triangles->size(); i++) {
   }
-  //_data.tree = new BVH_node[_data.triangles->size()];
   _data.size = _data.triangles->size();
 
   _data.triangle_ids.reserve(_data.size);
@@ -72,10 +51,7 @@ void BVH::set_triangles(std::vector<Triangle> *triangles) {
  * @return Intersection 
  */
 Intersection BVH::intersect(Ray *ray) {
-
   _intersect_count = 0;
-
-  // check root
   return intersect_node(0, ray);
 }
 
@@ -87,7 +63,6 @@ Intersection BVH::intersect(Ray *ray) {
  * @return Intersection 
  */
 Intersection BVH::intersect_node(uint node_id, Ray *ray) {
-
   Intersection result;
   if (!intersect_node_bool(node_id, ray)) {
     return result;
@@ -96,23 +71,14 @@ Intersection BVH::intersect_node(uint node_id, Ray *ray) {
   _intersect_count += 1;
   // check if leaf
   if (_data.tree[node_id].leaf) {
-  //std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-  //std::cout << "node_id: " << node_id << "\n";
-  //std::cout << "node_size: " << _data.tree[node_id].count << "\n";
     Intersection intersect = intersect_leaf(node_id, ray);
-
-  //std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-  //std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
-    #ifdef DEBUG
-    std::cout << "intersect_count: " << _intersect_count << "\n";
-    #endif
 
     return intersect;
   }
 
   update_intersection(&result, intersect_node(node_id*2 +1, ray));
   update_intersection(&result, intersect_node(node_id*2 +2, ray));
-  
+
   return result;
 }
 
@@ -126,14 +92,17 @@ Intersection BVH::intersect_node(uint node_id, Ray *ray) {
  * @return false 
  */
 bool BVH::intersect_node_bool(uint id, Ray *ray) {
-  Interval tx = {(_data.tree[id].min.x - ray->get_origin().x) / ray->get_direction().x,
-                (_data.tree[id].max.x - ray->get_origin().x) / ray->get_direction().x};
+  Interval tx = {
+    (_data.tree[id].min.x - ray->get_origin().x) / ray->get_direction().x,
+    (_data.tree[id].max.x - ray->get_origin().x) / ray->get_direction().x};
 
-  Interval ty = {(_data.tree[id].min.y - ray->get_origin().y) / ray->get_direction().y,
-                (_data.tree[id].max.y - ray->get_origin().y) / ray->get_direction().y};
+  Interval ty = {
+    (_data.tree[id].min.y - ray->get_origin().y) / ray->get_direction().y,
+    (_data.tree[id].max.y - ray->get_origin().y) / ray->get_direction().y};
 
-  Interval tz = {(_data.tree[id].min.z - ray->get_origin().z) / ray->get_direction().z,
-                (_data.tree[id].max.z - ray->get_origin().z) / ray->get_direction().z};
+  Interval tz = {
+    (_data.tree[id].min.z - ray->get_origin().z) / ray->get_direction().z,
+    (_data.tree[id].max.z - ray->get_origin().z) / ray->get_direction().z};
 
   // overlapping intervals indicate intersection
   // check box intersection
@@ -176,7 +145,8 @@ Intersection BVH::intersect_leaf(uint id, Ray *ray) {
 
   uint i = _data.tree[id].first;
   for (; i < _data.tree[id].count + _data.tree[id].first; i++) {
-    Intersection t_i = _data.triangles->at(_data.triangle_ids.at(i)).intersect(ray);
+    Intersection t_i =
+      _data.triangles->at(_data.triangle_ids.at(i)).intersect(ray);
 
     if (t_i.found && t_i.t < t_min) {
       t_min = t_i.t;
@@ -184,17 +154,14 @@ Intersection BVH::intersect_leaf(uint id, Ray *ray) {
     }
   }
 
-  Triangle triangle_best = _data.triangles->at(_data.triangle_ids.at(best_triangle_id));
-  //Intersection intersection = {found_one,
-  //                             t_min,
-  //                             ray->get_point(t_min),
-  //                             triangle_best.get_normal(),
-  //                             triangle_best.get_material()};
+  Triangle triangle_best =
+    _data.triangles->at(_data.triangle_ids.at(best_triangle_id));
 
   return triangle_best.intersect(ray);
 }
 
-bool BVH::update_intersection(Intersection *intersect, Intersection new_intersect) {
+bool BVH::update_intersection(Intersection *intersect,
+                              Intersection new_intersect) {
   if (new_intersect.found) {
     // update intersection if the new one is closer
     if (new_intersect.t < intersect->t) {
@@ -229,7 +196,7 @@ bvh_Box BVH::update_box(uint node_id) {
   if (_data.tree[node_id].leaf) {
     calculate_max(node_id);
     calculate_min(node_id);
-    return {_data.tree[node_id].min ,_data.tree[node_id].max};
+    return {_data.tree[node_id].min , _data.tree[node_id].max};
   }
   bvh_Box left = update_box(node_id*2 +1);
   bvh_Box right = update_box(node_id*2 +2);
@@ -239,7 +206,7 @@ bvh_Box BVH::update_box(uint node_id) {
   _data.tree[node_id].min = left.min;
   _data.tree[node_id].max = left.max;
 
-  return {_data.tree[node_id].min ,_data.tree[node_id].max};
+  return {_data.tree[node_id].min , _data.tree[node_id].max};
 }
 
 /**
@@ -307,7 +274,7 @@ void BVH::print_node_triangles(uint id) {
   std::cout << "-------bvh_node_triangles------\n";
   std::cout << "id: " << id << "\n";
   for (int i = 0; i < _data.tree[id].count; i++) {
-    Triangle t = 
+    Triangle t =
       _data.triangles->at(_data.triangle_ids.at(i + _data.tree[id].first));
     t.print();
   }
