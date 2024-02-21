@@ -8,22 +8,45 @@
 #include <boost/lambda/bind.hpp>
 #include <glm/gtx/string_cast.hpp>
 
-#define DEBUG
-
-#include <chrono>
-#include <iterator>
+//#define DEBUG
 
 BVH::BVH() {
+  //_data.size = 1;
+  //_data.tree = new BVH_node[1];
 }
 
+//BVH::BVH(const BVH &bvh) {
+//  //_data.triangles = bvh._data.triangles;
+//  _data.triangle_ids = bvh._data.triangle_ids;
+//  _data.size = bvh._data.size;
+//
+//  _data.tree = bvh._data.tree;
+//
+//  // allocate tree
+//  //_data.tree = new BVH_node[_data.size];
+//  //std::copy(bvh._data.tree, bvh._data.tree + bvh._data.size, _data.tree);
+//}
+
 BVH::~BVH(){
-  delete[] _data.tree;
+  //delete[] _data.tree;
 }
+
 
 void BVH::build_tree(std::vector<Triangle> *triangles) {
   // initialize data structure
   _data.triangles = triangles;
-  _data.tree = new BVH_node[_data.triangles->size()];
+  //delete[] _data.tree;
+
+  // initialize tree with standart nodes
+  _data.tree.reserve(_data.triangles->size());
+  for (int i = 0; i < _data.triangles->size(); i++) {
+    BVH_node node;
+    _data.tree.push_back(node);
+  }
+
+  for (int i = 0; i < _data.triangles->size(); i++) {
+  }
+  //_data.tree = new BVH_node[_data.triangles->size()];
   _data.size = _data.triangles->size();
 
   _data.triangle_ids.reserve(_data.size);
@@ -37,6 +60,9 @@ void BVH::build_tree(std::vector<Triangle> *triangles) {
 
   // split nodes recursivley
   split(0);
+}
+void BVH::set_triangles(std::vector<Triangle> *triangles) {
+  _data.triangles = triangles;
 }
 
 /**

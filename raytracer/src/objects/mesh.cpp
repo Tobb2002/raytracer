@@ -37,6 +37,21 @@ Mesh::Mesh(std::string input_file, vec3 origin, Material material) {
   _bvh.build_tree(&_triangles);
 }
 
+Mesh::Mesh(const Mesh &old_mesh) {
+  _triangles = old_mesh._triangles;
+  _size = old_mesh._size;
+  _origin = old_mesh._origin;
+  _bounding_box = old_mesh._bounding_box;
+  _enable_smooth_shading = old_mesh._enable_smooth_shading;
+  _material = old_mesh._material;
+
+  //_bvh = BVH(old_mesh._bvh);
+  //_bvh.build_tree(&_triangles);
+  _bvh = old_mesh._bvh;
+  //_bvh.build_tree(&_triangles);
+  _bvh.set_triangles(&_triangles);
+}
+
 Mesh::~Mesh() {}
 
 /***** Print DEBUG information *****/
@@ -104,6 +119,8 @@ void Mesh::apply_transform(mat4 transformation) {
   for (size_t i = 0; i < _triangles.size(); i++) {
     Triangle *t = &_triangles[i];
     t->apply_transform(transformation);
+    // check if t is outside of bounding box
+    //update_bounding_box(t);
   }
   _bvh.update_boxes();
 }

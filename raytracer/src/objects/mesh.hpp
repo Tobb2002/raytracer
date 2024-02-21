@@ -15,6 +15,8 @@ class Mesh : public Object{
  public:
   Mesh(std::string input_file, vec3 origin);
   Mesh(std::string input_file, vec3 origin, Material material);
+
+  Mesh(const Mesh &old_mesh);
   ~Mesh();
 
   /***** Print Debug information *****/

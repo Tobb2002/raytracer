@@ -3,6 +3,7 @@
  */
 
 #include "scene.hpp"
+#include "objects/plane.hpp"
 
 #include <glm/gtx/string_cast.hpp>
 
@@ -25,7 +26,7 @@ Scene::Scene(vec3 standart_color) {
  * @param light
  * @return size_t id of light.
  */
-size_t Scene::add_light(Pointlight *light) {
+size_t Scene::add_light(Pointlight light) {
   _lights.push_back(light);
   return _lights.size() -1;
 }
@@ -38,6 +39,22 @@ size_t Scene::add_light(Pointlight *light) {
  */
 size_t Scene::add_object(Object *object) {
   _objects.push_back(object);
+  return _objects.size() -1;
+}
+
+size_t Scene::add_object(Plane plane) {
+  _obj_planes.push_back(plane);
+  _objects.push_back(&_obj_planes.at(_obj_planes.size() - 1));
+  return _objects.size() -1;
+}
+size_t Scene::add_object(Sphere sphere) {
+  _obj_spheres.push_back(sphere);
+  _objects.push_back(&_obj_spheres.at(_obj_spheres.size() - 1));
+  return _objects.size() -1;
+}
+size_t Scene::add_object(Mesh mesh) {
+  _obj_meshes.push_back(mesh);
+  _objects.push_back(&_obj_meshes.at(_obj_meshes.size() - 1));
   return _objects.size() -1;
 }
 
@@ -183,14 +200,14 @@ Image Scene::trace_image() {
  * @return vec3 
  */
 vec3 Scene::get_phong(
-    Pointlight *light,
+    Pointlight light,
     Material material,
     vec3 point,
     vec3 normal,
     vec3 viewing_direction) {
-  vec3 incoming_light = light->get_color();
+  vec3 incoming_light = light.get_color();
 
-  Ray ray_to_light = Ray(point, light->get_light_direction(point));
+  Ray ray_to_light = Ray(point, light.get_light_direction(point));
   ray_to_light.move_into_dir(0.01);
 
   vec3 light_direction = ray_to_light.get_direction();
@@ -223,7 +240,7 @@ vec3 Scene::get_phong(
         glm::pow(rdotv, material.pow_m));
   }
   // only ad the ones which are not blocked
-  if (!check_intersection(ray_to_light, light->get_distance(point))) {
+  if (!check_intersection(ray_to_light, light.get_distance(point))) {
     l_material = l_diffuse + l_specular;
   }
 
@@ -286,7 +303,7 @@ vec3 Scene::calculate_light(
   // calculate light for all lightsources
   vec3 mirror_light = get_mirroring_light(
       material, point, surface_normal, v);
-  for (Pointlight *light : _lights) {
+  for (Pointlight light : _lights) {
     vec3 phong_light = get_phong(
         light, material, point, surface_normal, v);
 
@@ -323,11 +340,11 @@ Ray Scene::generate_reflection_ray(
 
 void Scene::update_view_transform(void) {
   Transformation view_transform = _camera.get_view_transform();
-  for (Object * object : _objects) {
+  for (Object *object : _objects) {
     object->update_view_transform(view_transform);
   }
-  for (Pointlight *light : _lights) {
-    light->update_view_transform(view_transform);
+  for (Pointlight light : _lights) {
+    light.update_view_transform(view_transform);
   }
 }
 

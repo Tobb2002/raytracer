@@ -6,10 +6,19 @@
 
 #include <vector>
 
+#include "objects/mesh.hpp"
 #include "objects/object.hpp"
+#include "objects/plane.hpp"
 #include "objects/pointlight.hpp"
 #include "objects/camera.hpp"
 #include "image.hpp"
+#include "objects/sphere.hpp"
+
+union Obj {
+    Plane p;
+    Sphere s;
+    Mesh m;
+};
 
 class Scene {
  public:
@@ -17,8 +26,11 @@ class Scene {
 
   /***** Adding things to scene *****/
 
-  size_t add_light(Pointlight *light);
+  size_t add_light(Pointlight light);
   size_t add_object(Object *object);
+  size_t add_object(Plane plane);
+  size_t add_object(Sphere sphere);
+  size_t add_object(Mesh mesh);
 
   /***** Change Scene Settings *****/
 
@@ -40,8 +52,12 @@ class Scene {
   Image trace_image();
 
  private:
-  std::vector<Pointlight*> _lights;
-  std::vector<Object*> _objects;
+  std::vector<Pointlight> _lights;
+  std::vector<Object *> _objects;
+
+  std::vector<Plane> _obj_planes;
+  std::vector<Sphere> _obj_spheres;
+  std::vector<Mesh> _obj_meshes;
 
   Camera _camera;
 
@@ -59,7 +75,7 @@ class Scene {
       vec3 surface_normal,
       Ray camera_ray);
   vec3 get_phong(
-      Pointlight *light,
+      Pointlight light,
       Material material,
       vec3 point,
       vec3 normal,

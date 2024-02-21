@@ -42,7 +42,7 @@ struct BVH_node {
 struct BVH_data {
   std::vector<Triangle> *triangles;
   std::vector<uint> triangle_ids;
-  BVH_node *tree;
+  std::vector<BVH_node> tree;
   uint size;
 };
 
@@ -89,9 +89,12 @@ class BVH {
   /***** Functions *****/
 
   BVH();
+ // BVH(const BVH &bvh);
   ~BVH();
 
+
   void build_tree(std::vector<Triangle> *triangles);
+  void set_triangles(std::vector<Triangle> *triangles);
 
   Intersection intersect(Ray *ray);
 
