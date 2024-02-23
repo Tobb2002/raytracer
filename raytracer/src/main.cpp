@@ -20,27 +20,10 @@
 #include "objects/sphere.hpp"
 #include "objects/texture.hpp"
 
-#include "scenes/smooth_shading.hpp"
+#include "scenes/material_properties.hpp"
 
 
 using glm::vec3, glm::vec2;
-
-Scene test() {
-  Scene scene = Scene(vec3(0, 50, 100));
-
-  vec3 origin = vec3(-6, 0, 0);
-  vec3 origin_plane = vec3(0, -2, -18);
-  //Mesh m = Mesh("data/input/skull.obj",
-  //    vec3(0, 15, -20), {.color = vec3(0, 1, 0)});
-  Mesh m = Mesh("data/input/bunny_smooth.obj",
-      origin_plane + vec3(0, -0.8, 0), {.color = vec3(0, 1, 0), .specular=0.2});
-
-  //scene.add_object(m);
-
-  return scene;
-}
-
-
 
 int main(void) {
   //Scene scene = get_scene();
@@ -49,8 +32,6 @@ int main(void) {
   vec3 origin_plane = vec3(0, -2, -18);
   //Mesh m = Mesh("data/input/skull.obj",
   //    vec3(0, 15, -20), {.color = vec3(0, 1, 0)});
-  Mesh m = Mesh("data/input/bunny_smooth.obj",
-      origin_plane + vec3(0, -0.8, 0), {.color = vec3(0, 1, 0), .specular=0.2});
 
 
   Scene scene = get_scene();
