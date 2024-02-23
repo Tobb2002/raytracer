@@ -20,7 +20,7 @@
 #include "objects/sphere.hpp"
 #include "objects/texture.hpp"
 
-#include "scenes/material_properties.hpp"
+#include "scenes/smooth_shading.hpp"
 
 
 using glm::vec3, glm::vec2;
