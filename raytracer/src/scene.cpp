@@ -32,7 +32,7 @@ size_t Scene::add_light(Pointlight light) {
 }
 
 /**
- * @brief Add a Object to scene.
+ * @brief Add a Object to scenn.
  * 
  * @param object
  * @return size_t id of Object.
@@ -155,6 +155,7 @@ Image Scene::trace_image() {
   float progress_step = 0.01 * resolution[0];
   float progress = 0;
   std::cout << "rendering\n\n";
+  #pragma omp parallel for
   for (int x = 0; x < resolution[0]; x++) {
     for (int y = 0; y < resolution[1]; y++) {
       #ifdef DEBUG

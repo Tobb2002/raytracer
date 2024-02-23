@@ -33,7 +33,7 @@ class Box : public Object{
   // Transformations
   void apply_transform(mat4 transformation) override;
 
-  void print(void);
+  void print(void) override;
 
  private:
   vec3 _min;

@@ -14,11 +14,6 @@
 #include "image.hpp"
 #include "objects/sphere.hpp"
 
-union Obj {
-    Plane p;
-    Sphere s;
-    Mesh m;
-};
 
 class Scene {
  public:
