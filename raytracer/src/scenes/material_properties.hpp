@@ -9,10 +9,10 @@ Scene get_scene() {
   vec3 origin = vec3(0, 0, -3);
 
   // --- setup scene ---
-  scene.get_camera()->set_resolution(500, 500);
+  scene.get_camera()->set_resolution(700, 700);
   scene.get_camera()->set_sensor_size(1, 1);
 
-  scene.set_aliasing(1);
+  scene.set_aliasing(4);
   scene.set_tonemapping_value(-1);
 
   // --- add lights ---
@@ -30,7 +30,8 @@ Scene get_scene() {
     Sphere s = Sphere(origin + vec3(0, 0, 0) + vec3(0, 0, 0),
                       1,
                       {.color = vec3(1, 0, 1),
-                       .specular = 1});
+                       .specular = 1.2,
+                       .pow_m = 10});
   scene.add_object(s);
   //  spheres.push_back(s);
 

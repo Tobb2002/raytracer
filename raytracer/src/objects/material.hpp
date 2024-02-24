@@ -17,7 +17,7 @@ using glm::vec3;
  */
 struct Material {
   /// @brief color of the Material.
-  vec3 color = vec3(100, 100, 100);
+  vec3 color = vec3(1, 1, 1);
 
   /// @brief factor for diffuse material
   float diffuse = 0.7;
