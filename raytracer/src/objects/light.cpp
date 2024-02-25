@@ -14,13 +14,13 @@ Light::Light(vec3 position, float intensity) {
   _color = vec3(intensity);
 }
 
-vec3 Light::get_light_direction(vec3 point) {
+vec3 Light::get_light_direction(vec3 point) const {
   return glm::normalize(_origin - point);
 }
 
-float Light::get_distance(vec3 point) {
+float Light::get_distance(vec3 point) const {
   return glm::distance(_origin, point);
 }
 
-vec3 Light::get_color() { return _color; }
+vec3 Light::get_color() const { return _color; }
 

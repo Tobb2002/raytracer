@@ -1,7 +1,15 @@
 .PHONY: all
 
 CC = clang++
-FLAGS = -std=c++2a -Wall -O0 -g -fsanitize=address -L/usr/X11R6/lib -lm -lpthread -lX11 -fopenmp -pg
+FLAGS = -std=c++2a -Wall -fsanitize=address -L/usr/X11R6/lib -lm -lpthread -lX11 -fopenmp
+
+ifeq ($(BUILD),debug)   
+# "Debug" build - no optimization, and debugging symbols
+FLAGS += -O0 -g -pg
+else
+# "Release" build - optimization, and no debug symbols
+FLAGS += -O2 -s -DNDEBUG
+endif
 
 # tasks
 all: compile

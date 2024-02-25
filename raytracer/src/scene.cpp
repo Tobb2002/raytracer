@@ -7,6 +7,7 @@
 
 #include <glm/gtx/string_cast.hpp>
 #include <memory>
+#include <time.h>
 
 // #define DEBUG
 
@@ -159,8 +160,11 @@ Image Scene::trace_image() {
 
   uint count_pix = 0;
 
+  // start time
+  timeval start, end;
+  gettimeofday(&start, 0);
   std::cout << "rendering\n\n";
-  #pragma omp parallel for
+  #pragma omp parallel for num_threads(5)
   for (int x = 0; x < resolution[0]; x++) {
       std::cout << "\e[2K\e[1A" << "Progress: "
       << floorf((float)count_pix / (resolution[0] * resolution[1]) * 100) << "%\n";
@@ -190,6 +194,9 @@ Image Scene::trace_image() {
   if (_tonemapping_gray > 0) {
     image.apply_tonemapping(_tonemapping_gray);
   }
+  gettimeofday(&end, 0);
+  std::cout << "Time for rendering: ";
+  std::cout << end.tv_sec - start.tv_sec <<  " s\n";
   return image;
 }
 
@@ -204,8 +211,8 @@ Image Scene::trace_image() {
  * @return vec3 
  */
 vec3 Scene::get_phong(
-    Pointlight light,
-    Material material,
+    const Pointlight &light,
+    const Material &material,
     vec3 point,
     vec3 normal,
     vec3 viewing_direction) {
@@ -294,16 +301,16 @@ void Scene::tonemapping(vec3 *light) {
  * @return vec3 amount of light transported in direction of ray.
  */
 vec3 Scene::calculate_light(
-    vec3 point,
-    Material material,
+    const vec3 &point,
+    const Material &material,
     vec3 surface_normal,
-    Ray ray) {
+    const Ray &ray) {
 
   vec3 res_light = vec3(0, 0, 0);
 
-  surface_normal = glm::normalize(surface_normal);
   vec3 v = ray.get_direction();
 
+  surface_normal = glm::normalize(surface_normal);
   // calculate light for all lightsources
   vec3 mirror_light = get_mirroring_light(
       material, point, surface_normal, v);

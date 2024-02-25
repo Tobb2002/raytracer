@@ -66,13 +66,13 @@ class Scene {
 
 
   vec3 calculate_light(
-      vec3 point,
-      Material material,
+      const vec3 &point,
+      const Material &material,
       vec3 surface_normal,
-      Ray camera_ray);
+      const Ray &camera_ray);
   vec3 get_phong(
-      Pointlight light,
-      Material material,
+      const Pointlight &light,
+      const Material &material,
       vec3 point,
       vec3 normal,
       vec3 viewing_direction);

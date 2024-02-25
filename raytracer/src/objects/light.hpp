@@ -13,9 +13,9 @@ class Light : public Object {
   Light(vec3 position, vec3 color);
   Light(vec3 position, float intensity);
 
-  vec3 get_light_direction(vec3 point);
-  float get_distance(vec3 point);
-  vec3 get_color();
+  vec3 get_light_direction(vec3 point) const;
+  float get_distance(vec3 point) const;
+  vec3 get_color() const;
 
  protected:
   vec3 _color;
