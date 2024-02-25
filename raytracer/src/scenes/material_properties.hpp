@@ -35,9 +35,6 @@ Scene get_scene() {
   scene.add_object(s);
 
   }
-  //scene.add_object(spheres.at(0));
-  //scene.add_object(spheres.at(1));
-
 
   return scene;
 }

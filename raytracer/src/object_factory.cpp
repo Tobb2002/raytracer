@@ -25,3 +25,19 @@ void ObjectFactory::new_square_pattern(Object *object,
   }
   // apply_transform all objects to final position
 }
+
+void ObjectFactory::new_xy_square_light(
+    const vec3 &position,
+    const int &strength,
+    const uint &amount,
+    const float &space) {
+  // square light
+  float ssize = 0.3;
+
+  for (int x = 0; x < amount ; x++) {
+    for (int y = 0; y < amount; y++) {
+      Pointlight l = Pointlight(position + vec3(x * ssize, y * ssize, 0), static_cast<float>(strength) / (amount * amount));
+      _scene->add_light(l);
+    }
+  }
+}
