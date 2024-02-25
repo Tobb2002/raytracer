@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <boost/lambda/bind.hpp>
+#include <cmath>
 #include <glm/gtx/string_cast.hpp>
 
 BVH::BVH() { }
@@ -92,29 +93,41 @@ Intersection BVH::intersect_node(uint node_id, const Ray& ray) {
  * @return false 
  */
 bool BVH::intersect_node_bool(uint id, const Ray& ray) {
+  vec3 d = ray.get_direction();
+  vec3 o = ray.get_origin();
+
+  vec3 box_min = _data.tree[id].min;
+  vec3 box_max = _data.tree[id].max;
+
   Interval tx = {
-    (_data.tree[id].min.x - ray.get_origin().x) / ray.get_direction().x,
-    (_data.tree[id].max.x - ray.get_origin().x) / ray.get_direction().x};
+    (box_min.x - o.x) / d.x,
+    (box_max.x - o.x) / d.x};
 
   Interval ty = {
-    (_data.tree[id].min.y - ray.get_origin().y) / ray.get_direction().y,
-    (_data.tree[id].max.y - ray.get_origin().y) / ray.get_direction().y};
+    (box_min.y - o.y) / d.y,
+    (box_max.y - o.y) / d.y};
 
   Interval tz = {
-    (_data.tree[id].min.z - ray.get_origin().z) / ray.get_direction().z,
-    (_data.tree[id].max.z - ray.get_origin().z) / ray.get_direction().z};
+    (box_min.z - o.z) / d.z,
+    (box_max.z - o.z) / d.z};
 
   // overlapping intervals indicate intersection
   // check box intersection
 
   if (tx.min > tx.max) {
-    std::swap(tx.min, tx.max);
+    float t = tx.min;
+    tx.min = tx.max;
+    tx.max = t;
   }
   if (ty.min > ty.max) {
-    std::swap(ty.min, ty.max);
+    float t = ty.min;
+    ty.min = ty.max;
+    ty.max = t;
   }
   if (tz.min > tz.max) {
-    std::swap(tz.min, tz.max);
+    float t = tz.min;
+    tz.min = tz.max;
+    tz.max = t;
   }
 
   if (tx.min > ty.max || ty.min > tx.max) {
