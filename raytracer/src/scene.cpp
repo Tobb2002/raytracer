@@ -160,7 +160,7 @@ Image Scene::trace_image() {
   uint count_pix = 0;
 
   std::cout << "rendering\n\n";
-  //#pragma omp parallel for
+  #pragma omp parallel for
   for (int x = 0; x < resolution[0]; x++) {
       std::cout << "\e[2K\e[1A" << "Progress: "
       << floorf((float)count_pix / (resolution[0] * resolution[1]) * 100) << "%\n";

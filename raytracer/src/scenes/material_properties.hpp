@@ -6,11 +6,11 @@
 Scene get_scene() {
   Scene scene = Scene(vec3(0, 50, 100));
 
-  vec3 origin = vec3(0, 0, -3);
+  vec3 origin = vec3(0, 0, -10);
 
   // --- setup scene ---
-  scene.get_camera()->set_resolution(700, 700);
-  scene.get_camera()->set_sensor_size(1, 1);
+  scene.get_camera()->set_resolution(1000, 333);
+  scene.get_camera()->set_sensor_size(1, 0.333);
 
   scene.set_aliasing(4);
   scene.set_tonemapping_value(-1);
@@ -25,24 +25,16 @@ Scene get_scene() {
   // --- add objects ---
   std::vector<Sphere> spheres;
   //spheres.reserve(5);
-  //for (int i = 0; i < 4; i++) {
-  //  float spec = (float)i * 0.2;
-    Sphere s = Sphere(origin + vec3(0, 0, 0) + vec3(0, 0, 0),
+  for (int i = 0; i < 4; i++) {
+    float spec = (float)i * 0.4;
+    Sphere s = Sphere(origin + vec3(-3.75,0,0) +  vec3(i * 2.5, 0, 0),
                       1,
                       {.color = vec3(1, 0, 1),
-                       .specular = 1.2,
-                       .pow_m = 10});
-    Sphere s1 = Sphere(origin + vec3(1, 0, 0) + vec3(0, 0, 0),
-                      1,
-                      {.color = vec3(1, 0, 1),
-                       .specular = 1.2,
+                       .specular = spec,
                        .pow_m = 10});
   scene.add_object(s);
-  scene.add_object(s1);
-  //spheres.push_back(s);
 
-    //scene.add_object(s);
-  //}
+  }
   //scene.add_object(spheres.at(0));
   //scene.add_object(spheres.at(1));
 
