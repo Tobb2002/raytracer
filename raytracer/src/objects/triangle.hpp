@@ -17,8 +17,7 @@ class Triangle : public Object{
   Triangle(vec3 points[3], Material material);
   Triangle(vec3 points[3], Material material, vec2 uv_coordinates[3]);
 
-  Intersection intersect(Ray ray) override;
-  Intersection intersect(Ray *ray);
+  Intersection intersect(const Ray& ray) override;
 
   // transformations
   void apply_transform(mat4 transformation) override;

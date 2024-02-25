@@ -59,7 +59,9 @@ vec3 Triangle::calculate_middle(void) {
   return _p[0];
 }
 
-Intersection Triangle::intersect(Ray *ray) {
+// calculate intersection and give back t.
+// if no intersection return -1.
+Intersection Triangle::intersect(const Ray& ray) {
   /* 
    * returns intersection Point beetween ray and trianlge.
    * if intersection is outside of triangle return vec(0,0,0) since that's the camera origin.
@@ -70,8 +72,8 @@ Intersection Triangle::intersect(Ray *ray) {
   e[0] = _p[1] - _p[0];
   e[1] = _p[2] - _p[0];
 
-  vec3 s = ray->get_origin() - _p[0];
-  vec3 d = ray->get_direction();
+  vec3 s = ray.get_origin() - _p[0];
+  vec3 d = ray.get_direction();
 
   float p1 = (
     1 / (glm::dot(glm::cross(d, e[1]), e[0])));
@@ -100,18 +102,9 @@ Intersection Triangle::intersect(Ray *ray) {
     normal = calculate_normal_interpolated(res);
   }
 
-  Intersection i = {found, res[0], ray->get_point(res[0]), normal, _material};
+  Intersection i = {found, res[0], ray.get_point(res[0]), normal, _material};
 
   return i;
-}
-// calculate intersection and give back t.
-// if no intersection return -1.
-Intersection Triangle::intersect(Ray ray) {
-  /* 
-   * returns intersection Point beetween ray and trianlge.
-   * if intersection is outside of triangle return vec(0,0,0) since that's the camera origin.
-   */
-  return intersect(&ray);
 }
 
 // ----- setters ------

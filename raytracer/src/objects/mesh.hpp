@@ -34,7 +34,7 @@ class Mesh : public Object{
   Triangle get_triangle(int i);
 
   /***** Functions *****/
-  Intersection intersect(Ray ray) override;
+  Intersection intersect(const Ray& ray) override;
 
  private:
   std::vector<Triangle> _triangles;

@@ -50,7 +50,7 @@ void BVH::set_triangles(std::vector<Triangle> *triangles) {
  * @param ray 
  * @return Intersection 
  */
-Intersection BVH::intersect(Ray *ray) {
+Intersection BVH::intersect(const Ray& ray) {
   _intersect_count = 0;
   return intersect_node(0, ray);
 }
@@ -62,7 +62,7 @@ Intersection BVH::intersect(Ray *ray) {
  * @param ray 
  * @return Intersection 
  */
-Intersection BVH::intersect_node(uint node_id, Ray *ray) {
+Intersection BVH::intersect_node(uint node_id, const Ray& ray) {
   Intersection result;
   if (!intersect_node_bool(node_id, ray)) {
     return result;
@@ -91,18 +91,18 @@ Intersection BVH::intersect_node(uint node_id, Ray *ray) {
  * @return true 
  * @return false 
  */
-bool BVH::intersect_node_bool(uint id, Ray *ray) {
+bool BVH::intersect_node_bool(uint id, const Ray& ray) {
   Interval tx = {
-    (_data.tree[id].min.x - ray->get_origin().x) / ray->get_direction().x,
-    (_data.tree[id].max.x - ray->get_origin().x) / ray->get_direction().x};
+    (_data.tree[id].min.x - ray.get_origin().x) / ray.get_direction().x,
+    (_data.tree[id].max.x - ray.get_origin().x) / ray.get_direction().x};
 
   Interval ty = {
-    (_data.tree[id].min.y - ray->get_origin().y) / ray->get_direction().y,
-    (_data.tree[id].max.y - ray->get_origin().y) / ray->get_direction().y};
+    (_data.tree[id].min.y - ray.get_origin().y) / ray.get_direction().y,
+    (_data.tree[id].max.y - ray.get_origin().y) / ray.get_direction().y};
 
   Interval tz = {
-    (_data.tree[id].min.z - ray->get_origin().z) / ray->get_direction().z,
-    (_data.tree[id].max.z - ray->get_origin().z) / ray->get_direction().z};
+    (_data.tree[id].min.z - ray.get_origin().z) / ray.get_direction().z,
+    (_data.tree[id].max.z - ray.get_origin().z) / ray.get_direction().z};
 
   // overlapping intervals indicate intersection
   // check box intersection
@@ -134,7 +134,7 @@ bool BVH::intersect_node_bool(uint id, Ray *ray) {
   return true;
 }
 
-Intersection BVH::intersect_leaf(uint id, Ray *ray) {
+Intersection BVH::intersect_leaf(uint id, const Ray& ray) {
   #ifdef DEBUG
   std::cout << "id: " << id << "  parent:" << (id -1) /2 << "\n";
   #endif

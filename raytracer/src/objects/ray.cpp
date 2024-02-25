@@ -13,10 +13,10 @@ Ray::Ray(vec3 origin, vec3 direction) {
 }
 
 // getter
-vec3 Ray::get_origin() { return _origin; }
-vec3 Ray::get_direction() { return _direction; }
+vec3 Ray::get_origin() const { return _origin; }
+vec3 Ray::get_direction() const { return _direction; }
 
-vec3 Ray::get_point(float t) {
+vec3 Ray::get_point(float t) const {
   return _origin + (t * _direction);
 }
 

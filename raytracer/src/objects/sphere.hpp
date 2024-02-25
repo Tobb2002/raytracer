@@ -25,7 +25,7 @@ class Sphere : public Object{
   void set_start_position(vec3 position, float radius);
   void enable_texture(bool enable);
 
-  Intersection intersect(Ray ray) override;
+  Intersection intersect(const Ray& ray) override;
 
   void print(void) override;
 

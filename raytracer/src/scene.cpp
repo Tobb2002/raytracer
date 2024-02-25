@@ -355,7 +355,7 @@ void Scene::update_view_transform(void) {
 /// @brief Calculates light transport a long a ray in the scene.
 /// @param ray
 /// @return amount of light reflected to direction of ray.
-vec3 Scene::get_light(Ray ray) {
+vec3 Scene::get_light(const Ray& ray) {
   // calculate object intersections
   Material material;
   Intersection best_intersection = {

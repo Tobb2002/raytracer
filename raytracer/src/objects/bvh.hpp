@@ -51,9 +51,9 @@ class BVH {
   BVH_data _data;
 
   /***** Funcitons *****/
-  bool intersect_node_bool(uint id, Ray *ray);
-  Intersection intersect_node(uint node_id, Ray *ray);
-  Intersection intersect_leaf(uint id, Ray *ray);
+  bool intersect_node_bool(uint id, const Ray& ray);
+  Intersection intersect_node(uint node_id, const Ray& ray);
+  Intersection intersect_leaf(uint id, const Ray& ray);
 
   bool update_intersection(Intersection * intersect,
                            Intersection new_intersect);
@@ -95,7 +95,7 @@ class BVH {
   void build_tree(std::vector<Triangle> *triangles);
   void set_triangles(std::vector<Triangle> *triangles);
 
-  Intersection intersect(Ray *ray);
+  Intersection intersect(const Ray& ray);
 
   /***** DEBUG *****/
   void print_node(uint id);

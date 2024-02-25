@@ -22,7 +22,7 @@ Object::Object() {
  * 
  * This function should be overriden by inheriting Objects.
  */
-Intersection Object::intersect(Ray ray) {
+Intersection Object::intersect(const Ray& ray) {
   Material material;
   return {false, 0, vec3(0, 0, 0), vec3(0, 0, 0), material};
 }
@@ -35,7 +35,7 @@ Intersection Object::intersect(Ray ray) {
  * @return true if Ray intersects.
  * @return false else
  */
-bool Object::intersect_bool(Ray ray, float t_max) {
+bool Object::intersect_bool(const Ray& ray, float t_max) {
   Intersection i = intersect(ray);
 
   if (i.found && i.t < t_max) {

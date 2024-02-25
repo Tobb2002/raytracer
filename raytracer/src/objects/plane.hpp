@@ -29,7 +29,7 @@ class Plane : public Object{
   // settings
   void set_axis(bool enable);
 
-  Intersection intersect(Ray ray) override;
+  Intersection intersect(const Ray& ray) override;
 
   void print(void) override;
 

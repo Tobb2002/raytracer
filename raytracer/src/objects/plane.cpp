@@ -80,7 +80,7 @@ void Plane::set_axis(bool enable) {
 
 /***** Intersection *****/
 
-Intersection Plane::intersect(Ray ray) {
+Intersection Plane::intersect(const Ray& ray) {
   float t = -(glm::dot(ray.get_origin() - _origin, _normal)
             / glm::dot(ray.get_direction(), _normal));
 

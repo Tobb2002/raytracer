@@ -45,7 +45,7 @@ void Sphere::enable_texture(bool enable) {
   _enable_texture = enable;
 }
 
-Intersection Sphere::intersect(Ray ray) {
+Intersection Sphere::intersect(const Ray& ray) {
   // sphere equation from raytracing in one weekend
   vec3 oc = ray.get_origin() - _origin;
 

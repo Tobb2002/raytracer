@@ -133,8 +133,8 @@ void Mesh::update_bounding_box(Triangle * t) {
 
 /***** Functions *****/
 
-Intersection Mesh::intersect(Ray ray) {
-  return _bvh.intersect(&ray);
+Intersection Mesh::intersect(const Ray& ray) {
+  return _bvh.intersect(ray);
 }
 
 /***** File input *****/

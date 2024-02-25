@@ -41,8 +41,8 @@ class Object {
 
   /***** Intersections *****/
 
-  virtual Intersection intersect(Ray ray);
-  virtual bool intersect_bool(Ray ray, float t_max);
+  virtual Intersection intersect(const Ray& ray);
+  virtual bool intersect_bool(const Ray& ray, float t_max);
 
   /***** Print DEBUG information */
 
