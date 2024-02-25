@@ -32,8 +32,14 @@ Scene get_scene() {
                       {.color = vec3(1, 0, 1),
                        .specular = 1.2,
                        .pow_m = 10});
+    Sphere s1 = Sphere(origin + vec3(1, 0, 0) + vec3(0, 0, 0),
+                      1,
+                      {.color = vec3(1, 0, 1),
+                       .specular = 1.2,
+                       .pow_m = 10});
   scene.add_object(s);
-  //  spheres.push_back(s);
+  scene.add_object(s1);
+  //spheres.push_back(s);
 
     //scene.add_object(s);
   //}

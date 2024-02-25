@@ -6,6 +6,7 @@
 #include "objects/plane.hpp"
 
 #include <glm/gtx/string_cast.hpp>
+#include <memory>
 
 // #define DEBUG
 
@@ -38,23 +39,27 @@ size_t Scene::add_light(Pointlight light) {
  * @return size_t id of Object.
  */
 size_t Scene::add_object(Object *object) {
-  _objects.push_back(object);
+  //_objects.push_back(object);
   return _objects.size() -1;
 }
 
 size_t Scene::add_object(Plane plane) {
   _obj_planes.push_back(plane);
-  _objects.push_back(&_obj_planes.at(_obj_planes.size() - 1));
+  _objects.push_back(std::make_shared<Plane>(plane));
+  //_objects.push_back(std::make_unique<Object>(new Plane(plane));
+  //_objects.push_back(&_obj_planes.at(_obj_planes.size() - 1));
   return _objects.size() -1;
 }
 size_t Scene::add_object(Sphere sphere) {
   _obj_spheres.push_back(sphere);
-  _objects.push_back(&_obj_spheres.at(_obj_spheres.size() - 1));
+  _objects.push_back(std::make_shared<Sphere>(sphere));
+  //_objects.push_back(&_obj_spheres.at(_obj_spheres.size() - 1));
   return _objects.size() -1;
 }
 size_t Scene::add_object(Mesh mesh) {
   _obj_meshes.push_back(mesh);
-  _objects.push_back(&_obj_meshes.at(_obj_meshes.size() - 1));
+  _objects.push_back(std::make_shared<Mesh>(mesh));
+  //_objects.push_back(&_obj_meshes.at(_obj_meshes.size() - 1));
   return _objects.size() -1;
 }
 
@@ -114,9 +119,9 @@ Camera *Scene::get_camera(void) {
  * @param id id of the Object
  * @return Object* 
  */
-Object *Scene::get_object(size_t id) {
-  return _objects.at(id);
-}
+//Object *Scene::get_object(size_t id) {
+//  return _objects.at(id);
+//}
 
 /**
  * @brief Check if a Ray intersects with an Object in the Scene.
@@ -127,7 +132,7 @@ Object *Scene::get_object(size_t id) {
  * @return false else
  */
 bool Scene::check_intersection(Ray ray, float t_max) {
-  for (Object *object : _objects) {
+  for (auto object : _objects) {
     if (object->intersect_bool(ray, t_max)) {
       return true;
     }
@@ -155,7 +160,7 @@ Image Scene::trace_image() {
   uint count_pix = 0;
 
   std::cout << "rendering\n\n";
-  #pragma omp parallel for
+  //#pragma omp parallel for
   for (int x = 0; x < resolution[0]; x++) {
       std::cout << "\e[2K\e[1A" << "Progress: "
       << floorf((float)count_pix / (resolution[0] * resolution[1]) * 100) << "%\n";
@@ -339,7 +344,7 @@ Ray Scene::generate_reflection_ray(
 
 void Scene::update_view_transform(void) {
   Transformation view_transform = _camera.get_view_transform();
-  for (Object *object : _objects) {
+  for (auto object : _objects) {
     object->update_view_transform(view_transform);
   }
   for (Pointlight light : _lights) {
@@ -360,7 +365,7 @@ vec3 Scene::get_light(Ray ray) {
       vec3(0, 0, 0),
       material};
   // find closest intersection in Scene
-  for (Object *object : _objects) {
+  for (auto object : _objects) {
     Intersection intersect = object->intersect(ray);
 
     if (intersect.found) {

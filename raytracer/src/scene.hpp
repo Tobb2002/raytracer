@@ -13,6 +13,7 @@
 #include "objects/camera.hpp"
 #include "image.hpp"
 #include "objects/sphere.hpp"
+#include "memory"
 
 
 class Scene {
@@ -35,7 +36,7 @@ class Scene {
   /***** Getters *****/
 
   Camera *get_camera(void);
-  Object *get_object(size_t id);
+ // Object *get_object(size_t id);
 
   vec3 get_light(Ray ray);
 
@@ -48,7 +49,7 @@ class Scene {
 
  private:
   std::vector<Pointlight> _lights;
-  std::vector<Object *> _objects;
+  std::vector<std::shared_ptr<Object>> _objects;
 
   std::vector<Plane> _obj_planes;
   std::vector<Sphere> _obj_spheres;
