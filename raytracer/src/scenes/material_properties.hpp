@@ -16,7 +16,7 @@ Scene get_scene() {
   scene.set_tonemapping_value(-1);
 
   // --- add lights ---
-  Pointlight light1 = Pointlight(origin + vec3(-1.5, 2, 4), 250);
+  Pointlight light1 = Pointlight(origin + vec3(-12, 2, 14), 250);
 
 
   scene.add_light(light1);
@@ -29,9 +29,9 @@ Scene get_scene() {
     float spec = (float)i * 0.4;
     Sphere s = Sphere(origin + vec3(-3.75,0,0) +  vec3(i * 2.5, 0, 0),
                       1,
-                      {.color = vec3(1, 0, 1),
+                      {.color = vec3(1, 0, 0),
                        .specular = spec,
-                       .pow_m = 10});
+                       .pow_m = 14});
   scene.add_object(s);
 
   }
