@@ -28,7 +28,7 @@ Scene get_scene() {
   scene.get_camera()->set_sensor_size(1, 1);
 
   scene.set_aliasing(2);
-  scene.set_tonemapping_value(3);
+  scene.set_tonemapping_value(15);
 
   ObjectFactory factory = ObjectFactory(&scene);
   
