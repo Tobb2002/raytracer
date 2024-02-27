@@ -8,6 +8,7 @@
 #include <glm/gtx/string_cast.hpp>
 #include <memory>
 #include <time.h>
+#include <chrono>
 
 // #define DEBUG
 
@@ -161,8 +162,7 @@ Image Scene::trace_image() {
   uint count_pix = 0;
 
   // start time
-  timeval start, end;
-  gettimeofday(&start, 0);
+  std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
   std::cout << "rendering\n\n";
   #pragma omp parallel for num_threads(5)
   for (int x = 0; x < resolution[0]; x++) {
@@ -194,9 +194,11 @@ Image Scene::trace_image() {
   if (_tonemapping_gray > 0) {
     image.apply_tonemapping(_tonemapping_gray);
   }
-  gettimeofday(&end, 0);
-  std::cout << "Time for rendering: ";
-  std::cout << end.tv_sec - start.tv_sec <<  " s\n";
+  // stop and print time
+  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+  std::cout << "Time for rendering (sec) = " << 
+    (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count()) /1000000.0 
+    << "\n";
   return image;
 }
 
