@@ -7,7 +7,7 @@
 #include "image.hpp"
 #include "scene.hpp"
 
-#include "scenes/smooth_shadows.hpp"
+#include "scenes/dragon.hpp"
 
 
 using glm::vec3, glm::vec2;

@@ -31,6 +31,7 @@ Scene get_scene() {
                       1,
                       {.color = vec3(1, 0, 0),
                        .specular = spec,
+                      b
                        .pow_m = 14});
   scene.add_object(s);
 

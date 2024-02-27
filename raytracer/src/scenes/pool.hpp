@@ -6,12 +6,16 @@
 #include <string.h>
 
 Scene get_scene() {
-  Scene scene = Scene(vec3(0, 50, 100));
+  Scene scene = Scene(vec3(0, 0, 0));
+
+  
 
   vec3 origin = vec3(0, 0, -12);
 
   Plane plane = Plane(origin + vec3(0, -1,0), vec3(0, 1, 0),
-      {.color = vec3(0.2 , 1, 0.2),.specular=0, .mirror = 0.0});
+      {.color = vec3(0.2 , 1, 0.2),.specular=0, .mirror = 0.0},
+                      vec2(20,30),
+                      "data/input/textures/pool/table.png");
 
   scene.get_camera()->set_resolution(800, 400);
   scene.get_camera()->set_sensor_size(1, 0.5);
@@ -46,7 +50,6 @@ Scene get_scene() {
                         texture);
           // rotate ball randomly
           int rand = 359 * (double) std::rand() / RAND_MAX;
-          std::cout << "rand: " << rand << "\n";
           b.rotate(vec3(rand,rand,rand),rand);
 
           scene.add_object(b);
