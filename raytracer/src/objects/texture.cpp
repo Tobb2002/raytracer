@@ -44,6 +44,14 @@ vec3 Texture::get_color_uv(vec2 position_uv) {
   {
     position_uv.y = 0.99;
   }
+  if (position_uv.x <=0)
+  {
+    position_uv.x = 0;
+  }
+  if (position_uv.y <=0)
+  {
+    position_uv.y = 0;
+  }
   position_uv.x = static_cast<int>(position_uv.x * _texture.width());
   position_uv.y = static_cast<int>(position_uv.y * _texture.height());
   vec3 colors = vec3(static_cast<int>(_texture(position_uv.x,

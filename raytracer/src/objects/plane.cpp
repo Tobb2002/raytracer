@@ -73,6 +73,15 @@ Plane::Plane(vec3 position,
   _size = size;
 }
 
+Plane::Plane(vec3 pos, vec3 normal, Material material,vec2 size, std::string path_to_file) {
+  set_start_position(pos, normal);
+
+  _material = material;
+  _size = size;
+  _enable_size = true;
+  _texture.load_image(path_to_file);
+  _textured = true;
+}
 /***** settings *****/
 void Plane::set_axis(bool enable) {
   _axis_enable = enable;
@@ -110,14 +119,26 @@ Intersection Plane::intersect(const Ray& ray) {
  * @return Material 
  */
 Material Plane::get_material(vec3 point) {
-  if (!_two_colored) {
-    return _material;
-  }
-
   // calculate point relative to standart plane (at origin)
   vec3 point_origin =
     _transform.virtual_to_origin(
       _transform.transform_point(_view_transform.inv, point));
+
+  if (_textured) {
+    // calculate pointuv
+    vec2 point_uv = vec2((point_origin.x + _size.x) / _size.x / 2,
+                         (point_origin.y + _size.y) / _size.y / 2);
+    //std::cout << glm::to_string(point_origin) << "\n";
+    //std::cout << glm::to_string(point_uv) << "\n";
+    _material.color = _texture.get_color_uv(point_uv);
+    return _material;
+  }
+
+  if (!_two_colored) {
+    return _material;
+  }
+
+  // squares of two materials
   vec3 point_origin_mod = glm::mod(point_origin, 4.f);
 
   // draw axis of worldspace

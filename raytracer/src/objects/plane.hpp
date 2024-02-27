@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 #include "ray.hpp"
 #include "object.hpp"
+#include "texture.hpp"
 
 using glm::vec3;
 
@@ -25,6 +26,7 @@ class Plane : public Object{
         Material material1,
         Material material2,
         vec2 size);
+  Plane(vec3 pos, vec3 normal, Material material, vec2 size, std::string path_to_file);
 
   // settings
   void set_axis(bool enable);
@@ -49,8 +51,10 @@ class Plane : public Object{
   vec2 _size;
   Material _material;
   Material _material2;
+  Texture _texture;
 
   bool _two_colored;
+  bool _textured;
   bool _axis_enable = false;
   bool _enable_size = false;
 };
