@@ -4,6 +4,8 @@
 
 #pragma once
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include<string>
 #include "glm/glm.hpp"
 #include <CImg.h>
 
