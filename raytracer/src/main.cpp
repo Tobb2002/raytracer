@@ -3,7 +3,6 @@
  */
 
 #include <glm/glm.hpp>
-#include <glm/gtx/string_cast.hpp>
 #include "image.hpp"
 #include "scene.hpp"
 
