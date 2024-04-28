@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2023 Tobias Vonier. All rights reserved.
+ */
 #include "../scene.hpp"
 #include "../objects/mesh.hpp"
 #include "../objects/sphere.hpp"

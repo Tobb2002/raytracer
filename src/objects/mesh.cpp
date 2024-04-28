@@ -35,14 +35,15 @@ Mesh::Mesh(std::string input_file, vec3 origin, Material material) {
   _origin = origin;
   _material = material;
   read_from_obj(input_file);  // read file with origin as offset
-  
+
   // stop time needed to build bvh
-  std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+  std::chrono::steady_clock::time_point begin =
+      std::chrono::steady_clock::now();
   _bvh.build_tree(&_triangles);
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-  std::cout << "Time for building bvh (sec) = " << 
-    (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count()) /1000000.0 
-    << "\n";
+  std::cout << "Time for building bvh (sec) = " <<
+    (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count())
+    / 1000000.0 << "\n";
 }
 
 Mesh::Mesh(const Mesh &old_mesh) {

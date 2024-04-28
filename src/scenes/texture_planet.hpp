@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2023 Tobias Vonier. All rights reserved.
+ */
 #include "../objects/sphere.hpp"
 #include "../objects/plane.hpp"
 #include "../object_factory.hpp"
@@ -14,17 +17,16 @@ Scene get_scene() {
   vec3 origin = vec3(0, 0, -13);
 
   Plane plane = Plane(origin + vec3(0, 0, -10), vec3(0, 0, -1),
-      {.color = vec3(1 , 1, 1),.diffuse=0, .ambient=0.6, .specular=0},
-      vec2(14,10),
+      {.color = vec3(1 , 1, 1), .diffuse = 0, .ambient = 0.6, .specular = 0},
+      vec2(14, 10),
       "data/input/textures/planets/background_stars.png");
 
   Sphere earth = Sphere(origin,
                         2,
                         {.specular = 0.2},
                         "data/input/textures/planets/earth_uv.png");
-  earth.rotate(vec3(0,1,0), -20);
+  earth.rotate(vec3(0, 1, 0), -20);
 
-  //plane.set_axis(true);
   Pointlight light1 = Pointlight(origin + vec3(-6, 2, 4), 320);
 
   scene.add_light(light1);

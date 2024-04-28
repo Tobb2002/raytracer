@@ -1,5 +1,7 @@
+/*
+ * Copyright (c) 2023 Tobias Vonier. All rights reserved.
+ */
 #include "../scene.hpp"
-#include "../objects/mesh.hpp"
 #include "../objects/sphere.hpp"
 #include "../objects/plane.hpp"
 
@@ -17,25 +19,20 @@ Scene get_scene() {
 
   // --- add lights ---
   Pointlight light1 = Pointlight(origin + vec3(-12, 2, 14), 250);
-
-
   scene.add_light(light1);
-  
 
   // --- add objects ---
   std::vector<Sphere> spheres;
-  //spheres.reserve(5);
   for (int i = 0; i < 4; i++) {
-    float spec = (float)i * 0.4;
-    Sphere s = Sphere(origin + vec3(-3.75,0,0) +  vec3(i * 2.5, 0, 0),
+    float spec = static_cast<float>(i) * 0.4;
+    Sphere s = Sphere(origin + vec3(-3.75, 0, 0) +  vec3(i * 2.5, 0, 0),
                       1,
                       {.color = vec3(1, 0, 0),
                        .specular = spec,
-                      b
                        .pow_m = 14});
-  scene.add_object(s);
-
+    scene.add_object(s);
   }
 
   return scene;
 }
+

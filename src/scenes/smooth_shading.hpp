@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2023 Tobias Vonier. All rights reserved.
+ */
 #include "../scene.hpp"
 #include "../objects/mesh.hpp"
 #include "../objects/sphere.hpp"
@@ -17,11 +20,10 @@ Scene get_scene() {
                 {.color = vec3(0, 1, 0), .specular = 0.2});
 
   Plane plane = Plane(origin_plane, vec3(0, 1, 0),
-      {.color = vec3(1 , 1, 1),.specular=0, .mirror = 0.0},
-      {.color = vec3(0.6, 0.6, 0.6),.specular=0, .mirror = 0.0}, vec2(100,15));
+      {.color = vec3(1 , 1, 1), .specular = 0, .mirror = 0.0},
+      {.color = vec3(0.6, 0.6, 0.6), .specular = 0, .mirror = 0.0},
+                      vec2(100, 15));
 
-  //plane.set_axis(true);
-  //Pointlight light1 = Pointlight(origin_plane + vec3(-3, 2, 4), 250);
   ObjectFactory factory = ObjectFactory(&scene);
   factory.new_xy_square_light(origin_plane + vec3(-5, 6, 5),
                               250,

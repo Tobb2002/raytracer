@@ -36,7 +36,10 @@ void ObjectFactory::new_xy_square_light(
 
   for (int x = 0; x < amount ; x++) {
     for (int y = 0; y < amount; y++) {
-      Pointlight l = Pointlight(position + vec3(x * ssize, y * ssize, 0), static_cast<float>(strength) / (amount * amount));
+      Pointlight l =
+        Pointlight(position + vec3(x * ssize, y * ssize, 0),
+                   static_cast<float>(strength) /
+                   (amount * amount));
       _scene->add_light(l);
     }
   }

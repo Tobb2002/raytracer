@@ -26,7 +26,11 @@ class Plane : public Object{
         Material material1,
         Material material2,
         vec2 size);
-  Plane(vec3 pos, vec3 normal, Material material, vec2 size, std::string path_to_file);
+  Plane(vec3 pos,
+        vec3 normal,
+        Material material,
+        vec2 size,
+        std::string path_to_file);
 
   // settings
   void set_axis(bool enable);

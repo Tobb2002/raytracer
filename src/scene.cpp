@@ -41,27 +41,22 @@ size_t Scene::add_light(Pointlight light) {
  * @return size_t id of Object.
  */
 size_t Scene::add_object(Object *object) {
-  //_objects.push_back(object);
   return _objects.size() -1;
 }
 
 size_t Scene::add_object(Plane plane) {
   _obj_planes.push_back(plane);
   _objects.push_back(std::make_shared<Plane>(plane));
-  //_objects.push_back(std::make_unique<Object>(new Plane(plane));
-  //_objects.push_back(&_obj_planes.at(_obj_planes.size() - 1));
   return _objects.size() -1;
 }
 size_t Scene::add_object(Sphere sphere) {
   _obj_spheres.push_back(sphere);
   _objects.push_back(std::make_shared<Sphere>(sphere));
-  //_objects.push_back(&_obj_spheres.at(_obj_spheres.size() - 1));
   return _objects.size() -1;
 }
 size_t Scene::add_object(Mesh mesh) {
   _obj_meshes.push_back(mesh);
   _objects.push_back(std::make_shared<Mesh>(mesh));
-  //_objects.push_back(&_obj_meshes.at(_obj_meshes.size() - 1));
   return _objects.size() -1;
 }
 
@@ -115,15 +110,6 @@ Camera *Scene::get_camera(void) {
   return &_camera;
 }
 
-/**
- * @brief Get pointer to object in the scene.
- * 
- * @param id id of the Object
- * @return Object* 
- */
-//Object *Scene::get_object(size_t id) {
-//  return _objects.at(id);
-//}
 
 /**
  * @brief Check if a Ray intersects with an Object in the Scene.
@@ -162,12 +148,15 @@ Image Scene::trace_image() {
   uint count_pix = 0;
 
   // start time
-  std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+  std::chrono::steady_clock::time_point begin =
+      std::chrono::steady_clock::now();
   std::cout << "rendering\n\n";
   #pragma omp parallel for num_threads(5)
   for (int x = 0; x < resolution[0]; x++) {
       std::cout << "\e[2K\e[1A" << "Progress: "
-      << floorf((float)count_pix / (resolution[0] * resolution[1]) * 100) << "%\n";
+      << floorf(static_cast<float>(count_pix) /
+                (resolution[0] * resolution[1]) * 100)
+      << "%\n";
 
     for (int y = 0; y < resolution[1]; y++) {
       #ifdef DEBUG
@@ -196,9 +185,9 @@ Image Scene::trace_image() {
   }
   // stop and print time
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-  std::cout << "Time for rendering (sec) = " << 
-    (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count()) /1000000.0 
-    << "\n";
+  std::cout << "Time for rendering (sec) = " <<
+    (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count())
+    / 1000000.0 << "\n";
   return image;
 }
 

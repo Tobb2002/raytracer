@@ -36,20 +36,16 @@ vec3 Texture::get_color_absolute(vec2 position_xy) {
 
 // only acepts values between 0-1
 vec3 Texture::get_color_uv(vec2 position_uv) {
-  if (position_uv.x >=1)
-  {
+  if (position_uv.x >=1) {
     position_uv.x = 0.99;
   }
-  if (position_uv.y >=1)
-  {
+  if (position_uv.y >=1) {
     position_uv.y = 0.99;
   }
-  if (position_uv.x <=0)
-  {
+  if (position_uv.x <=0) {
     position_uv.x = 0;
   }
-  if (position_uv.y <=0)
-  {
+  if (position_uv.y <=0) {
     position_uv.y = 0;
   }
   position_uv.x = static_cast<int>(position_uv.x * _texture.width());

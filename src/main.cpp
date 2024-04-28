@@ -6,7 +6,7 @@
 #include "image.hpp"
 #include "scene.hpp"
 
-#include "scenes/aliasing.hpp"
+#include "scenes/pool.hpp"
 
 
 using glm::vec3, glm::vec2;
@@ -16,7 +16,7 @@ int main(void) {
 
   Image out = scene.trace_image();
   char filename[50];
-  sprintf(filename, "data/output/out.ppm");
+  snprintf(filename, sizeof(filename), "data/output/out.ppm");
   out.write_to_file(filename);
 
   return 0;

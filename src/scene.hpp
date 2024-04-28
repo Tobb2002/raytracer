@@ -36,7 +36,6 @@ class Scene {
   /***** Getters *****/
 
   Camera *get_camera(void);
- // Object *get_object(size_t id);
 
   vec3 get_light(const Ray& ray);
 
