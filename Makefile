@@ -1,14 +1,15 @@
 .PHONY: all
 
 CC = clang++
-FLAGS = -std=c++2a -Wall -fsanitize=address -L/usr/X11R6/lib -lm -lpthread -lX11 -fopenmp
+FLAGS = -std=c++2a -W -fsanitize=address -fopenmp
+LINKER_FLAGS = -lm -lpthread -lX11
 
 ifeq ($(BUILD),debug)   
 # "Debug" build - no optimization, and debugging symbols
 FLAGS += -O0 -g -pg
 else
 # "Release" build - optimization, and no debug symbols
-FLAGS += -O2 -s -DNDEBUG
+FLAGS += -O2 -DNDEBUG
 endif
 
 # tasks
@@ -52,7 +53,7 @@ targets = $(addsuffix .o,$(addprefix obj/,$(files)))
 
 # linke everything
 bin/main: $(targets) | $(BUILDDIRS)
-	$(CC) $(FLAGS) -o bin/main $(targets)
+	$(CC) $(FLAGS) $(LINKER_FLAGS) -o bin/main $(targets)
 
 # main
 obj/main.o: src/main.cpp src/scenes/ | $(BUILDDIRS)
