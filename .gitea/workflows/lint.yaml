@@ -1,0 +1,19 @@
+name: Lint
+run-name: checking the code for linting errors.
+on: [push]
+
+jobs:
+  Explore-Gitea-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: install linter
+        run: pip install cclint
+      - name: Run linter
+        run: |
+          cd ${{ gitea.workspace }} && make checkstyle
