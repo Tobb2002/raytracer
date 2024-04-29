@@ -34,16 +34,36 @@ size_t Scene::add_light(Pointlight light) {
   return _lights.size() -1;
 }
 
+/**
+ * @brief Add a plane to the scene.
+ *
+ * @param plane 
+ * @return size_t id of plane 
+ */
 size_t Scene::add_object(Plane plane) {
   _obj_planes.push_back(plane);
   _objects.push_back(std::make_shared<Plane>(plane));
   return _objects.size() -1;
 }
+
+/**
+ * @brief Add a Sphere to the scene.
+ *
+ * @param sphere 
+ * @return size_t id of plane 
+ */
 size_t Scene::add_object(Sphere sphere) {
   _obj_spheres.push_back(sphere);
   _objects.push_back(std::make_shared<Sphere>(sphere));
   return _objects.size() -1;
 }
+
+/**
+ * @brief Add a Mesh to the scene.
+ *
+ * @param sphere 
+ * @return size_t id of mesh
+ */
 size_t Scene::add_object(Mesh mesh) {
   _obj_meshes.push_back(mesh);
   _objects.push_back(std::make_shared<Mesh>(mesh));
@@ -133,14 +153,13 @@ Image Scene::trace_image() {
     {static_cast<int>(_camera.get_resolution().x),
     static_cast<int>(_camera.get_resolution().y)};
 
-
-
   uint count_pix = 0;
 
   // start time
   std::chrono::steady_clock::time_point begin =
       std::chrono::steady_clock::now();
   std::cout << "rendering\n\n";
+
   #pragma omp parallel for num_threads(5)
   for (int x = 0; x < resolution[0]; x++) {
       std::cout << "\e[2K\e[1A" << "Progress: "
@@ -340,9 +359,12 @@ void Scene::update_view_transform(void) {
   }
 }
 
-/// @brief Calculates light transport a long a ray in the scene.
-/// @param ray
-/// @return amount of light reflected to direction of ray.
+/**
+ * @brief Calculates light transport in the scene along a ray.
+ *
+ * @param ray 
+ * @return amount of light reflected into ray directions. 
+ */
 vec3 Scene::get_light(const Ray& ray) {
   // calculate object intersections
   Material material;
@@ -352,6 +374,7 @@ vec3 Scene::get_light(const Ray& ray) {
       vec3(0, 0, 0),
       vec3(0, 0, 0),
       material};
+
   // find closest intersection in Scene
   for (auto object : _objects) {
     Intersection intersect = object->intersect(ray);
