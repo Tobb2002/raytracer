@@ -28,7 +28,7 @@ Scene get_scene() {
   factory.new_xy_square_light(origin + vec3(-3, 4, 5),
                               250,
                               4,
-                              0.4);
+                              0.3);
 
   // --- add objects ---
   scene.add_object(plane);

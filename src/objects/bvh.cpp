@@ -20,17 +20,17 @@ void BVH::build_tree(std::vector<Triangle> *triangles) {
 
   // initialize tree with standart nodes
   _data.tree.reserve(_data.triangles->size());
-  for (int i = 0; i < _data.triangles->size(); i++) {
+  for (size_t i = 0; i < _data.triangles->size(); i++) {
     BVH_node node;
     _data.tree.push_back(node);
   }
 
-  for (int i = 0; i < _data.triangles->size(); i++) {
+  for (size_t i = 0; i < _data.triangles->size(); i++) {
   }
   _data.size = _data.triangles->size();
 
   _data.triangle_ids.reserve(_data.size);
-  for (int i = 0; i < _data.size; i++) {
+  for (size_t i = 0; i < _data.size; i++) {
     _data.triangle_ids.push_back(i);
   }
   // initialize root node
@@ -274,7 +274,7 @@ void BVH::print_node(uint id) {
   std::cout << "leaf: " << n.leaf << "\n";
 
   // triangle ids
-  for (int i = 0; i < _data.tree[id].count; i++) {
+  for (size_t i = 0; i < _data.tree[id].count; i++) {
     std::cout << _data.triangle_ids.at(i + _data.tree[id].first) <<",";
   }
   std::cout << "\n";
@@ -286,7 +286,7 @@ void BVH::print_node_triangles(uint id) {
 
   std::cout << "-------bvh_node_triangles------\n";
   std::cout << "id: " << id << "\n";
-  for (int i = 0; i < _data.tree[id].count; i++) {
+  for (size_t i = 0; i < _data.tree[id].count; i++) {
     Triangle t =
       _data.triangles->at(_data.triangle_ids.at(i + _data.tree[id].first));
     t.print();

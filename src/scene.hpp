@@ -23,7 +23,6 @@ class Scene {
   /***** Adding things to scene *****/
 
   size_t add_light(Pointlight light);
-  size_t add_object(Object *object);
   size_t add_object(Plane plane);
   size_t add_object(Sphere sphere);
   size_t add_object(Mesh mesh);

@@ -22,7 +22,7 @@ Object::Object() {
  * 
  * This function should be overriden by inheriting Objects.
  */
-Intersection Object::intersect(const Ray& ray) {
+Intersection Object::intersect(const Ray&) {
   Material material;
   return {false, 0, vec3(0, 0, 0), vec3(0, 0, 0), material};
 }

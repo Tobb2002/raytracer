@@ -190,7 +190,7 @@ void Mesh::read_from_obj(std::string inputfile) {
     std::cout << "normals available\n";
   }
 
-  for (int s = 0; s < shapes.size(); s++) {
+  for (size_t s = 0; s < shapes.size(); s++) {
     int size = shapes[s].mesh.num_face_vertices.size();
     std::cout << "size:" << size << "\n";
 

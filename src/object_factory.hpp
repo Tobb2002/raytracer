@@ -13,13 +13,6 @@ class ObjectFactory {
  public:
   explicit ObjectFactory(Scene *scene);
 
-  void new_square_pattern(
-      Object *object,
-      int amount,
-      float size,
-      vec3 position,
-      vec3 normal);
-
   void new_xy_square_light(
     const vec3 &position,
     const int &strength,

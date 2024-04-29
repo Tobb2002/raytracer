@@ -34,16 +34,6 @@ size_t Scene::add_light(Pointlight light) {
   return _lights.size() -1;
 }
 
-/**
- * @brief Add a Object to scenn.
- * 
- * @param object
- * @return size_t id of Object.
- */
-size_t Scene::add_object(Object *object) {
-  return _objects.size() -1;
-}
-
 size_t Scene::add_object(Plane plane) {
   _obj_planes.push_back(plane);
   _objects.push_back(std::make_shared<Plane>(plane));
@@ -166,7 +156,7 @@ Image Scene::trace_image() {
 
       // get color from ray
       vec3 color = vec3(0, 0, 0);
-      for (int i = 0; i < _aliasing_positions.size(); i++) {
+      for (size_t i = 0; i < _aliasing_positions.size(); i++) {
         vec3 light =
           get_light(_camera.get_ray({x, y}, _aliasing_positions.at(i), 0.2));
 
