@@ -5,7 +5,7 @@
 
 #include <glm/glm.hpp>
 #include <vector>
-#include <array>
+
 #include "ray.hpp"
 #include "triangle.hpp"
 
@@ -86,15 +86,18 @@ class BVH {
   uint _intersect_count = 0;
 
  public:
-  /***** Functions *****/
+  BVH() { }
+  ~BVH() { }
 
-  BVH();
-  ~BVH();
-
-
-  void build_tree(std::vector<Triangle> *triangles);
+  void build_tree_axis(std::vector<Triangle> *triangles);
   void set_triangles(std::vector<Triangle> *triangles);
 
+  /**
+   * @brief Return best triangle intersection if found.
+   * 
+   * @param ray 
+   * @return Intersection 
+   */
   Intersection intersect(const Ray& ray);
 
   /***** DEBUG *****/
@@ -105,6 +108,11 @@ class BVH {
 
   /***** Transformation *****/
 
+  /**
+   * @brief Apply a transfromation to the Hierarchy
+   *
+   * @param t Transformation matrix
+   */
   void apply_transform(mat4 t);
   void update_boxes();
 };

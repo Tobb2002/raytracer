@@ -1,20 +1,15 @@
 /*
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
-
-#include "bvh.hpp"
-
 #include <algorithm>
 #include <boost/lambda/bind.hpp>
 #include <cmath>
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/string_cast.hpp>
-
-BVH::BVH() { }
-
-BVH::~BVH() { }
+#include "bvh.hpp"
 
 
-void BVH::build_tree(std::vector<Triangle> *triangles) {
+void BVH::build_tree_axis(std::vector<Triangle> *triangles) {
   // initialize data structure
   _data.triangles = triangles;
 
@@ -41,16 +36,11 @@ void BVH::build_tree(std::vector<Triangle> *triangles) {
   // split nodes recursivley
   split(0);
 }
+
 void BVH::set_triangles(std::vector<Triangle> *triangles) {
   _data.triangles = triangles;
 }
 
-/**
- * @brief Return best triangle intersection if found.
- * 
- * @param ray 
- * @return Intersection 
- */
 Intersection BVH::intersect(const Ray& ray) {
   _intersect_count = 0;
   return intersect_node(0, ray);

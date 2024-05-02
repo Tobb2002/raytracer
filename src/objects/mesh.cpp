@@ -39,7 +39,7 @@ Mesh::Mesh(std::string input_file, vec3 origin, Material material) {
   // stop time needed to build bvh
   std::chrono::steady_clock::time_point begin =
       std::chrono::steady_clock::now();
-  _bvh.build_tree(&_triangles);
+  _bvh.build_tree_axis(&_triangles);
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   std::cout << "Time for building bvh (sec) = " <<
     (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count())

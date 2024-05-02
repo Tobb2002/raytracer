@@ -6,7 +6,7 @@
 #include "image.hpp"
 #include "scene.hpp"
 
-#include "scenes/pool.hpp"
+#include "scenes/performance.hpp"
 
 
 using glm::vec3, glm::vec2;
