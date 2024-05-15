@@ -47,7 +47,7 @@ struct BVH_node {
  */
 struct SAH_bucket {
   std::vector<uint> ids;
-  bvh_box bounding;
+  bvh_box box;
   float cost;
 };
 
@@ -133,7 +133,7 @@ class BVH {
   /***** SAH ******/
 
   void calc_SAH_costs(uint node_id, SAH_buckets *buckets);
-  bvh_box combine_box(SAH_buckets *buckets, uint min, uint max);
+  bvh_box combine_box(SAH_buckets *buckets, uint axis, uint min, uint max);
 
 
   /***** Transformation *****/

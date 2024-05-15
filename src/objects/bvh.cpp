@@ -432,8 +432,13 @@ void triangles_into_buckets(uint node_id, SAH_buckets *buckets, BVH_data *data) 
 
 }
 
-bvh_box BVH::combine_box(SAH_buckets *buckets, uint min, uint max) {
-  // TODO
+bvh_box BVH::combine_box(SAH_buckets *buckets, uint axis, uint min, uint max) {
+  bvh_box res;
+  for (size_t i = min; i < max; i++) {
+    update_min(&res.min, buckets->buckets[axis][i].box.min);
+    update_max(&res.max, buckets->buckets[axis][i].box.max);
+  }
+  return res;
 }
 
 void BVH::calc_SAH_costs(uint node_id, SAH_buckets *buckets) {
@@ -441,8 +446,8 @@ void BVH::calc_SAH_costs(uint node_id, SAH_buckets *buckets) {
 
   for (size_t a = 0; a < 3; a++) { // for every axis
     for (size_t b = 0; b < SAH_NUM_BUCKETS; b++) { // for every bucket
-      bvh_box left = combine_box(buckets, 0,b);
-      bvh_box right = combine_box(buckets, b, SAH_NUM_BUCKETS - 1);
+      bvh_box left = combine_box(buckets, a, 0,b);
+      bvh_box right = combine_box(buckets, a, b, SAH_NUM_BUCKETS - 1);
     }
   }
 }
