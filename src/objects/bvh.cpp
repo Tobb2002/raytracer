@@ -432,6 +432,12 @@ void triangles_into_buckets(uint node_id, SAH_buckets *buckets, BVH_data *data) 
 
 }
 
+float BVH:: get_surface_area(const bvh_box& box) {
+  return 2 * (box.max.x - box.min.x) + 
+         2 * (box.max.y - box.min.y) +
+         2 * (box.max.z - box.min.z);
+}
+
 bvh_box BVH::combine_box(SAH_buckets *buckets, uint axis, uint min, uint max) {
   bvh_box res;
   for (size_t i = min; i < max; i++) {
@@ -441,15 +447,49 @@ bvh_box BVH::combine_box(SAH_buckets *buckets, uint axis, uint min, uint max) {
   return res;
 }
 
-void BVH::calc_SAH_costs(uint node_id, SAH_buckets *buckets) {
+split_point BVH::calc_min_split(uint node_id, SAH_buckets *buckets) {
   // go trough all buckets and generate split
+
+  float min_cost = MAXFLOAT;
+  split_point split;
+
+  bvh_box box = bvh_box(_data.tree[node_id].min, _data.tree[node_id].max);
+  float surface_box = get_surface_area(box);
 
   for (size_t a = 0; a < 3; a++) { // for every axis
     for (size_t b = 0; b < SAH_NUM_BUCKETS; b++) { // for every bucket
       bvh_box left = combine_box(buckets, a, 0,b);
-      bvh_box right = combine_box(buckets, a, b, SAH_NUM_BUCKETS - 1);
+      bvh_box right = combine_box(buckets, a, b, SAH_NUM_BUCKETS - 1); // TODO check +-1
+
+      // calc probabilities that random ray hits box
+      float prob_left = surface_box / get_surface_area(left);
+      float prob_right = surface_box / get_surface_area(right);
+
+      // get number of triangles
+      uint left_amount = 0;
+      for (size_t i = 0; i < b; i++) { // TODO check +-1
+        left_amount += buckets->buckets[a][i].ids.size();
+      }
+
+      uint right_amount = 0;
+      for (size_t i = 0; i < b; i++) { // TODO check +-1
+        right_amount += buckets->buckets[a][i].ids.size();
+      }
+
+      // calculate costs
+      float cost = COST_TRAVERSAL +
+                   prob_left * left_amount * COST_INTERSECT +
+                   prob_right * right_amount * COST_INTERSECT;
+
+      // update min cost
+      if (cost < min_cost) {
+        min_cost = cost;
+        split.id = b;
+        split.axis = a;
+      }
     }
   }
+  return split;
 }
 
 void BVH::split_SAH(uint node_id) {
@@ -463,7 +503,7 @@ void BVH::split_SAH(uint node_id) {
   triangles_into_buckets(node_id, &buckets, &_data);
 
   // calculate costs for every split
-  calc_SAH_costs(node_id, &buckets);
+  calc_min_split(node_id, &buckets);
 
   // DEBUGING print bucket sizes
 

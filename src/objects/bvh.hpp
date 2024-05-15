@@ -11,6 +11,9 @@
 
 #define SAH_NUM_BUCKETS 12
 
+#define COST_TRAVERSAL 0
+#define COST_INTERSECT 1
+
 using glm::vec3;
 
 struct Triangle_set {
@@ -54,6 +57,11 @@ struct SAH_bucket {
 /// @brief Struct containing two-dimensional array of all buckets
 struct SAH_buckets {
   SAH_bucket buckets[3][SAH_NUM_BUCKETS];
+};
+
+struct split_point {
+  size_t axis = -1;
+  size_t id = -1;
 };
 
 
@@ -132,8 +140,9 @@ class BVH {
 
   /***** SAH ******/
 
-  void calc_SAH_costs(uint node_id, SAH_buckets *buckets);
+  split_point calc_min_split(uint node_id, SAH_buckets *buckets);
   bvh_box combine_box(SAH_buckets *buckets, uint axis, uint min, uint max);
+  float get_surface_area(const bvh_box& box);
 
 
   /***** Transformation *****/
