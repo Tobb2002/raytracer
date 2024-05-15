@@ -408,15 +408,22 @@ void triangles_into_buckets(uint node_id, SAH_buckets *buckets, BVH_data *data) 
     for (uint b = 0; b < SAH_NUM_BUCKETS; b++) {
       // get boundary for x,y,z-bucket[b] 
       vec3 split = min + static_cast<float>(b) * bucket_step;
+      vec3 split_before;
+      if (b != 0) {
+        split_before = min + static_cast<float>(b - 1) * bucket_step;
+      }
+      else {
+        split_before = min;
+      }
 
       // check if triangle is in bucket b for x,y,z- bucket
       vec3 triangle_pos = data->triangles->at(data->triangle_ids.at(i)).get_pos();
 
       // triangle is in bucket if smaller than split if in bucket[i] it's also in all buckets[<i]
       for (size_t a = 0; a < 3; a++) {
-        if (triangle_pos[a] < split[a]) {
+        if (triangle_pos[a] < split[a] &&  triangle_pos[a] > split_before[a]) {
           // insert trianlge to specific bucket
-          buckets->b[a].push_back(i);
+          buckets->buckets[a][b].ids.push_back(i);
         }
       }
     }
@@ -425,7 +432,7 @@ void triangles_into_buckets(uint node_id, SAH_buckets *buckets, BVH_data *data) 
 }
 
 void calc_SAH_costs(uint node_id, SAH_buckets *costs, BVH_data *data) {
-  
+  // go trough all buckets and generate split
 }
 
 void BVH::split_SAH(uint node_id) {
@@ -435,22 +442,10 @@ void BVH::split_SAH(uint node_id) {
   }
 
   SAH_buckets buckets;
-  for (size_t i = 0; i < 3; i++) { 
-    buckets.b[i].reserve(SAH_NUM_BUCKETS);
-  }
   // sort triangles into buckets
   triangles_into_buckets(node_id, &buckets, &_data);
 
-  printf("bucket content: \n");
-  for (size_t i = 0; i < buckets.b[0].size(); i++) {
-    printf("%d,", buckets.b[0].at(i));
-  }
-
-  SAH_buckets costs;
-  for (size_t i = 0; i < 3; i++) { 
-    buckets.b[i].reserve(SAH_NUM_BUCKETS);
-  }
-  calc_SAH_costs(node_id, &costs, &_data);
+  calc_SAH_costs(node_id, &buckets, &_data);
 
   // calculate costs for every split
 

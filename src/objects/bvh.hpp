@@ -40,14 +40,21 @@ struct BVH_node {
   uint count = 0;
 };
 
+struct SAH_bucket {
+  std::vector<uint> ids;
+  vec3 min;
+  vec3 max;
+  float cost;
+};
 /**
  * @class SAH_buckets
  * @brief contains triangle id's for every bucket for every axis
  *
  */
 struct SAH_buckets {
-  std::vector<uint> b[3];
+  SAH_bucket buckets[3][SAH_NUM_BUCKETS];
 };
+
 
 /// @brief struct for BVH arrays data.
 struct BVH_data {
