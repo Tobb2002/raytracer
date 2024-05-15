@@ -23,7 +23,7 @@ struct Interval {
   float max;
 };
 
-struct bvh_Box {
+struct bvh_box {
   vec3 min;
   vec3 max;
 };
@@ -40,17 +40,18 @@ struct BVH_node {
   uint count = 0;
 };
 
-struct SAH_bucket {
-  std::vector<uint> ids;
-  vec3 min;
-  vec3 max;
-  float cost;
-};
 /**
- * @class SAH_buckets
- * @brief contains triangle id's for every bucket for every axis
+ * @class SAH_bucket
+ * @brief Sturct holding all the information of a bucket
  *
  */
+struct SAH_bucket {
+  std::vector<uint> ids;
+  bvh_box bounding;
+  float cost;
+};
+
+/// @brief Struct containing two-dimensional array of all buckets
 struct SAH_buckets {
   SAH_bucket buckets[3][SAH_NUM_BUCKETS];
 };
@@ -82,7 +83,7 @@ class BVH {
   /// @brief get longest axis of bounding box.
   Axis get_longest_axis(uint node_id);
 
-  bvh_Box update_box(uint node_id);
+  bvh_box update_box(uint node_id);
 
   void calculate_min(uint node_id);
   void calculate_max(uint node_id);
@@ -129,6 +130,10 @@ class BVH {
   void print_node(uint id);
   void print_node_triangles(uint id);
 
+  /***** SAH ******/
+
+  void calc_SAH_costs(uint node_id, SAH_buckets *buckets);
+  bvh_box combine_box(SAH_buckets *buckets, uint min, uint max);
 
 
   /***** Transformation *****/

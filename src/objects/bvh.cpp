@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
+#include "box.hpp"
 #include <algorithm>
 #include <boost/lambda/bind.hpp>
 #include <cmath>
@@ -33,7 +34,7 @@ void BVH::build_tree_axis(std::vector<Triangle> *triangles) {
   calculate_min(0);
 
   // split nodes recursivley
-  split_middle(0);
+  split_SAH(0);
 }
 
 void BVH::set_triangles(std::vector<Triangle> *triangles) {
@@ -194,14 +195,14 @@ Axis BVH::get_longest_axis(uint node_id) {
   return res;
 }
 
-bvh_Box BVH::update_box(uint node_id) {
+bvh_box BVH::update_box(uint node_id) {
   if (_data.tree[node_id].leaf) {
     calculate_max(node_id);
     calculate_min(node_id);
     return {_data.tree[node_id].min , _data.tree[node_id].max};
   }
-  bvh_Box left = update_box(node_id*2 +1);
-  bvh_Box right = update_box(node_id*2 +2);
+  bvh_box left = update_box(node_id*2 +1);
+  bvh_box right = update_box(node_id*2 +2);
   update_min(&left.min, right.min);
   update_max(&left.max, right.max);
 
@@ -431,8 +432,19 @@ void triangles_into_buckets(uint node_id, SAH_buckets *buckets, BVH_data *data) 
 
 }
 
-void calc_SAH_costs(uint node_id, SAH_buckets *costs, BVH_data *data) {
+bvh_box BVH::combine_box(SAH_buckets *buckets, uint min, uint max) {
+  // TODO
+}
+
+void BVH::calc_SAH_costs(uint node_id, SAH_buckets *buckets) {
   // go trough all buckets and generate split
+
+  for (size_t a = 0; a < 3; a++) { // for every axis
+    for (size_t b = 0; b < SAH_NUM_BUCKETS; b++) { // for every bucket
+      bvh_box left = combine_box(buckets, 0,b);
+      bvh_box right = combine_box(buckets, b, SAH_NUM_BUCKETS - 1);
+    }
+  }
 }
 
 void BVH::split_SAH(uint node_id) {
@@ -445,9 +457,20 @@ void BVH::split_SAH(uint node_id) {
   // sort triangles into buckets
   triangles_into_buckets(node_id, &buckets, &_data);
 
-  calc_SAH_costs(node_id, &buckets, &_data);
-
   // calculate costs for every split
+  calc_SAH_costs(node_id, &buckets);
+
+  // DEBUGING print bucket sizes
+
+  /*
+  printf("Triangles in node: %d\n", _data.tree[node_id].count);
+  for (size_t i = 0; i <= SAH_NUM_BUCKETS; i++) {
+
+  printf("content of bucket %zu:  ", i);
+  printf("%zu\n", buckets.buckets[0][i].ids.size());
+  }
+  */
+
 
   // choose best split
 
