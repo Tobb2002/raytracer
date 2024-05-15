@@ -9,6 +9,8 @@
 #include "ray.hpp"
 #include "triangle.hpp"
 
+#define SAH_NUM_BUCKETS 12
+
 using glm::vec3;
 
 struct Triangle_set {
@@ -36,6 +38,15 @@ struct BVH_node {
   bool leaf = true;
   uint first = 0;
   uint count = 0;
+};
+
+/**
+ * @class SAH_buckets
+ * @brief contains triangle id's for every bucket for every axis
+ *
+ */
+struct SAH_buckets {
+  std::vector<uint> b[3];
 };
 
 /// @brief struct for BVH arrays data.
@@ -79,7 +90,14 @@ class BVH {
   void sort(uint first, uint count, Axis axis);
 
   /// @brief Splits node a long longest axis
-  void split(uint node_id);
+  void split_middle(uint node_id);
+
+  void split_SAH(uint node_id);
+
+
+
+  /// @brief calculate costs of given split
+  float get_cost();
 
   uint _max_triangles = 4;
 

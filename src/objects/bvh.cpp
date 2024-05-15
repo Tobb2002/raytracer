@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <boost/lambda/bind.hpp>
 #include <cmath>
+#include <vector>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/string_cast.hpp>
 #include "bvh.hpp"
@@ -20,8 +21,6 @@ void BVH::build_tree_axis(std::vector<Triangle> *triangles) {
     _data.tree.push_back(node);
   }
 
-  for (size_t i = 0; i < _data.triangles->size(); i++) {
-  }
   _data.size = _data.triangles->size();
 
   _data.triangle_ids.reserve(_data.size);
@@ -34,7 +33,7 @@ void BVH::build_tree_axis(std::vector<Triangle> *triangles) {
   calculate_min(0);
 
   // split nodes recursivley
-  split(0);
+  split_middle(0);
 }
 
 void BVH::set_triangles(std::vector<Triangle> *triangles) {
@@ -324,7 +323,7 @@ void BVH::sort(uint first, uint count, Axis axis) {
   }
 }
 
-void BVH::split(uint node_id) {
+void BVH::split_middle(uint node_id) {
   // check if split is needed
   if (!(_data.tree[node_id].count > _max_triangles)) {
     return;
@@ -334,20 +333,7 @@ void BVH::split(uint node_id) {
   uint start = _data.tree[node_id].first;
   uint count = _data.tree[node_id].count;
 
-  // std::cout << axis << "\n";
-  // for (uint i : _data.triangle_ids) {
-  //   std::cout << i << ",";
-  // }
-  // std::cout << "\n";
-  // if ((start + count - 1 >= _data.size)) {
-  //   print_node(node_id);
-  //   std::cout << "hallooooooooo\n";
-  // }
   sort(start, count, axis);
-  // for (uint i : _data.triangle_ids) {
-  //   std::cout << i << ",";
-  // }
-  // std::cout << "\n";
 
   // update node
   _data.tree[node_id].leaf = false;
@@ -395,6 +381,83 @@ void BVH::split(uint node_id) {
 
 
   // recursivley split more
-  split(left_id);
-  split(right_id);
+  split_SAH(left_id);
+  split_SAH(right_id);
+}
+
+vec3 calc_bucket_step(vec3 min, vec3 max) {
+  vec3 res;
+  for (size_t y = 0; y < 3; y++) {
+    res[0] = (max[0] - min[0]) / SAH_NUM_BUCKETS;
+  }
+  return res;
+}
+
+void triangles_into_buckets(uint node_id, SAH_buckets *buckets, BVH_data *data) {
+  vec3 min = data->tree.at(node_id).min;
+  vec3 max = data->tree.at(node_id).max;
+
+  uint start = data->tree[node_id].first;
+  uint count = data->tree[node_id].count;
+
+  // calculate bucket size (x,y,z)
+  vec3 bucket_step = calc_bucket_step(min, max);
+
+  // go trough all triangles in node
+  for (size_t i = start; i < start + count; i++) {
+    for (uint b = 0; b < SAH_NUM_BUCKETS; b++) {
+      // get boundary for x,y,z-bucket[b] 
+      vec3 split = min + static_cast<float>(b) * bucket_step;
+
+      // check if triangle is in bucket b for x,y,z- bucket
+      vec3 triangle_pos = data->triangles->at(data->triangle_ids.at(i)).get_pos();
+
+      // triangle is in bucket if smaller than split if in bucket[i] it's also in all buckets[<i]
+      for (size_t a = 0; a < 3; a++) {
+        if (triangle_pos[a] < split[a]) {
+          // insert trianlge to specific bucket
+          buckets->b[a].push_back(i);
+        }
+      }
+    }
+  }
+
+}
+
+void calc_SAH_costs(uint node_id, SAH_buckets *costs, BVH_data *data) {
+  
+}
+
+void BVH::split_SAH(uint node_id) {
+  // check if split needed -> triangles > 2
+  if (!(_data.tree[node_id].count > _max_triangles)) {
+    return;
+  }
+
+  SAH_buckets buckets;
+  for (size_t i = 0; i < 3; i++) { 
+    buckets.b[i].reserve(SAH_NUM_BUCKETS);
+  }
+  // sort triangles into buckets
+  triangles_into_buckets(node_id, &buckets, &_data);
+
+  printf("bucket content: \n");
+  for (size_t i = 0; i < buckets.b[0].size(); i++) {
+    printf("%d,", buckets.b[0].at(i));
+  }
+
+  SAH_buckets costs;
+  for (size_t i = 0; i < 3; i++) { 
+    buckets.b[i].reserve(SAH_NUM_BUCKETS);
+  }
+  calc_SAH_costs(node_id, &costs, &_data);
+
+  // calculate costs for every split
+
+  // choose best split
+
+  // split note
+  
+  split_middle(node_id);
+
 }
