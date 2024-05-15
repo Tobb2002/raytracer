@@ -492,6 +492,77 @@ split_point BVH::calc_min_split(uint node_id, SAH_buckets *buckets) {
   return split;
 }
 
+/**
+ * @brief 
+ *
+ * @param node_id 
+ * @param axis which to split
+ * @param distance beetween split and min of bounding box in given axis
+ */
+void BVH::split(uint node_id, size_t axis, float distance) {
+  // check if split is needed
+  if (!(_data.tree[node_id].count > _max_triangles)) {
+    return;
+  }
+  // TODO change format of axis
+
+  uint start = _data.tree[node_id].first;
+  uint count = _data.tree[node_id].count;
+
+  Axis ax = X;
+  if (axis == 0) { ax = X; };
+  if (axis == 1) { ax = Y; };
+  if (axis == 2) { ax = Z; };
+
+  sort(start, count, ax);
+
+  // find triangle to split
+  float split_p = _data.tree[node_id].min[axis] + distance;
+  size_t split_id = start;
+  for (size_t i = start; i < count; i++) {
+    Triangle t = _data.triangles->at(_data.triangle_ids.at(start));
+    if (t.get_pos()[axis] < split_p) {
+      // found split point
+      split_id = i;
+      break;
+    }
+  }
+
+  // Split node at triangle with split id
+
+  // update node
+  _data.tree[node_id].leaf = false;
+
+  // point to split id belongs to the right child
+  uint middle_count = floor(_data.tree[node_id].count / 2.f);
+
+
+  // asing child nodes 
+  uint left_id = node_id*2 + 1;
+  uint right_id = node_id*2 + 2;
+
+  // asing left child
+  _data.tree[left_id].first = _data.tree[node_id].first;
+  _data.tree[left_id].count = middle_count;
+
+  // asing right child
+  _data.tree[right_id].first =
+    _data.tree[node_id].first + middle_count;
+  _data.tree[right_id].count = middle_count;
+
+  // calculate new bounding boxes
+  calculate_min(left_id);
+  calculate_max(left_id);
+
+  calculate_min(right_id);
+  calculate_max(right_id);
+
+
+  // recursivley split more
+  split_SAH(left_id);
+  split_SAH(right_id);
+}
+
 void BVH::split_SAH(uint node_id) {
   // check if split needed -> triangles > 2
   if (!(_data.tree[node_id].count > _max_triangles)) {
@@ -503,24 +574,26 @@ void BVH::split_SAH(uint node_id) {
   triangles_into_buckets(node_id, &buckets, &_data);
 
   // calculate costs for every split
-  calc_min_split(node_id, &buckets);
+  split_point splitp = calc_min_split(node_id, &buckets);
+
+  float bucket_width = (_data.tree[node_id].max[splitp.axis] - _data.tree[node_id].min[splitp.axis]) / SAH_NUM_BUCKETS;
+  float distance = _data.tree[node_id].min[splitp.axis] + splitp.id * bucket_width; 
+
+  split(node_id, splitp.axis, distance);
 
   // DEBUGING print bucket sizes
 
-  /*
   printf("Triangles in node: %d\n", _data.tree[node_id].count);
   for (size_t i = 0; i <= SAH_NUM_BUCKETS; i++) {
-
-  printf("content of bucket %zu:  ", i);
-  printf("%zu\n", buckets.buckets[0][i].ids.size());
+    printf("content of bucket %zu:  ", i);
+    printf("%zu\n", buckets.buckets[0][i].ids.size());
   }
-  */
 
 
   // choose best split
 
   // split note
   
-  split_middle(node_id);
+  //split_middle(node_id);
 
 }

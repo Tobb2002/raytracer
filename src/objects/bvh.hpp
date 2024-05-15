@@ -109,6 +109,7 @@ class BVH {
   void split_middle(uint node_id);
 
   void split_SAH(uint node_id);
+  void split(uint node_id, size_t axis, float distance);
 
 
 
