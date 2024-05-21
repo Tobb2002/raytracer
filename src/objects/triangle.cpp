@@ -55,8 +55,11 @@ vec3 Triangle::calculate_normal_interpolated(vec3 uvw) {
 }
 
 vec3 Triangle::calculate_middle(void) {
-  // TODO(tobi) implement real middle point
-  return _p[0];
+  vec3 res;
+  res.x = (_p[0].x + _p[1].x + _p[2].x / 3);
+  res.y = (_p[0].y + _p[1].y + _p[2].y / 3);
+  res.z = (_p[0].z + _p[1].z + _p[2].z / 3);
+  return res;
 }
 
 // calculate intersection and give back t.
