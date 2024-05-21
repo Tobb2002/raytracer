@@ -408,13 +408,10 @@ void triangles_into_buckets(uint node_id, SAH_buckets *buckets, BVH_data *data) 
   for (size_t i = start; i < start + count; i++) {
     for (uint b = 0; b < SAH_NUM_BUCKETS; b++) {
       // get boundary for x,y,z-bucket[b] 
-      vec3 split = min + static_cast<float>(b) * bucket_step;
-      vec3 split_before;
+      vec3 split = min + static_cast<float>(b + 1) * bucket_step;
+      vec3 split_before = min;
       if (b != 0) {
-        split_before = min + static_cast<float>(b - 1) * bucket_step;
-      }
-      else {
-        split_before = min;
+        split_before = min + static_cast<float>(b) * bucket_step;
       }
 
       // check if triangle is in bucket b for x,y,z- bucket
@@ -422,7 +419,7 @@ void triangles_into_buckets(uint node_id, SAH_buckets *buckets, BVH_data *data) 
 
       // triangle is in bucket if smaller than split if in bucket[i] it's also in all buckets[<i]
       for (size_t a = 0; a < 3; a++) {
-        if (triangle_pos[a] < split[a] &&  triangle_pos[a] > split_before[a]) {
+        if (triangle_pos[a] <= split[a] &&  triangle_pos[a] >= split_before[a]) {
           // insert trianlge to specific bucket
           buckets->buckets[a][b].ids.push_back(i);
         }
@@ -438,9 +435,9 @@ float BVH:: get_surface_area(const bvh_box& box) {
          2 * (box.max.z - box.min.z);
 }
 
-bvh_box BVH::combine_box(SAH_buckets *buckets, uint axis, uint min, uint max) {
+bvh_box BVH::combine_box(SAH_buckets *buckets, uint axis, uint bid_min, uint bid_max) {
   bvh_box res;
-  for (size_t i = min; i < max; i++) {
+  for (size_t i = bid_min; i < bid_max; i++) {
     update_min(&res.min, buckets->buckets[axis][i].box.min);
     update_max(&res.max, buckets->buckets[axis][i].box.max);
   }
@@ -459,11 +456,11 @@ split_point BVH::calc_min_split(uint node_id, SAH_buckets *buckets) {
   for (size_t a = 0; a < 3; a++) { // for every axis
     for (size_t b = 0; b < SAH_NUM_BUCKETS; b++) { // for every bucket
       bvh_box left = combine_box(buckets, a, 0,b);
-      bvh_box right = combine_box(buckets, a, b, SAH_NUM_BUCKETS - 1); // TODO check +-1
+      bvh_box right = combine_box(buckets, a, b + 1, SAH_NUM_BUCKETS - 1); // TODO check +-1
 
       // calc probabilities that random ray hits box
-      float prob_left = surface_box / get_surface_area(left);
-      float prob_right = surface_box / get_surface_area(right);
+      float prob_left = get_surface_area(left) / surface_box;
+      float prob_right = get_surface_area(right) / surface_box;
 
       // get number of triangles
       uint left_amount = 0;
@@ -501,7 +498,7 @@ split_point BVH::calc_min_split(uint node_id, SAH_buckets *buckets) {
  */
 void BVH::split(uint node_id, size_t axis, float distance) {
   // check if split is needed
-  if (!(_data.tree[node_id].count > _max_triangles)) {
+  if (!(_data.tree[node_id].count >= 2)) {
     return;
   }
   // TODO change format of axis
@@ -518,9 +515,9 @@ void BVH::split(uint node_id, size_t axis, float distance) {
 
   // find triangle to split
   float split_p = _data.tree[node_id].min[axis] + distance;
-  size_t split_id = start;
-  for (size_t i = start; i < count; i++) {
-    Triangle t = _data.triangles->at(_data.triangle_ids.at(start));
+  size_t split_id = count / 2;
+  for (size_t i = start; i < start + count; i++) {
+    Triangle t = _data.triangles->at(_data.triangle_ids.at(i));
     if (t.get_pos()[axis] < split_p) {
       // found split point
       split_id = i;
@@ -533,8 +530,6 @@ void BVH::split(uint node_id, size_t axis, float distance) {
   // update node
   _data.tree[node_id].leaf = false;
 
-  // point to split id belongs to the right child
-  uint middle_count = floor(_data.tree[node_id].count / 2.f);
 
 
   // asing child nodes 
@@ -543,20 +538,11 @@ void BVH::split(uint node_id, size_t axis, float distance) {
 
   // asing left child
   _data.tree[left_id].first = _data.tree[node_id].first;
-  _data.tree[left_id].count = middle_count;
+  _data.tree[left_id].count = split_id - _data.tree[left_id].first;
 
   // asing right child
-  _data.tree[right_id].first =
-    _data.tree[node_id].first + middle_count;
-  _data.tree[right_id].count = middle_count;
-
-  // calculate new bounding boxes
-  calculate_min(left_id);
-  calculate_max(left_id);
-
-  calculate_min(right_id);
-  calculate_max(right_id);
-
+  _data.tree[right_id].first = split_id + 1;
+  _data.tree[right_id].count = _data.tree[node_id].count - _data.tree[left_id].count - 1;
 
   // recursivley split more
   split_SAH(left_id);
@@ -579,12 +565,13 @@ void BVH::split_SAH(uint node_id) {
   float bucket_width = (_data.tree[node_id].max[splitp.axis] - _data.tree[node_id].min[splitp.axis]) / SAH_NUM_BUCKETS;
   float distance = _data.tree[node_id].min[splitp.axis] + splitp.id * bucket_width; 
 
-  split(node_id, splitp.axis, distance);
+  //split(node_id, splitp.axis, distance);
 
   // DEBUGING print bucket sizes
 
   printf("Triangles in node: %d\n", _data.tree[node_id].count);
-  for (size_t i = 0; i <= SAH_NUM_BUCKETS; i++) {
+  printf("spltip: ax:%zu  id:%zu  ", splitp.axis, splitp.id);
+  for (size_t i = 0; i < SAH_NUM_BUCKETS; i++) {
     printf("content of bucket %zu:  ", i);
     printf("%zu\n", buckets.buckets[0][i].ids.size());
   }
