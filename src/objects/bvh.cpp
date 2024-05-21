@@ -523,12 +523,6 @@ split_point BVH::calc_min_split(uint node_id, SAH_buckets *buckets) {
  * @param distance beetween split and min of bounding box in given axis
  */
 void BVH::split(uint node_id, size_t axis, float distance) {
-  // check if split is needed
-  if (!(_data.tree[node_id].count >= 2)) {
-    return;
-  }
-  // TODO change format of axis
-
   uint start = _data.tree[node_id].first;
   uint count = _data.tree[node_id].count;
 
@@ -563,21 +557,18 @@ void BVH::split(uint node_id, size_t axis, float distance) {
   uint right_id = node_id*2 + 2;
 
   // asing left child
-  _data.tree[left_id].first = _data.tree[node_id].first;
-  _data.tree[left_id].count = split_id - _data.tree[left_id].first;
+  _data.tree[left_id].first = start;
+  _data.tree[left_id].count = split_id - 1 - start;
 
   // asing right child
-  _data.tree[right_id].first = split_id + 1;
-  _data.tree[right_id].count = _data.tree[node_id].count - _data.tree[left_id].count - 1;
+  _data.tree[right_id].first = split_id - 1;
+  _data.tree[right_id].count = _data.tree[node_id].count - _data.tree[left_id].count;
 
-  // recursivley split more
-  split_SAH(left_id);
-  split_SAH(right_id);
 }
 
 void BVH::split_SAH(uint node_id) {
   // check if split needed -> triangles > 2
-  if (!(_data.tree[node_id].count > _max_triangles)) {
+  if (!(_data.tree[node_id].count < 2)) {
     return;
   }
 
@@ -589,24 +580,12 @@ void BVH::split_SAH(uint node_id) {
   split_point splitp = calc_min_split(node_id, &buckets);
 
   float bucket_width = (_data.tree[node_id].max[splitp.axis] - _data.tree[node_id].min[splitp.axis]) / SAH_NUM_BUCKETS;
-  float distance = _data.tree[node_id].min[splitp.axis] + splitp.id * bucket_width; 
+  float distance = splitp.id * bucket_width; 
 
-  //split(node_id, splitp.axis, distance);
+  split(node_id, splitp.axis, distance);
 
-  // DEBUGING print bucket sizes
-
-  printf("Triangles in node: %d\n", _data.tree[node_id].count);
-  printf("spltip: ax:%zu  id:%zu  ", splitp.axis, splitp.id);
-  for (size_t i = 0; i < SAH_NUM_BUCKETS; i++) {
-    printf("content of bucket %zu:  ", i);
-    printf("%zu\n", buckets.buckets[0][i].ids.size());
-  }
-
-
-  // choose best split
-
-  // split note
-  
-  //split_middle(node_id);
+  // recursivley continue splitting
+  split_SAH(node_id*2 +1);
+  split_SAH(node_id*2 +2);
 
 }
