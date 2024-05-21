@@ -487,13 +487,13 @@ split_point BVH::calc_min_split(uint node_id, SAH_buckets *buckets) {
       }
 
       uint right_amount = 0;
-      for (size_t i = 0; i < b; i++) { // TODO check +-1
+      for (size_t i = b+1; i < SAH_NUM_BUCKETS; i++) { // TODO check +-1
         right_amount += buckets->buckets[a][i].ids.size();
       }
 
+      // calculate costs
       float cost = MAXFLOAT;
       if (!(left_amount == 0 || right_amount == 0)) {
-      // calculate costs
       cost = COST_TRAVERSAL +
                    prob_left * left_amount * COST_INTERSECT +
                    prob_right * right_amount * COST_INTERSECT;
@@ -501,6 +501,8 @@ split_point BVH::calc_min_split(uint node_id, SAH_buckets *buckets) {
 
       // DEBUGING: print costs for every split 
       printf("axis: %zu \t bucket: %zu \t cost: %f\n", a, b, cost);
+
+      buckets->buckets[a][b].cost = cost;
 
       // update min cost
       if (cost < min_cost) {
