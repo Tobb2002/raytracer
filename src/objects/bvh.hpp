@@ -11,8 +11,8 @@
 
 #define SAH_NUM_BUCKETS 12
 
-#define COST_TRAVERSAL 0
-#define COST_INTERSECT 1
+#define COST_TRAVERSAL 1
+#define COST_INTERSECT 2
 
 using glm::vec3;
 
@@ -107,6 +107,7 @@ class BVH {
 
   /// @brief Splits node a long longest axis
   void split_middle(uint node_id);
+  void triangles_into_buckets(uint node_id, SAH_buckets *buckets);
 
   void split_SAH(uint node_id);
   void split(uint node_id, size_t axis, float distance);
