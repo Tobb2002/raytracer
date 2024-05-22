@@ -160,7 +160,7 @@ Image Scene::trace_image() {
       std::chrono::steady_clock::now();
   std::cout << "rendering\n\n";
 
-  #pragma omp parallel for num_threads(5)
+  //#pragma omp parallel for num_threads(5)
   for (int x = 0; x < resolution[0]; x++) {
       std::cout << "\e[2K\e[1A" << "Progress: "
       << floorf(static_cast<float>(count_pix) /
