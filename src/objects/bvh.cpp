@@ -388,8 +388,8 @@ void BVH::split_middle(uint node_id) {
 
 vec3 calc_bucket_step(vec3 min, vec3 max) {
   vec3 res;
-  for (size_t y = 0; y < 3; y++) {
-    res[y] = (max[y] - min[y]) / SAH_NUM_BUCKETS;
+  for (size_t a = 0; a < 3; a++) {
+    res[a] = (max[a] - min[a]) / SAH_NUM_BUCKETS;
   }
   return res;
 }
@@ -406,13 +406,13 @@ void BVH::triangles_into_buckets(uint node_id, SAH_buckets *buckets) {
 
   // go trough all triangles in node
   for (size_t i = start; i < start + count; i++) {
+    // check if triangle is in bucket b for x,y,z- bucket
+    vec3 triangle_pos = _data.triangles->at(_data.triangle_ids.at(i)).get_pos();
+
     for (uint b = 0; b < SAH_NUM_BUCKETS; b++) {
       // get boundary for x,y,z-bucket[b] 
       vec3 split_before = min + static_cast<float>(b) * bucket_step;
       vec3 split = min + static_cast<float>(b + 1) * bucket_step;
-
-      // check if triangle is in bucket b for x,y,z- bucket
-      vec3 triangle_pos = _data.triangles->at(_data.triangle_ids.at(i)).get_pos();
 
       // triangle is in bucket if smaller than split if in bucket[i] it's also in all buckets[<i]
       for (size_t a = 0; a < 3; a++) {
@@ -428,21 +428,16 @@ void BVH::triangles_into_buckets(uint node_id, SAH_buckets *buckets) {
   for (size_t a = 0; a < 3; a++) {
     for (uint b = 0; b < SAH_NUM_BUCKETS; b++) {
       SAH_bucket bucket = buckets->buckets[a][b];
-      buckets->buckets[a][b].box = bvh_box(max, min);
+      buckets->buckets[a][b].box = bvh_box(vec3(MAXFLOAT), vec3(-MAXFLOAT));
       if (bucket.ids.size() <= 0) {
-        // initialize big bounding box to ensure no split here
-        buckets->buckets[a][b].box.min = vec3(-MAXFLOAT);
-        buckets->buckets[a][b].box.max = vec3(MAXFLOAT);
-        printf("bucket: %zu,%i \tcount: %zu \t min: %f \t max: %f \t continued\n", a, b,buckets->buckets[a][b].ids.size(), buckets->buckets[a][b].box.min[a], buckets->buckets[a][b].box.max[a]);
         continue;
       }
 
       // calculate bounding box
-      for (size_t n = 0; n < bucket.ids.size(); n++) {
-        update_min(&buckets->buckets[a][b].box.min, _data.triangles->at(n).get_min_bounding());
-        update_max(&buckets->buckets[a][b].box.max, _data.triangles->at(n).get_max_bounding());
+      for (size_t i = 0; i < bucket.ids.size(); i++) {
+        update_min(&buckets->buckets[a][b].box.min, _data.triangles->at(_data.triangle_ids.at(buckets->buckets[a][b].ids.at(i))).get_min_bounding());
+        update_max(&buckets->buckets[a][b].box.max, _data.triangles->at(_data.triangle_ids.at(buckets->buckets[a][b].ids.at(i))).get_max_bounding());
       }
-      printf("bucket: %zu,%i \tcount: %zu \t min: %f \t max: %f \n", a, b,buckets->buckets[a][b].ids.size(), buckets->buckets[a][b].box.min[a], buckets->buckets[a][b].box.max[a]);
     }
   }
 
@@ -471,7 +466,6 @@ bvh_box BVH::combine_box(SAH_buckets *buckets, uint axis, uint bid_min, uint bid
 
 split_point BVH::calc_min_split(uint node_id, SAH_buckets *buckets) {
   // go trough all buckets and generate split
-  printf("calc_min_split\n\n");
 
   float min_cost = MAXFLOAT;
   split_point split;
@@ -486,8 +480,8 @@ split_point BVH::calc_min_split(uint node_id, SAH_buckets *buckets) {
 
 
       // calc probabilities that random ray hits box
-      float prob_left = get_surface_area_axis(a, left);
-      float prob_right = get_surface_area_axis(a, right);
+      float prob_left = get_surface_area(left);
+      float prob_right = get_surface_area(right);
 
       // get number of triangles
       uint left_amount = 0;
@@ -508,11 +502,6 @@ split_point BVH::calc_min_split(uint node_id, SAH_buckets *buckets) {
                    prob_right * right_amount * COST_INTERSECT;
       }
 
-      // DEBUGING: print costs for every split 
-      printf("axis: %zu \t bucket: %zu \t num_bucket:%zu \t cost: %f\n", a, split_id, buckets->buckets[a][split_id].ids.size(), cost);
-      printf("bound_left: min:%f \t max:%f\n amount:%i\n", left.min[a], left.max[a], left_amount);
-      printf("bound_right: min:%f \t max:%f amount:%i\n", right.min[a], right.max[a], right_amount);
-
       buckets->buckets[a][split_id].cost = cost;
 
       // update min cost
@@ -530,7 +519,6 @@ split_point BVH::calc_min_split(uint node_id, SAH_buckets *buckets) {
   //  split.id = _data.tree[node_id].first - _data.tree[node_id].count / 2;
   //  split.axis = 0;
   //}
-  printf("best_split: %zu \t%zu\n",split.axis, split.id);
   return split;
 }
 
@@ -548,9 +536,6 @@ void BVH::split(uint node_id, size_t axis, float distance) {
   uint start = _data.tree[node_id].first;
   uint count = _data.tree[node_id].count;
 
-  printf("split:first: %i\n", start);
-  printf("split:count: %i\n", count);
-
   Axis ax = X;
   if (axis == 0) { ax = X; };
   if (axis == 1) { ax = Y; };
@@ -566,7 +551,6 @@ void BVH::split(uint node_id, size_t axis, float distance) {
     if (t.get_pos()[axis] < split_p) {
       // found split point
       split_id = i;
-      printf("found split\n");
       break;
     }
   }
@@ -593,7 +577,6 @@ void BVH::split(uint node_id, size_t axis, float distance) {
 
 void BVH::split_SAH(uint node_id) {
   // check if split needed -> triangles > 2
-  printf("split_SAH\n\n");
   if (_data.tree[node_id].count < _max_triangles) {
     return;
   }
@@ -605,7 +588,6 @@ void BVH::split_SAH(uint node_id) {
   // calculate costs for every split
   split_point splitp = calc_min_split(node_id, &buckets);
   
-  // axis is large number 
   float bucket_width = (_data.tree[node_id].max[splitp.axis] - _data.tree[node_id].min[splitp.axis]) / SAH_NUM_BUCKETS;
   float distance = (splitp.id + 1) * bucket_width; 
 
