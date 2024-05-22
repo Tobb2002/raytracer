@@ -12,7 +12,7 @@
 #define SAH_NUM_BUCKETS 12
 
 #define COST_TRAVERSAL 1
-#define COST_INTERSECT 2
+#define COST_INTERSECT 1
 
 using glm::vec3;
 
@@ -27,8 +27,8 @@ struct Interval {
 };
 
 struct bvh_box {
-  vec3 min;
-  vec3 max;
+  vec3 min = vec3(0);
+  vec3 max = vec3(0);
 };
 
 /// @brief Axis (X, Y, Z)
@@ -60,8 +60,10 @@ struct SAH_buckets {
 };
 
 struct split_point {
-  size_t axis = -1;
-  size_t id = -1;
+  size_t axis = 0;
+  size_t id = 0;
+  bvh_box left;
+  bvh_box right;
 };
 
 
@@ -117,7 +119,7 @@ class BVH {
   /// @brief calculate costs of given split
   float get_cost();
 
-  uint _max_triangles = 4;
+  uint _max_triangles = 2;
 
   uint _intersect_count = 0;
 
