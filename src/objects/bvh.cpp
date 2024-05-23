@@ -478,10 +478,9 @@ split_point BVH::calc_min_split(uint node_id, SAH_buckets *buckets) {
       bvh_box left = combine_box(buckets, a, 0,split_id);
       bvh_box right = combine_box(buckets, a, split_id + 1, SAH_NUM_BUCKETS - 1);
 
-
       // calc probabilities that random ray hits box
-      float prob_left = get_surface_area(left);
-      float prob_right = get_surface_area(right);
+      float prob_left = get_surface_area(left) / surface_box;
+      float prob_right = get_surface_area(right) / surface_box;
 
       // get number of triangles
       uint left_amount = 0;
@@ -545,7 +544,7 @@ void BVH::split(uint node_id, size_t axis, float distance) {
 
   // find triangle to split
   float split_p = _data.tree[node_id].min[axis] + distance;
-  size_t split_id = 1000000;
+  size_t split_id = 0;
   for (size_t i = start; i <= start + count; i++) {
     Triangle t = _data.triangles->at(_data.triangle_ids.at(i));
     if (t.get_pos()[axis] < split_p) {
@@ -554,9 +553,7 @@ void BVH::split(uint node_id, size_t axis, float distance) {
       break;
     }
   }
-
   // Split node at triangle with split id
-
   // update node
   _data.tree[node_id].leaf = false;
 
@@ -571,7 +568,7 @@ void BVH::split(uint node_id, size_t axis, float distance) {
   _data.tree[left_id].count = split_id - start;
 
   // asing right child
-  _data.tree[right_id].first = split_id - 1;
+  _data.tree[right_id].first = split_id;
   _data.tree[right_id].count = _data.tree[node_id].count - _data.tree[left_id].count;
 }
 
@@ -588,6 +585,7 @@ void BVH::split_SAH(uint node_id) {
   // calculate costs for every split
   split_point splitp = calc_min_split(node_id, &buckets);
   
+  // split the node
   float bucket_width = (_data.tree[node_id].max[splitp.axis] - _data.tree[node_id].min[splitp.axis]) / SAH_NUM_BUCKETS;
   float distance = (splitp.id + 1) * bucket_width; 
 
@@ -597,11 +595,18 @@ void BVH::split_SAH(uint node_id) {
   size_t left = node_id *2 + 1;
   size_t right = node_id *2 + 2;
 
-  _data.tree[left].min = splitp.left.min;
-  _data.tree[left].max = splitp.left.max;
+  //_data.tree[left].min = splitp.left.min;
+  //_data.tree[left].max = splitp.left.max;
 
-  _data.tree[right].min = splitp.right.min;
-  _data.tree[right].max = splitp.right.max;
+  //_data.tree[right].min = splitp.right.min;
+  //_data.tree[right].max = splitp.right.max;
+  //
+  // calculate new bounding boxes
+  calculate_min(left);
+  calculate_max(left);
+
+  calculate_min(right);
+  calculate_max(right);
 
   // recursivley continue splitting
   split_SAH(left);
