@@ -61,7 +61,7 @@ struct SAH_buckets {
 
 struct split_point {
   size_t axis = 0;
-  size_t id = 0;
+  size_t left_count = 0;
   bvh_box left;
   bvh_box right;
 };
@@ -112,7 +112,7 @@ class BVH {
   void triangles_into_buckets(uint node_id, SAH_buckets *buckets);
 
   void split_SAH(uint node_id);
-  void split(uint node_id, size_t axis, float distance);
+  void split(uint node_id, size_t axis, uint left_amount);
 
 
 
