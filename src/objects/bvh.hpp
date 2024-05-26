@@ -80,39 +80,39 @@ class BVH {
   BVH_data _data;
 
   /***** Funcitons *****/
-  bool intersect_node_bool(uint id, const Ray& ray);
-  Intersection intersect_node(uint node_id, const Ray& ray);
-  Intersection intersect_leaf(uint id, const Ray& ray);
+  bool intersect_node_bool(const uint &id, const Ray& ray);
+  Intersection intersect_node(const uint &node_id, const Ray& ray);
+  Intersection intersect_leaf(const uint &id, const Ray& ray);
 
   bool update_intersection(Intersection * intersect,
-                           Intersection new_intersect);
+                           const Intersection &new_intersect);
 
   /// @brief swaps to triangle ids in BVHdata
-  void swap_triangle(uint id1, uint id2);
+  void swap_triangle(const uint &id1, const uint &id2);
 
   /// @brief get longest axis of bounding box.
-  Axis get_longest_axis(uint node_id);
+  Axis get_longest_axis(const uint &node_id);
 
-  bvh_box update_box(uint node_id);
+  bvh_box update_box(const uint &node_id);
 
-  void calculate_min(uint node_id);
-  void calculate_max(uint node_id);
+  void calculate_min(const uint &node_id);
+  void calculate_max(const uint &node_id);
 
-  void update_min(vec3 *min, vec3 min_value);
-  void update_max(vec3 *min, vec3 min_value);
+  void update_min(vec3 *min, const vec3 &min_value);
+  void update_max(vec3 *min, const vec3 &min_value);
 
   uint get_lowest_hitbox();
 
 
   /// @brief sorts the array beetween first and first + count INPLACE
-  void sort(uint first, uint count, Axis axis);
+  void sort(const uint &first, const uint &count, const Axis &axis);
 
   /// @brief Splits node a long longest axis
-  void split_middle(uint node_id);
+  void split_middle(const uint &node_id);
   void triangles_into_buckets(uint node_id, SAH_buckets *buckets);
 
-  void split_SAH(uint node_id);
-  void split(uint node_id, size_t axis, uint left_amount);
+  void split_SAH(const uint &node_id);
+  void split(const uint &node_id, const size_t &axis, const uint &left_amount);
 
 
 
@@ -139,13 +139,13 @@ class BVH {
   Intersection intersect(const Ray& ray);
 
   /***** DEBUG *****/
-  void print_node(uint id);
-  void print_node_triangles(uint id);
+  void print_node(const uint &id);
+  void print_node_triangles(const uint &id);
 
   /***** SAH ******/
 
-  split_point calc_min_split(uint node_id, SAH_buckets *buckets);
-  bvh_box combine_box(SAH_buckets *buckets, uint axis, uint min, uint max);
+  split_point calc_min_split(const uint &node_id, SAH_buckets *buckets);
+  bvh_box combine_box(SAH_buckets *buckets, const uint &axis, const uint &min, const uint &max);
   float get_surface_area(const bvh_box& box);
 
 
@@ -156,6 +156,6 @@ class BVH {
    *
    * @param t Transformation matrix
    */
-  void apply_transform(mat4 t);
+  void apply_transform(const mat4 &t);
   void update_boxes();
 };

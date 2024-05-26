@@ -54,7 +54,7 @@ Intersection BVH::intersect(const Ray& ray) {
  * @param ray 
  * @return Intersection 
  */
-Intersection BVH::intersect_node(uint node_id, const Ray& ray) {
+Intersection BVH::intersect_node(const uint &node_id, const Ray& ray) {
   Intersection result;
   if (!intersect_node_bool(node_id, ray)) {
     return result;
@@ -83,7 +83,7 @@ Intersection BVH::intersect_node(uint node_id, const Ray& ray) {
  * @return true 
  * @return false 
  */
-bool BVH::intersect_node_bool(uint id, const Ray& ray) {
+bool BVH::intersect_node_bool(const uint &id, const Ray& ray) {
   vec3 d = ray.get_direction();
   vec3 o = ray.get_origin();
 
@@ -138,7 +138,7 @@ bool BVH::intersect_node_bool(uint id, const Ray& ray) {
   return true;
 }
 
-Intersection BVH::intersect_leaf(uint id, const Ray& ray) {
+Intersection BVH::intersect_leaf(const uint &id, const Ray& ray) {
   #ifdef DEBUG
   std::cout << "id: " << id << "  parent:" << (id -1) /2 << "\n";
   #endif
@@ -165,7 +165,7 @@ Intersection BVH::intersect_leaf(uint id, const Ray& ray) {
 }
 
 bool BVH::update_intersection(Intersection *intersect,
-                              Intersection new_intersect) {
+                              const Intersection &new_intersect) {
   if (new_intersect.found) {
     // update intersection if the new one is closer
     if (new_intersect.t < intersect->t) {
@@ -177,13 +177,13 @@ bool BVH::update_intersection(Intersection *intersect,
 }
 
 /// @brief swap Triangle ids in BVH_data.
-void BVH::swap_triangle(uint id1, uint id2) {
+void BVH::swap_triangle(const uint &id1, const uint &id2) {
   uint tmp = _data.triangle_ids[id1];
   _data.triangle_ids[id1] = _data.triangle_ids[id2];
   _data.triangle_ids[id2] = tmp;
 }
 
-Axis BVH::get_longest_axis(uint node_id) {
+Axis BVH::get_longest_axis(const uint &node_id) {
   float longest = 0;
   Axis res = X;
   for (int i = 0; i < 3; i++) {
@@ -196,7 +196,7 @@ Axis BVH::get_longest_axis(uint node_id) {
   return res;
 }
 
-bvh_box BVH::update_box(uint node_id) {
+bvh_box BVH::update_box(const uint &node_id) {
   if (_data.tree[node_id].leaf) {
     calculate_max(node_id);
     calculate_min(node_id);
@@ -219,7 +219,7 @@ bvh_box BVH::update_box(uint node_id) {
  * @param node_id 
  * @return vec3 
  */
-void BVH::calculate_min(uint node_id) {
+void BVH::calculate_min(const uint &node_id) {
   for (uint i = 0; i < _data.tree[node_id].count; i++) {
     uint index = i + _data.tree[node_id].first;
     Triangle t = _data.triangles->at(_data.triangle_ids.at(index));
@@ -227,7 +227,7 @@ void BVH::calculate_min(uint node_id) {
   }
 }
 
-void BVH::calculate_max(uint node_id) {
+void BVH::calculate_max(const uint &node_id) {
   for (uint i = 0; i < _data.tree[node_id].count; i++) {
     uint index = i + _data.tree[node_id].first;
     Triangle t = _data.triangles->at(_data.triangle_ids.at(index));
@@ -235,7 +235,7 @@ void BVH::calculate_max(uint node_id) {
   }
 }
 
-void BVH::update_min(vec3 *min, vec3 min_value) {
+void BVH::update_min(vec3 *min, const vec3 &min_value) {
   for (int i = 0; i < 3; i++) {
     // update min
     if (min_value[i] < (*min)[i]) {
@@ -244,7 +244,7 @@ void BVH::update_min(vec3 *min, vec3 min_value) {
   }
 }
 
-void BVH::update_max(vec3 *max, vec3 max_value) {
+void BVH::update_max(vec3 *max, const vec3 &max_value) {
   for (int i = 0; i < 3; i++) {
     // update min
     if (max_value[i] > (*max)[i]) {
@@ -253,7 +253,7 @@ void BVH::update_max(vec3 *max, vec3 max_value) {
   }
 }
 
-void BVH::print_node(uint id) {
+void BVH::print_node(const uint &id) {
   BVH_node n = _data.tree[id];
 
   std::cout << "-------bvh_node------\n";
@@ -272,7 +272,7 @@ void BVH::print_node(uint id) {
   std::cout << "----------------------\n";
 }
 
-void BVH::print_node_triangles(uint id) {
+void BVH::print_node_triangles(const uint &id) {
   BVH_node n = _data.tree[id];
 
   std::cout << "-------bvh_node_triangles------\n";
@@ -301,7 +301,7 @@ bool comp(BVH_data *data, uint id1, uint id2, Axis axis) {
   return false;
 }
 
-void BVH::sort(uint first, uint count, Axis axis) {
+void BVH::sort(const uint &first, const uint &count, const Axis &axis) {
   namespace boo = boost::lambda;
   switch (axis) {
     case X:
@@ -325,7 +325,7 @@ void BVH::sort(uint first, uint count, Axis axis) {
   }
 }
 
-void BVH::split_middle(uint node_id) {
+void BVH::split_middle(const uint &node_id) {
   // check if split is needed
   if (!(_data.tree[node_id].count > _max_triangles)) {
     return;
@@ -454,7 +454,7 @@ float get_surface_area_axis(uint axis, const bvh_box& box) {
   return box.max[axis] - box.min[axis];
 }
 
-bvh_box BVH::combine_box(SAH_buckets *buckets, uint axis, uint bid_min, uint bid_max) {
+bvh_box BVH::combine_box(SAH_buckets *buckets, const uint &axis, const uint &bid_min, const uint &bid_max) {
   // TODO check what happens if no triangle in bucket
   bvh_box res = bvh_box(vec3(MAXFLOAT), vec3(-MAXFLOAT));
   for (size_t i = bid_min; i <= bid_max; i++) {
@@ -467,7 +467,7 @@ bvh_box BVH::combine_box(SAH_buckets *buckets, uint axis, uint bid_min, uint bid
   return res;
 }
 
-split_point BVH::calc_min_split(uint node_id, SAH_buckets *buckets) {
+split_point BVH::calc_min_split(const uint &node_id, SAH_buckets *buckets) {
   // go trough all buckets and generate split
 
   float min_cost = MAXFLOAT;
@@ -482,8 +482,8 @@ split_point BVH::calc_min_split(uint node_id, SAH_buckets *buckets) {
       bvh_box right = combine_box(buckets, a, split_id + 1, SAH_NUM_BUCKETS - 1);
 
       // calc probabilities that random ray hits box
-      float prob_left = get_surface_area(left) / surface_box;
-      float prob_right = get_surface_area(right) / surface_box;
+      float prob_left = get_surface_area(left);
+      float prob_right = get_surface_area(right);
 
       // get number of triangles
       uint left_amount = 0;
@@ -506,7 +506,7 @@ split_point BVH::calc_min_split(uint node_id, SAH_buckets *buckets) {
 
       buckets->buckets[a][split_id].cost = cost;
 
-      //printf("axis: %zu \t bucket: %zu \t num_bucket:%zu \t cost: %f\n", a, split_id, buckets->buckets[a][split_id].ids.size(), cost);
+      printf("axis: %zu \t bucket: %zu \t num_bucket:%zu \t cost: %f\n", a, split_id, buckets->buckets[a][split_id].ids.size(), cost);
       //printf("bound_left: min:%f \t max:%f\n amount:%i\n", left.min[a], left.max[a], left_amount);
       //printf("bound_right: min:%f \t max:%f amount:%i\n", right.min[a], right.max[a], right_amount);
 
@@ -530,7 +530,7 @@ split_point BVH::calc_min_split(uint node_id, SAH_buckets *buckets) {
  * @param axis which to split
  * @param distance beetween split and min of bounding box in given axis
  */
-void BVH::split(uint node_id, size_t axis, uint left_amount) {
+void BVH::split(const uint &node_id, const size_t &axis, const uint &left_amount) {
   if (_data.tree[node_id].count < _max_triangles) {
     return;
   }
@@ -564,7 +564,7 @@ void BVH::split(uint node_id, size_t axis, uint left_amount) {
   _data.tree[right_id].count = _data.tree[node_id].count - _data.tree[left_id].count;
 }
 
-void BVH::split_SAH(uint node_id) {
+void BVH::split_SAH(const uint &node_id) {
   // check if split needed -> triangles > 2
   if (_data.tree[node_id].count < _max_triangles) {
     return;
@@ -577,7 +577,8 @@ void BVH::split_SAH(uint node_id) {
   // calculate costs for every split
   split_point splitp = calc_min_split(node_id, &buckets);
 
-  //printf("Best split: %zu, %zu\n", splitp.axis, splitp.left_count);
+  printf("node id: %i \t count: %i\n", node_id, _data.tree[node_id].count);
+  printf("Best split: %zu, %zu\n", splitp.axis, splitp.left_count);
   //printf("node cound: %i \n", _data.tree[node_id].count );
   
   // split the node
