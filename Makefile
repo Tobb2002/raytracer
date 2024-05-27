@@ -1,12 +1,14 @@
 .PHONY: all
 
+#BUILD=debug
+
 CC = clang++
-FLAGS = -std=c++2a -W -fsanitize=address -fopenmp
-LINKER_FLAGS = -lm -lpthread -lX11
+FLAGS = -std=c++2a -W -fopenmp
+LINKER_FLAGS = -lm -lpthread -lX11 -lprofiler
 
 ifeq ($(BUILD),debug)   
 # "Debug" build - no optimization, and debugging symbols
-FLAGS += -O0 -g -pg
+FLAGS += -fsanitize=address -O0 -g -pg
 else
 # "Release" build - optimization, and no debug symbols
 FLAGS += -O2 -DNDEBUG
@@ -38,6 +40,11 @@ checkstyle:
 run: compile
 	./bin/main
 
+profile_valgrind: ./bin/main
+	valgrind --tool=callgrind --dump-instr=yes --simulate-cache=yes --collect-jumps=yes bin/main
+profile_gperf: ./bin/main
+	env CPUPROFILE=main.prof ./bin/main
+	pprof ./bin/main ./main.prof
 animation:
 	ffmpeg -framerate 25 -start_number 0 -i data/output/animation/sample%d.ppm -vcodec jpeg2000 data/output/finished/animation.avi
 
