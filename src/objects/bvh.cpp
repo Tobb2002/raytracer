@@ -158,10 +158,7 @@ Intersection BVH::intersect_leaf(const uint &id, const Ray& ray) {
     }
   }
 
-  Triangle triangle_best =
-    _data.triangles->at(_data.triangle_ids.at(best_triangle_id));
-
-  return triangle_best.intersect(ray);
+  return (_data.triangles->data() + _data.triangle_ids.at(best_triangle_id))->intersect(ray);
 }
 
 bool BVH::update_intersection(Intersection *intersect,
@@ -222,16 +219,16 @@ bvh_box BVH::update_box(const uint &node_id) {
 void BVH::calculate_min(const uint &node_id) {
   for (uint i = 0; i < _data.tree[node_id].count; i++) {
     uint index = i + _data.tree[node_id].first;
-    Triangle t = _data.triangles->at(_data.triangle_ids.at(index));
-    update_min(&_data.tree[node_id].min, t.get_min_bounding());
+    Triangle *t = (_data.triangles->data() + _data.triangle_ids.at(index));
+    update_min(&_data.tree[node_id].min, t->get_min_bounding());
   }
 }
 
 void BVH::calculate_max(const uint &node_id) {
   for (uint i = 0; i < _data.tree[node_id].count; i++) {
     uint index = i + _data.tree[node_id].first;
-    Triangle t = _data.triangles->at(_data.triangle_ids.at(index));
-    update_max(&_data.tree[node_id].max, t.get_max_bounding());
+    Triangle *t = (_data.triangles->data() + _data.triangle_ids.at(index));
+    update_max(&_data.tree[node_id].max, t->get_max_bounding());
   }
 }
 
@@ -273,14 +270,12 @@ void BVH::print_node(const uint &id) {
 }
 
 void BVH::print_node_triangles(const uint &id) {
-  BVH_node n = _data.tree[id];
-
   std::cout << "-------bvh_node_triangles------\n";
   std::cout << "id: " << id << "\n";
   for (size_t i = 0; i < _data.tree[id].count; i++) {
-    Triangle t =
-      _data.triangles->at(_data.triangle_ids.at(i + _data.tree[id].first));
-    t.print();
+    Triangle *t =
+      _data.triangles->data() + (_data.triangle_ids.at(i + _data.tree[id].first));
+    t->print();
   }
   std::cout << "----------------------\n";
 }
@@ -436,9 +431,9 @@ void BVH::triangles_into_buckets(uint node_id, SAH_buckets *buckets) {
 
       // calculate bounding box
       for (size_t i = 0; i < bucket.ids.size(); i++) {
-        Triangle t = _data.triangles->at(_data.triangle_ids.at(buckets->buckets[a][b].ids.at(i)));
-        update_min(&buckets->buckets[a][b].box.min, t.get_min_bounding());
-        update_max(&buckets->buckets[a][b].box.max, t.get_max_bounding());
+        Triangle *t = _data.triangles->data() + _data.triangle_ids.at(buckets->buckets[a][b].ids.at(i));
+        update_min(&buckets->buckets[a][b].box.min, t->get_min_bounding());
+        update_max(&buckets->buckets[a][b].box.max, t->get_max_bounding());
       }
     }
   }
@@ -506,7 +501,7 @@ split_point BVH::calc_min_split(const uint &node_id, SAH_buckets *buckets) {
 
       buckets->buckets[a][split_id].cost = cost;
 
-      printf("axis: %zu \t bucket: %zu \t num_bucket:%zu \t cost: %f\n", a, split_id, buckets->buckets[a][split_id].ids.size(), cost);
+      ////printf("axis: %zu \t bucket: %zu \t num_bucket:%zu \t cost: %f\n", a, split_id, buckets->buckets[a][split_id].ids.size(), cost);
       //printf("bound_left: min:%f \t max:%f\n amount:%i\n", left.min[a], left.max[a], left_amount);
       //printf("bound_right: min:%f \t max:%f amount:%i\n", right.min[a], right.max[a], right_amount);
 
@@ -577,8 +572,8 @@ void BVH::split_SAH(const uint &node_id) {
   // calculate costs for every split
   split_point splitp = calc_min_split(node_id, &buckets);
 
-  printf("node id: %i \t count: %i\n", node_id, _data.tree[node_id].count);
-  printf("Best split: %zu, %zu\n", splitp.axis, splitp.left_count);
+  //printf("node id: %i \t count: %i\n", node_id, _data.tree[node_id].count);
+  //printf("Best split: %zu, %zu\n", splitp.axis, splitp.left_count);
   //printf("node cound: %i \n", _data.tree[node_id].count );
   
   // split the node
