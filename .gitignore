@@ -18,5 +18,6 @@ compile_commands.json
 # data directory
 data/output
 data/input/no_git
+data/input/blender
 
 test/
