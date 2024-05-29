@@ -15,7 +15,7 @@ struct bvh_box {
 /// @brief Struct for bounding volume node.
 struct BVH_node_data {
   bvh_box bounds = bvh_box(vec3(MAXFLOAT), vec3(-MAXFLOAT));
-  std::vector<uint> triangles_ids;
+  std::vector<uint> triangle_ids;
 };
 
 struct bvh_node {
@@ -35,10 +35,15 @@ class BVH_tree{
  public:
   BVH_tree() {}
   BVH_tree(BVH_node_data root_data);
+  BVH_tree(const BVH_tree& old_tree);
+  BVH_tree& operator=(const BVH_tree& old_tree);
+  bvh_node* copy_node(bvh_node *old_node);
   ~BVH_tree();
 
   /// inserts data to first free child (left, right) ASSERTION if both full
   void insert_child(BVH_node_data data, bvh_node *node);
+
+  bvh_node* get_root();
 
   bvh_node* get_left(bvh_node* node);
   bvh_node* get_right(bvh_node* node);
