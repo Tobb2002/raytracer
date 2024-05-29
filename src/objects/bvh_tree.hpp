@@ -18,11 +18,11 @@ struct BVH_node_data {
   std::vector<uint> triangles_ids;
 };
 
-struct node {
+struct bvh_node {
   BVH_node_data data;
-  node *parent = nullptr;
-  node *left = nullptr;
-  node *right = nullptr;
+  bvh_node *parent = nullptr;
+  bvh_node *left = nullptr;
+  bvh_node *right = nullptr;
 };
 
 
@@ -38,14 +38,15 @@ class BVH_tree{
   ~BVH_tree();
 
   /// inserts data to first free child (left, right) ASSERTION if both full
-  void insert_child(BVH_node_data data, node *node);
+  void insert_child(BVH_node_data data, bvh_node *node);
 
-  node* get_left(node* node);
-  node* get_right(node* node);
+  bvh_node* get_left(bvh_node* node);
+  bvh_node* get_right(bvh_node* node);
 
-  BVH_node_data* get_data(node* node);
+  BVH_node_data* get_data(bvh_node* node);
 
-  bool is_leaf(node* node);
+  bool is_leaf(bvh_node* node);
+  void free_triangles(bvh_node* node);
 
   void print_inorder();
 
@@ -53,10 +54,10 @@ class BVH_tree{
   void flatten();
   //void build_from_flattened();
  private:
-  void destroy_node(node *node);
+  void destroy_node(bvh_node *node);
   void destroy_tree();
 
   std::vector<uint> triangles_flat;
-  node *root = nullptr;
+  bvh_node *root = nullptr;
 };
 

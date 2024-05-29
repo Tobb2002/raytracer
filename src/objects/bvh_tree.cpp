@@ -2,7 +2,7 @@
 #include <stdexcept>
 
 BVH_tree::BVH_tree(BVH_node_data root_data) {
-  root = new node;
+  root = new bvh_node;
   root->data = root_data;
 }
 
@@ -11,35 +11,35 @@ BVH_tree::~BVH_tree() {
 }
 
 
-void BVH_tree::insert_child(BVH_node_data data, node *node) {
+void BVH_tree::insert_child(BVH_node_data data, bvh_node *node) {
   if (node == nullptr) {
     throw std::runtime_error("Node does not exist or has no right child!");
   }
 
 }
 
-node* BVH_tree::get_left(node* node){
+bvh_node* BVH_tree::get_left(bvh_node* node){
   if (node == nullptr || node->left == nullptr) {
     throw std::runtime_error("Node does not exist or has no left child!");
   }
   return node->left;
 }
 
-node* BVH_tree::get_right(node* node){
+bvh_node* BVH_tree::get_right(bvh_node* node){
   if (node == nullptr || node->right == nullptr) {
     throw std::runtime_error("Node does not exist or has no right child!");
   }
   return node->right;
 }
 
-BVH_node_data* BVH_tree::get_data(node* node) {
+BVH_node_data* BVH_tree::get_data(bvh_node* node) {
   if (node == nullptr) {
     throw std::runtime_error("Node does not exist or has no right child!");
   }
   return &node->data;
 }
 
-bool BVH_tree::is_leaf(node* node) {
+bool BVH_tree::is_leaf(bvh_node* node) {
   if (node->left == nullptr && node->right == nullptr) {
     return true;
   }
@@ -47,7 +47,7 @@ bool BVH_tree::is_leaf(node* node) {
 }
 // private
 
-void BVH_tree::destroy_node(node *node) {
+void BVH_tree::destroy_node(bvh_node *node) {
   if (node == nullptr) {
     return;
   }
