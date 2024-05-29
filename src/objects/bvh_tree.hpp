@@ -41,7 +41,7 @@ class BVH_tree{
   ~BVH_tree();
 
   /// inserts data to first free child (left, right) ASSERTION if both full
-  void insert_child(BVH_node_data data, bvh_node *node);
+  bvh_node* insert_child(BVH_node_data data, bvh_node *node);
 
   bvh_node* get_root();
 

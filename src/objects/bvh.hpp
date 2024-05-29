@@ -50,7 +50,7 @@ struct SAH_buckets {
 
 struct split_point {
   size_t axis = 0;
-  size_t left_count = 0;
+  size_t id = 0;
   bvh_box left;
   bvh_box right;
 };
@@ -101,7 +101,7 @@ class BVH {
   void triangles_into_buckets(bvh_node* node, SAH_buckets *buckets);
 
   void split_SAH(bvh_node* node);
-  void split(bvh_node* node, const size_t &axis, const float &distance);
+  void split(bvh_node* node, const SAH_buckets& buckets, const split_point& splitp);
 
 
 
@@ -135,6 +135,7 @@ class BVH {
 
   split_point calc_min_split(bvh_node* node, SAH_buckets *buckets);
   bvh_box combine_box(SAH_buckets *buckets, const uint &axis, const uint &min, const uint &max);
+  void combine_ids(std::vector<uint>* result, const SAH_buckets& buckets, const uint &axis, const uint &min, const uint &max);
   float get_surface_area(const bvh_box& box);
 
 

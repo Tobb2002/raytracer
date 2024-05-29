@@ -34,7 +34,7 @@ BVH_tree::~BVH_tree() {
 }
 
 
-void BVH_tree::insert_child(BVH_node_data data, bvh_node *node) {
+bvh_node* BVH_tree::insert_child(BVH_node_data data, bvh_node *node) {
   if (node == nullptr) {
     throw std::runtime_error("insert child: Node does not exist!");
   }
@@ -44,14 +44,14 @@ void BVH_tree::insert_child(BVH_node_data data, bvh_node *node) {
     node->left = new bvh_node;
     node->left->parent = node;
     node->left->data = data;
-    return;
+    return node->left;
   }
   if (node->right == nullptr) {
     // no right child -> insert as left
     node->right = new bvh_node;
     node->right->parent = node;
     node->right->data = data;
-    return;
+    return node->right;
   }
   throw std::runtime_error("insert child: node allready has two childs!");
 
