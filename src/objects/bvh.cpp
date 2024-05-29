@@ -559,7 +559,7 @@ void BVH::split(bvh_node* node, const SAH_buckets& buckets, const split_point& s
 
 void BVH::split_SAH(bvh_node* node) {
   // check if split needed -> triangles > 2
-  if (_data.tree.is_leaf(node) || _data.tree.get_data(node)->triangle_ids.size() < _max_triangles) {
+  if (_data.tree.get_data(node)->triangle_ids.size() < _max_triangles) {
     return;
   }
 
@@ -570,23 +570,24 @@ void BVH::split_SAH(bvh_node* node) {
   // calculate costs for every split
   split_point splitp = calc_min_split(node, &buckets);
 
-  //printf("node id: %i \t count: %i\n", node_id, _data.tree[node_id].count);
-  //printf("Best split: %zu, %zu\n", splitp.axis, splitp.left_count);
+  //printf("node id: %i \t count: %zu\n", 0, _data.tree.get_data(node)->triangle_ids.size());
+  //for (uint i : _data.tree.get_data(node)->triangle_ids) {
+  //  printf("%i,", i);
+  //}
+  //printf("Best split: %zu, %zu\n", splitp.axis, splitp.id);
   //printf("node cound: %i \n", _data.tree[node_id].count );
   
   // split the node
-  float bucket_width = (_data.tree.get_data(node)->bounds.max[splitp.axis] - _data.tree.get_data(node)->bounds.min[splitp.axis]) / SAH_NUM_BUCKETS;
-  float distance = (splitp.id + 1) * bucket_width; 
-
   split(node, buckets, splitp);
 
+  // TODO bounding boxes should be set in split() function
   // set bounding boxes
   bvh_node *left = _data.tree.get_left(node);
 
   bvh_node *right = _data.tree.get_right(node);
 
   _data.tree.get_data(left)->bounds.min = splitp.left.min;
-  _data.tree.get_data(right)->bounds.max = splitp.left.max;
+  _data.tree.get_data(left)->bounds.max = splitp.left.max;
 
   _data.tree.get_data(right)->bounds.min = splitp.right.min;
   _data.tree.get_data(right)->bounds.max = splitp.right.max;
