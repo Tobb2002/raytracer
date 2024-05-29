@@ -156,7 +156,7 @@ Intersection BVH::intersect_leaf(bvh_node *node, const Ray& ray) {
 
   for (uint i : _data.tree.get_data(node)->triangle_ids) {
     Intersection t_i =
-      _data.triangles->at(_data.triangle_ids.at(i)).intersect(ray);
+      _data.triangles->at(i).intersect(ray);
 
     if (t_i.found && t_i.t < t_min) {
       t_min = t_i.t;
@@ -164,7 +164,7 @@ Intersection BVH::intersect_leaf(bvh_node *node, const Ray& ray) {
     }
   }
 
-  return (_data.triangles->data() + _data.triangle_ids.at(best_triangle_id))->intersect(ray);
+  return (_data.triangles->data() + best_triangle_id)->intersect(ray);
 }
 
 bool BVH::update_intersection(Intersection *intersect,
