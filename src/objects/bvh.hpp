@@ -10,7 +10,7 @@
 #include "triangle.hpp"
 #include "bvh_tree.hpp"
 
-#define SAH_NUM_BUCKETS 12
+#define SAH_NUM_BUCKETS 20
 
 #define COST_TRAVERSAL 1
 #define COST_INTERSECT 1
@@ -69,23 +69,23 @@ class BVH {
   BVH_data _data;
 
   /***** Funcitons *****/
-  bool intersect_node_bool(bvh_node *node, const Ray& ray);
-  Intersection intersect_node(bvh_node* node, const Ray& ray);
-  Intersection intersect_leaf(bvh_node *node, const Ray& ray);
+  bool intersect_node_bool(bvh_node_pointer *node, const Ray& ray);
+  Intersection intersect_node(bvh_node_pointer* node, const Ray& ray);
+  Intersection intersect_leaf(bvh_node_pointer *node, const Ray& ray);
 
   bool update_intersection(Intersection * intersect,
                            const Intersection &new_intersect);
 
   /// @brief swaps to triangle ids in BVHdata
-  void swap_triangle(bvh_node *node1, bvh_node *node2);
+  void swap_triangle(bvh_node_pointer *node1, bvh_node_pointer *node2);
 
   /// @brief get longest axis of bounding box.
-  Axis get_longest_axis(bvh_node* node);
+  Axis get_longest_axis(bvh_node_pointer* node);
 
-  bvh_box update_box(bvh_node* node);
+  bvh_box update_box(bvh_node_pointer* node);
 
-  void calculate_min(bvh_node* node);
-  void calculate_max(bvh_node* node);
+  void calculate_min(bvh_node_pointer* node);
+  void calculate_max(bvh_node_pointer* node);
 
   void update_min(vec3 *min, const vec3 &min_value);
   void update_max(vec3 *min, const vec3 &min_value);
@@ -97,11 +97,11 @@ class BVH {
   void sort(const uint &first, const uint &count, const Axis &axis);
 
   /// @brief Splits node a long longest axis
-  void split_middle(bvh_node* node);
-  void triangles_into_buckets(bvh_node* node, SAH_buckets *buckets);
+  void split_middle(bvh_node_pointer* node);
+  void triangles_into_buckets(bvh_node_pointer* node, SAH_buckets *buckets);
 
-  void split_SAH(bvh_node* node);
-  void split(bvh_node* node, const SAH_buckets& buckets, const split_point& splitp);
+  void split_SAH(bvh_node_pointer* node);
+  void split(bvh_node_pointer* node, const SAH_buckets& buckets, const split_point& splitp);
 
 
 
@@ -128,12 +128,12 @@ class BVH {
   Intersection intersect(const Ray& ray);
 
   /***** DEBUG *****/
-  void print_node(bvh_node *node);
-  void print_node_triangles(bvh_node *node);
+  void print_node(bvh_node_pointer *node);
+  void print_node_triangles(bvh_node_pointer *node);
 
   /***** SAH ******/
 
-  split_point calc_min_split(bvh_node* node, SAH_buckets *buckets);
+  split_point calc_min_split(bvh_node_pointer* node, SAH_buckets *buckets);
   bvh_box combine_box(SAH_buckets *buckets, const uint &axis, const uint &min, const uint &max);
   void combine_ids(std::vector<uint>* result, const SAH_buckets& buckets, const uint &axis, const uint &min, const uint &max);
   float get_surface_area(const bvh_box& box);

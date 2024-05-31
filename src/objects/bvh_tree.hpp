@@ -18,17 +18,22 @@ struct BVH_node_data {
   std::vector<uint> triangle_ids;
 };
 
-struct bvh_node {
+
+struct bvh_node_pointer {
   BVH_node_data data;
-  bvh_node *parent = nullptr;
-  bvh_node *left = nullptr;
-  bvh_node *right = nullptr;
+  bvh_node_pointer *parent = nullptr;
+  bvh_node_pointer *left = nullptr;
+  bvh_node_pointer *right = nullptr;
 };
 
-
-struct BVH_node_flat {
+struct bvh_node_flat {
   BVH_node_data data;
   uint offset_right;
+};
+
+union bvh_node {
+  bvh_node_pointer pointer;
+  bvh_node_flat flat;
 };
 
 class BVH_tree{
@@ -37,21 +42,29 @@ class BVH_tree{
   BVH_tree(BVH_node_data root_data);
   BVH_tree(const BVH_tree& old_tree);
   BVH_tree& operator=(const BVH_tree& old_tree);
-  bvh_node* copy_node(bvh_node *old_node);
+  bvh_node_pointer* copy_node(bvh_node_pointer *old_node);
   ~BVH_tree();
 
   /// inserts data to first free child (left, right) ASSERTION if both full
-  bvh_node* insert_child(BVH_node_data data, bvh_node *node);
+  bvh_node_pointer* insert_child(BVH_node_data data, bvh_node_pointer *node);
 
-  bvh_node* get_root();
+  bvh_node_pointer* get_root();
+  bvh_node_flat* get_root_flat();
 
-  bvh_node* get_left(bvh_node* node);
-  bvh_node* get_right(bvh_node* node);
+  bvh_node_pointer* get_left(bvh_node_pointer* node);
+  bvh_node_pointer* get_right(bvh_node_pointer* node);
 
-  BVH_node_data* get_data(bvh_node* node);
+  BVH_node_data* get_data(bvh_node_pointer* node);
 
-  bool is_leaf(bvh_node* node);
-  void free_triangles(bvh_node* node);
+  // operations on flattend tree
+
+  bvh_node_flat* get_left(bvh_node_flat* node);
+  bvh_node_flat* get_right(bvh_node_flat* node);
+
+  bvh_node_flat* get_data(bvh_node_flat* node);
+
+  bool is_leaf(bvh_node_pointer* node);
+  void free_triangles(bvh_node_pointer* node);
 
   void print_inorder();
 
@@ -59,10 +72,10 @@ class BVH_tree{
   void flatten();
   //void build_from_flattened();
  private:
-  void destroy_node(bvh_node *node);
+  void destroy_node(bvh_node_pointer *node);
   void destroy_tree();
 
-  std::vector<uint> triangles_flat;
-  bvh_node *root = nullptr;
+  std::vector<bvh_node_flat> triangles_flat;
+  bvh_node_pointer *root = nullptr;
 };
 
