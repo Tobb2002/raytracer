@@ -26,7 +26,7 @@ Scene get_scene() {
   scene.get_camera()->set_resolution(500);
   scene.get_camera()->set_sensor_size(1, 1);
 
-  scene.set_aliasing(4);
+  scene.set_aliasing(1);
   scene.set_tonemapping_value(-1);
 
   scene.add_object(m);

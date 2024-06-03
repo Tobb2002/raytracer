@@ -12,7 +12,7 @@ Scene get_scene() {
 
   vec3 origin_plane = vec3(0, -0.7, -2);
 
-  Mesh m = Mesh("data/input/armadillo.obj",
+  Mesh m = Mesh("data/input/dragon.obj",
                 origin_plane + vec3(0, 0, 0),
                 {.color = vec3(0.2, 0.2, 0.2), .specular = 0.2});
 
@@ -23,10 +23,10 @@ Scene get_scene() {
 
   Pointlight light1 = Pointlight(origin_plane + vec3(-3, 2, 4), 250);
 
-  scene.get_camera()->set_resolution(500);
+  scene.get_camera()->set_resolution(800);
   scene.get_camera()->set_sensor_size(1, 1);
 
-  scene.set_aliasing(4);
+  scene.set_aliasing(1);
   scene.set_tonemapping_value(-1);
 
   scene.add_object(m);
