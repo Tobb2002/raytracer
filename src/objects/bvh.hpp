@@ -10,7 +10,7 @@
 #include "triangle.hpp"
 #include "bvh_tree.hpp"
 
-#define SAH_NUM_BUCKETS 20
+#define SAH_NUM_BUCKETS 3
 
 #define COST_TRAVERSAL 1
 #define COST_INTERSECT 1
