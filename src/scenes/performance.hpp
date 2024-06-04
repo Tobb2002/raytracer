@@ -8,12 +8,16 @@
 #include "../object_factory.hpp"
 
 Scene get_scene() {
-  Scene scene = Scene(vec3(255, 255, 255));
+  Scene scene = Scene(vec3(102, 255, 102));
 
   vec3 origin_plane = vec3(0, -0.7, -2);
 
-  Mesh m = Mesh("data/input/dragon.obj",
-                origin_plane + vec3(0, 0, 0),
+  //Mesh m = Mesh("data/input/dragon.obj",
+  //              origin_plane + vec3(0, 0, 0),
+  //              {.color = vec3(0.2, 0.2, 0.2), .specular = 0.2});
+
+  Mesh m = Mesh("data/input/kingshall.obj",
+                origin_plane + vec3(0, 0, -18),
                 {.color = vec3(0.2, 0.2, 0.2), .specular = 0.2});
 
   Plane plane = Plane(origin_plane, vec3(0, 1, 0),
@@ -21,9 +25,9 @@ Scene get_scene() {
       {.color = vec3(0.6, 0.6, 0.6), .specular = 0, .mirror = 0.0},
                       vec2(100, 15));
 
-  Pointlight light1 = Pointlight(origin_plane + vec3(-3, 2, 4), 250);
+  Pointlight light1 = Pointlight(origin_plane + vec3(-3, 2, 4), 450);
 
-  scene.get_camera()->set_resolution(800);
+  scene.get_camera()->set_resolution(500);
   scene.get_camera()->set_sensor_size(1, 1);
 
   scene.set_aliasing(1);
