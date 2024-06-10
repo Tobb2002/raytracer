@@ -86,9 +86,11 @@ class BVH {
 
   void calculate_min(bvh_node_pointer* node);
   void calculate_max(bvh_node_pointer* node);
+  void calculate_bounds(bvh_node_pointer* node);
 
   void update_min(vec3 *min, const vec3 &min_value);
   void update_max(vec3 *min, const vec3 &min_value);
+  void update_bounds(vec3 *min, const vec3 &min_value, vec3 *max, const vec3 &max_value);
 
   uint get_lowest_hitbox();
 
