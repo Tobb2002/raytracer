@@ -80,7 +80,7 @@ class BVH {
   void swap_triangle(bvh_node_pointer *node1, bvh_node_pointer *node2);
 
   /// @brief get longest axis of bounding box.
-  Axis get_longest_axis(bvh_node_pointer* node);
+  uint get_longest_axis(bvh_node_pointer* node);
 
   bvh_box update_box(bvh_node_pointer* node);
 

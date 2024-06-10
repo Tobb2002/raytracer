@@ -186,14 +186,14 @@ void BVH::swap_triangle(bvh_node_pointer *node1, bvh_node_pointer *node2) {
   //_data.triangle_ids[id2] = tmp;
 }
 
-Axis BVH::get_longest_axis(bvh_node_pointer* node) {
+uint BVH::get_longest_axis(bvh_node_pointer* node) {
   float longest = 0;
-  Axis res = X;
+  uint res = 0;
   for (int i = 0; i < 3; i++) {
     float length = _data.tree.get_data(node)->bounds.max[i] - _data.tree.get_data(node)->bounds.min[i];
     if (length > longest) {
       longest = length;
-      res = static_cast<Axis>(i);
+      res = i;
     }
   }
   return res;
@@ -321,36 +321,20 @@ void BVH::update_boxes() {
   update_box(0);
 }
 
-bool comp(BVH_data *data, uint id1, uint id2, Axis axis) {
-  if (data->triangles->at(id1).get_pos()[static_cast<size_t>(axis)]
-    < data->triangles->at(id2).get_pos()[static_cast<size_t>(axis)]) {
+bool comp(BVH_data *data, uint id1, uint id2, uint axis) {
+  if (data->triangles->at(id1).get_pos()[axis]
+    < data->triangles->at(id2).get_pos()[axis]) {
       return true;
     }
   return false;
 }
 
-void BVH::sort(const uint &first, const uint &count, const Axis &axis) {
+void BVH::sort(std::vector<uint>::iterator begin, const uint &count, const uint &axis) {
   namespace boo = boost::lambda;
-  switch (axis) {
-    case X:
-      std::sort(
-        _data.triangle_ids.begin() + first,
-        _data.triangle_ids.begin() + first + count,
-        boo::bind(&comp, &_data, boo::_1, boo::_2, axis));
-      break;
-    case Y:
-      std::sort(
-        _data.triangle_ids.begin() + first,
-        _data.triangle_ids.begin() + first + count,
-        boo::bind(&comp, &_data, boo::_1, boo::_2, axis));
-      break;
-    case Z:
-      std::sort(
-        _data.triangle_ids.begin() + first,
-        _data.triangle_ids.begin() + first + count,
-        boo::bind(&comp, &_data, boo::_1, boo::_2, axis));
-      break;
-  }
+  std::sort(
+    begin,
+    begin + count,
+    boo::bind(&comp, &_data, boo::_1, boo::_2, axis));
 }
 
 void BVH::split_middle(bvh_node_pointer* node) {
