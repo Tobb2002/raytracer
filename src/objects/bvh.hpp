@@ -111,7 +111,7 @@ class BVH {
   /// @brief calculate costs of given split
   float get_cost();
 
-  uint _max_triangles = 2;
+  uint _max_triangles = 1;
 
   uint _intersect_count = 0;
 
