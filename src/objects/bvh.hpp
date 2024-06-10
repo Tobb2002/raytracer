@@ -99,10 +99,9 @@ class BVH {
   void sort(std::vector<uint>::iterator begin, const uint &count, const uint &axis);
 
   /// @brief Splits node a long longest axis
-  void split_middle(bvh_node_pointer* node);
   void triangles_into_buckets(bvh_node_pointer* node, SAH_buckets *buckets);
 
-  void split_middle_tree(bvh_node_pointer* node);
+  void split_middle(bvh_node_pointer* node);
   void split_middle_node(bvh_node_pointer* node);
   void split_SAH(bvh_node_pointer* node);
   void split(bvh_node_pointer* node, const SAH_buckets& buckets, const split_point& splitp);

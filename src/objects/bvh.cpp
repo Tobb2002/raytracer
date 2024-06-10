@@ -12,38 +12,31 @@
 #include "bvh.hpp"
 
 
+#define SPLIT_SAH // SPLIT_MID, SPLIT_SAH, ...
+
+
 void BVH::build_tree_axis(std::vector<Triangle> *triangles) {
   // initialize data structure
   _data.triangles = triangles;
 
   uint size = _data.triangles->size();
-  // initialize tree with standart nodes
-  //_data.tree.reserve(size);
-  //for (size_t i = 0; i < size; i++) {
-  //  BVH_node node;
-  //  _data.tree.push_back(node);
-  //}
-
-  //_data.size = _data.triangles->size();
-
-  //_data.triangle_ids.reserve(_data.size);
-  //for (size_t i = 0; i < _data.size; i++) {
-  //  _data.triangle_ids.push_back(i);
-  //}
-  // initialize root node
   BVH_node_data root_data = BVH_node_data();
   root_data.triangle_ids.reserve(size);
   for (size_t i = 0; i < size; i++) {
     root_data.triangle_ids.push_back(i);
   }
-
   _data.tree = BVH_tree(root_data);
   bvh_node_pointer* root = _data.tree.get_root();
 
   calculate_bounds(root);
 
-  // split nodes recursivley
+  #ifdef SPLIT_MID
+    split_middle(root);
+  #endif
+
+  #ifdef SPLIT_SAH
   split_SAH(root);
+  #endif
 }
 
 void BVH::set_triangles(std::vector<Triangle> *triangles) {
@@ -336,68 +329,6 @@ void BVH::sort(std::vector<uint>::iterator begin, const uint &count, const uint 
     boo::bind(&comp, &_data, boo::_1, boo::_2, axis));
 }
 
-void BVH::split_middle(bvh_node_pointer* node) {
-//  // check if split is needed
-//  if (!(_data.tree[node_id].count > _max_triangles)) {
-//    return;
-//  }
-//  Axis axis = get_longest_axis(node_id);
-//
-//  uint start = _data.tree[node_id].first;
-//  uint count = _data.tree[node_id].count;
-//
-//  sort(start, count, axis);
-//
-//  // update node
-//  _data.tree[node_id].leaf = false;
-//
-//  // point to split id belongs to the right child
-//  uint middle_count = floor(_data.tree[node_id].count / 2.f);
-//
-//  bool even_amount = false;
-//  if (_data.tree[node_id].count % 2 == 0) {
-//    even_amount = true;
-//  }
-//
-//  uint left_id = node_id*2 + 1;
-//  uint right_id = node_id*2 + 2;
-//
-//
-//
-//  // if odd assing one more to left child
-//  if (even_amount) {
-//    // asing left child
-//    _data.tree[left_id].first = _data.tree[node_id].first;
-//    _data.tree[left_id].count = middle_count;
-//
-//    // asing right child
-//    _data.tree[right_id].first =
-//      _data.tree[node_id].first + middle_count;
-//    _data.tree[right_id].count = middle_count;
-//  } else {  // asing left one more element
-//    // asing left child
-//    _data.tree[left_id].first = _data.tree[node_id].first;
-//    _data.tree[left_id].count = middle_count + 1;
-//
-//    // asing right child
-//    _data.tree[right_id].first =
-//      _data.tree[node_id].first + middle_count + 1;
-//    _data.tree[right_id].count = middle_count;
-//  }
-//
-//  // calculate new bounding boxes
-//  calculate_min(left_id);
-//  calculate_max(left_id);
-//
-//  calculate_min(right_id);
-//  calculate_max(right_id);
-//
-//
-//  // recursivley split more
-//  split_middle(left_id);
-//  split_middle(right_id);
-}
-
 vec3 calc_bucket_step(vec3 min, vec3 max) {
   vec3 res;
   for (size_t a = 0; a < 3; a++) {
@@ -554,15 +485,15 @@ split_point BVH::calc_min_split(bvh_node_pointer* node, SAH_buckets *buckets) {
   return split;
 }
 
-void BVH::split_middle_tree(bvh_node_pointer* node) {
+void BVH::split_middle(bvh_node_pointer* node) {
   if (_data.tree.get_data(node)->triangle_ids.size() <= _max_triangles) {
     return;
   }
 
   split_middle_node(node);
 
-  split_middle_tree(_data.tree.get_left(node));
-  split_middle_tree(_data.tree.get_right(node));
+  split_middle(_data.tree.get_left(node));
+  split_middle(_data.tree.get_right(node));
 
 }
 
