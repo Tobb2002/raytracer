@@ -253,22 +253,20 @@ void BVH::update_bounds(vec3 *min, const vec3 &min_value, vec3 *max,
 }
 
 void BVH::print_node(bvh_node_pointer *node) {
-  // BVH_node n = _data.tree[id];
+  BVH_node_data *n = _data.tree.get_data(node);
 
-  // std::cout << "-------bvh_node------\n";
-  // std::cout << "id: " << id << "\n";
-  // std::cout << "first: " << n.first << "\n";
-  // std::cout << "count: " << n.count << "\n";
-  // std::cout << "min: " << glm::to_string(n.min) << "\n";
-  // std::cout << "max: " << glm::to_string(n.max) << "\n";
-  // std::cout << "leaf: " << n.leaf << "\n";
+  std::cout << "-------bvh_node------\n";
+  std::cout << "count: " << n->triangle_ids.size() << "\n";
+  std::cout << "min: " << glm::to_string(n->bounds.min) << "\n";
+  std::cout << "max: " << glm::to_string(n->bounds.max) << "\n";
+  std::cout << "leaf: " << _data.tree.is_leaf(node)<< "\n";
 
-  //// triangle ids
-  // for (size_t i = 0; i < _data.tree[id].count; i++) {
-  //   std::cout << _data.triangle_ids.at(i + _data.tree[id].first) <<",";
-  // }
-  // std::cout << "\n";
-  // std::cout << "----------------------\n";
+  // triangle ids
+  for (uint id : _data.tree.get_data(node)->triangle_ids) {
+    std::cout << id <<",";
+  }
+  std::cout << "\n";
+  std::cout << "----------------------\n";
 }
 
 void BVH::print_node_triangles(bvh_node_pointer *node) {
@@ -334,19 +332,9 @@ void BVH::triangles_into_buckets(bvh_node_pointer *node, SAH_buckets *buckets) {
         // in all buckets[<i]
         if (triangle_pos[a] >= split_before[a] && triangle_pos[a] <= split[a]) {
           // insert trianlge to specific bucket
-          // printf("test:%i\t pos: %f \t sp_before: %f \t sp: %f\n",i,
-          // triangle_pos[a], split_before[a], split[a]);
           buckets->buckets[a][b].ids.push_back(i);
-
           break;  // found right bucket continue with next axis
         }
-        // else if (b == SAH_NUM_BUCKETS - 1 &&
-        //          triangle_pos[a] > split_before[a] &&
-        //          triangle_pos[a] <= split[a]) {
-        //   buckets->buckets[a][b].ids.push_back(i);
-        //   printf("juhu");
-        //   break;
-        // }
       }
     }
   }
@@ -436,12 +424,6 @@ split_point BVH::calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets) {
              prob_right * right_amount * COST_INTERSECT;
 
       buckets->buckets[a][split_id].cost = cost;
-
-      // printf("axis: %zu \t bucket: %zu \t num_bucket:%zu \t cost: %f\n", a,
-      // split_id, buckets->buckets[a][split_id].ids.size(), cost);
-      // printf("bound_left: min:%f \t max:%f\n amount:%i\n", left.min[a],
-      // left.max[a], left_amount); printf("bound_right: min:%f \t max:%f
-      // amount:%i\n", right.min[a], right.max[a], right_amount);
 
       // update min cost
       if (cost < min_cost) {
@@ -557,15 +539,6 @@ void BVH::split_SAH(bvh_node_pointer *node) {
   // calculate costs for every split
   split_point splitp = calc_min_split(node, &buckets);
 
-  // printf("node id: %i \t count: %zu\n", 0,
-  // _data.tree.get_data(node)->triangle_ids.size()); for (uint i :
-  // _data.tree.get_data(node)->triangle_ids) {
-  //   printf("%i,", i);
-  // }
-  // printf("Best split: %zu, %zu\n", splitp.axis, splitp.id);
-  // printf("node cound: %i \n", _data.tree[node_id].count );
-
-  // split the node
   split(node, buckets, splitp);
 
   // recursivley continue splitting
