@@ -231,7 +231,6 @@ void BVH::calculate_min(bvh_node_pointer* node) {
 }
 
 void BVH::calculate_max(bvh_node_pointer* node) {
-  _data.tree.get_data(node)->bounds.max = vec3(-MAXFLOAT);
   for (uint i: _data.tree.get_data(node)->triangle_ids) {
     Triangle *t = (_data.triangles->data() + i);
     update_max(&_data.tree.get_data(node)->bounds.max, t->get_max_bounding());
@@ -424,14 +423,6 @@ void BVH::triangles_into_buckets(bvh_node_pointer* node, SAH_buckets *buckets) {
     for (size_t a = 0; a < 3; a++) {
 
 
-      if (triangle_pos[a] > max[a]) { // max[a] == 0
-        printf("size:%zu\n", _data.tree.get_data(node)->triangle_ids.size());
-        printf("max:%f \t %f\n", triangle_pos[a], min[a]);
-      }
-      if (triangle_pos[a] < min[a]) { // min [a] == 0
-        printf("size:%zu\n", _data.tree.get_data(node)->triangle_ids.size());
-        printf("min:%f \t %f\n", triangle_pos[a], min[a]);
-      }
       for (uint b = 0; b < SAH_NUM_BUCKETS; b++) {
         // get boundary for x,y,z-bucket[b] 
         vec3 split_before = min + static_cast<float>(b) * bucket_step;
@@ -442,7 +433,7 @@ void BVH::triangles_into_buckets(bvh_node_pointer* node, SAH_buckets *buckets) {
           // insert trianlge to specific bucket
           //printf("test:%i\t pos: %f \t sp_before: %f \t sp: %f\n",i, triangle_pos[a], split_before[a], split[a]);
           buckets->buckets[a][b].ids.push_back(i);
-          
+
           break; // found right bucket continue with next axis
         }
         //else if (b == SAH_NUM_BUCKETS - 1 &&
@@ -459,7 +450,6 @@ void BVH::triangles_into_buckets(bvh_node_pointer* node, SAH_buckets *buckets) {
   // calcualte bucket bounding boxes
   for (size_t a = 0; a < 3; a++) {
     for (uint b = 0; b < SAH_NUM_BUCKETS; b++) {
-      SAH_bucket bucket = buckets->buckets[a][b];
       buckets->buckets[a][b].box = bvh_box(vec3(MAXFLOAT), vec3(-MAXFLOAT));
 
       // calculate bounding box
@@ -511,6 +501,7 @@ split_point BVH::calc_min_split(bvh_node_pointer* node, SAH_buckets *buckets) {
   bvh_box box = bvh_box(_data.tree.get_data(node)->bounds.min, _data.tree.get_data(node)->bounds.max);
   float surface_box = get_surface_area(box);
 
+  bool run_trough = true;
   for (size_t a = 0; a < 3; a++) { // for every axis
     for (size_t split_id = 0; split_id < SAH_NUM_BUCKETS - 1; split_id++) { // for every bucket
       bvh_box left = combine_box(buckets, a, 0,split_id);
@@ -553,10 +544,61 @@ split_point BVH::calc_min_split(bvh_node_pointer* node, SAH_buckets *buckets) {
         split.axis = a;
         split.left = left;
         split.right = right;
+        run_trough = false;
       }
+    }
+    if (run_trough) {
+      split.id = -1; // Fallback to middle split
     }
   }
   return split;
+}
+
+void BVH::split_middle_tree(bvh_node_pointer* node) {
+  if (_data.tree.get_data(node)->triangle_ids.size() <= _max_triangles) {
+    return;
+  }
+
+  split_middle_node(node);
+
+  split_middle_tree(_data.tree.get_left(node));
+  split_middle_tree(_data.tree.get_right(node));
+
+}
+
+void BVH::split_middle_node(bvh_node_pointer* node) {
+  // asing child nodes 
+  BVH_node_data data_left;
+  BVH_node_data data_right;
+
+  // TODO insert child withou BVH_node_data parameter
+  bvh_node_pointer* node_left = _data.tree.insert_child(data_left, node);
+  bvh_node_pointer* node_right = _data.tree.insert_child(data_right, node);
+
+  uint axis = get_longest_axis(node);
+
+  uint size = _data.tree.get_data(node)->triangle_ids.size();
+
+  sort(_data.tree.get_data(node)->triangle_ids.begin(), size, axis);
+
+  for (size_t i = 0; i < size; i++) {
+    uint id = _data.tree.get_data(node)->triangle_ids[i];
+    if (i < size / 2) {
+       _data.tree.get_data(node_left)->triangle_ids.push_back(id);
+    }
+    else {
+       _data.tree.get_data(node_right)->triangle_ids.push_back(id);
+    }
+  }
+
+  // calculate bounding boxes
+  calculate_min(node_left);
+  calculate_max(node_left);
+
+  calculate_min(node_right);
+  calculate_max(node_right);
+
+  _data.tree.free_triangles(node);
 }
 
 /**
@@ -569,6 +611,10 @@ split_point BVH::calc_min_split(bvh_node_pointer* node, SAH_buckets *buckets) {
 void BVH::split(bvh_node_pointer* node, const SAH_buckets& buckets, const split_point& splitp) {
   // Split node at triangle with split id
   // update node
+  if (splitp.id == -1) {
+    split_middle_node(node);
+    return;
+  }
 
   // asing child nodes 
   BVH_node_data data_left;
