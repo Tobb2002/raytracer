@@ -5,8 +5,9 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "ray.hpp"
+
 #include "object.hpp"
+#include "ray.hpp"
 
 using glm::vec3;
 
@@ -17,10 +18,10 @@ struct interval {
 
 /**
  * @brief Datastructure to represent bounding_boxes.
- * 
+ *
  * Bounding box get's defined by a min and max value.
  */
-class Box : public Object{
+class Box : public Object {
  public:
   Box();
   Box(vec3 min, vec3 max);
@@ -37,8 +38,7 @@ class Box : public Object{
 
  private:
   vec3 _min;
-  vec3 _max;;
-
+  vec3 _max;
 
   void ensure_min_max(void);
 };

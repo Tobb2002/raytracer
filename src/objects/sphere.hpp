@@ -5,17 +5,17 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "ray.hpp"
+
 #include "object.hpp"
+#include "ray.hpp"
 #include "texture.hpp"
 
 using glm::vec3;
 
-
 /**
  * @brief Object to render a sphere.
  */
-class Sphere : public Object{
+class Sphere : public Object {
  public:
   Sphere();
   Sphere(vec3 pos, float radius);

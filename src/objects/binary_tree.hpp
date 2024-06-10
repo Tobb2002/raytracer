@@ -25,16 +25,15 @@ struct bvh_node {
   bvh_node *right = nullptr;
 };
 
-
 struct BVH_node_flat {
   BVH_node_data data;
   uint offset_right;
 };
 
-class BVH_tree{
+class BVH_tree {
  public:
   BVH_tree();
-  BVH_tree(bvh_node *root_node);
+  explicit BVH_tree(bvh_node *root_node);
   ~BVH_tree();
 
   /// inserts data to first free child (left right) ASSERTION if both full
@@ -42,11 +41,9 @@ class BVH_tree{
 
   void print_inorder();
 
-
   void flatten();
-  //void build_from_flattened();
+  // void build_from_flattened();
  private:
   std::vector<uint> triangles_flat;
   bvh_node *root = nullptr;
 };
-

@@ -6,15 +6,14 @@
 
 #include <vector>
 
+#include "image.hpp"
+#include "memory"
+#include "objects/camera.hpp"
 #include "objects/mesh.hpp"
 #include "objects/object.hpp"
 #include "objects/plane.hpp"
 #include "objects/pointlight.hpp"
-#include "objects/camera.hpp"
-#include "image.hpp"
 #include "objects/sphere.hpp"
-#include "memory"
-
 
 class Scene {
  public:
@@ -36,10 +35,9 @@ class Scene {
 
   Camera *get_camera(void);
 
-  vec3 get_light(const Ray& ray);
+  vec3 get_light(const Ray &ray);
 
   void update_view_transform(void);
-
 
   /***** Rendering *****/
 
@@ -62,23 +60,12 @@ class Scene {
 
   Ray generate_reflection_ray(vec3 point, vec3 normal, vec3 viewer_direction);
 
-
-  vec3 calculate_light(
-      const vec3 &point,
-      const Material &material,
-      vec3 surface_normal,
-      const Ray &camera_ray);
-  vec3 get_phong(
-      const Pointlight &light,
-      const Material &material,
-      vec3 point,
-      vec3 normal,
-      vec3 viewing_direction);
-  vec3 get_mirroring_light(
-      Material material,
-      vec3 point,
-      vec3 normal,
-      vec3 viewing_direction);
+  vec3 calculate_light(const vec3 &point, const Material &material,
+                       vec3 surface_normal, const Ray &camera_ray);
+  vec3 get_phong(const Pointlight &light, const Material &material, vec3 point,
+                 vec3 normal, vec3 viewing_direction);
+  vec3 get_mirroring_light(Material material, vec3 point, vec3 normal,
+                           vec3 viewing_direction);
   void tonemapping(vec3 *light);
   bool check_intersection(Ray ray, float t_max);
 };

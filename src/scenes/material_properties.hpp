@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
-#include "../scene.hpp"
-#include "../objects/sphere.hpp"
 #include "../objects/plane.hpp"
+#include "../objects/sphere.hpp"
+#include "../scene.hpp"
 
 Scene get_scene() {
   Scene scene = Scene(vec3(0, 50, 100));
@@ -25,14 +25,10 @@ Scene get_scene() {
   std::vector<Sphere> spheres;
   for (int i = 0; i < 4; i++) {
     float spec = static_cast<float>(i) * 0.4;
-    Sphere s = Sphere(origin + vec3(-3.75, 0, 0) +  vec3(i * 2.5, 0, 0),
-                      1,
-                      {.color = vec3(1, 0, 0),
-                       .specular = spec,
-                       .pow_m = 14});
+    Sphere s = Sphere(origin + vec3(-3.75, 0, 0) + vec3(i * 2.5, 0, 0), 1,
+                      {.color = vec3(1, 0, 0), .specular = spec, .pow_m = 14});
     scene.add_object(s);
   }
 
   return scene;
 }
-

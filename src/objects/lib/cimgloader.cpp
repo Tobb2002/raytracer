@@ -5,4 +5,3 @@
 #include "cimgloader.hpp"
 
 #include "CImg.h"
-

@@ -9,7 +9,6 @@
 
 using glm::vec3;
 
-
 class Ray {
  public:
   Ray(vec3 origin, vec3 direction);

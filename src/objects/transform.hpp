@@ -5,14 +5,13 @@
 // functions for transforming points
 #pragma once
 
-
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 
 using glm::vec3, glm::vec4, glm::mat4;
 
-struct Transformation{
+struct Transformation {
   mat4 mat = glm::mat4(1.0);
   mat4 inv = glm::mat4(1.0);
 };

@@ -5,31 +5,25 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "ray.hpp"
+
 #include "object.hpp"
+#include "ray.hpp"
 #include "texture.hpp"
 
 using glm::vec3;
 
-
 /**
  * @brief Object to render a plane.
  */
-class Plane : public Object{
+class Plane : public Object {
  public:
   Plane();
   void set_start_position(vec3 position, vec3 normal);
   Plane(vec3 pos, vec3 normal, Material material);
   Plane(vec3 pos, vec3 normal, Material material1, Material material2);
-  Plane(vec3 pos,
-        vec3 normal,
-        Material material1,
-        Material material2,
+  Plane(vec3 pos, vec3 normal, Material material1, Material material2,
         vec2 size);
-  Plane(vec3 pos,
-        vec3 normal,
-        Material material,
-        vec2 size,
+  Plane(vec3 pos, vec3 normal, Material material, vec2 size,
         std::string path_to_file);
 
   // settings

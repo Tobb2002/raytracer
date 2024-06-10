@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
-#include "../objects/sphere.hpp"
-#include "../objects/plane.hpp"
 #include "../object_factory.hpp"
+#include "../objects/plane.hpp"
+#include "../objects/sphere.hpp"
 
 Scene get_scene() {
   Scene scene = Scene(vec3(0, 50, 100));
@@ -16,14 +16,12 @@ Scene get_scene() {
 
   vec3 origin = vec3(0, 0, -13);
 
-  Plane plane = Plane(origin + vec3(0, 0, -10), vec3(0, 0, -1),
-      {.color = vec3(1 , 1, 1), .diffuse = 0, .ambient = 0.6, .specular = 0},
-      vec2(14, 10),
-      "data/input/textures/planets/background_stars.png");
+  Plane plane = Plane(
+      origin + vec3(0, 0, -10), vec3(0, 0, -1),
+      {.color = vec3(1, 1, 1), .diffuse = 0, .ambient = 0.6, .specular = 0},
+      vec2(14, 10), "data/input/textures/planets/background_stars.png");
 
-  Sphere earth = Sphere(origin,
-                        2,
-                        {.specular = 0.2},
+  Sphere earth = Sphere(origin, 2, {.specular = 0.2},
                         "data/input/textures/planets/earth_uv.png");
   earth.rotate(vec3(0, 1, 0), -20);
 
@@ -31,12 +29,8 @@ Scene get_scene() {
 
   scene.add_light(light1);
 
-
   scene.add_object(earth);
   scene.add_object(plane);
 
-
   return scene;
 }
-
-

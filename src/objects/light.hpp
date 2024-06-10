@@ -4,6 +4,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+
 #include "object.hpp"
 
 using glm::vec3;
@@ -20,4 +21,3 @@ class Light : public Object {
  protected:
   vec3 _color;
 };
-

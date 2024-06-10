@@ -3,6 +3,7 @@
  */
 
 #include "transform.hpp"
+
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
 
@@ -16,10 +17,10 @@ mat4 Transform::add_translation(vec3 a) {
 
 /**
  * @brief adds_rotation around object origin.
- * 
+ *
  * @param axis rotation axis.
  * @param degree degree to rotate.
- * @return mat4 
+ * @return mat4
  */
 mat4 Transform::add_rotation(vec3 axis, float degree) {
   axis = glm::normalize(axis);  // recommended for glm library
@@ -37,11 +38,11 @@ mat4 Transform::add_rotation(vec3 axis, float degree) {
 
 /**
  * @brief Add rotation around a point.
- * 
+ *
  * @param point point to rotate around.
  * @param axis Rotation axis
  * @param degree degree to rotate.
- * @return mat4 
+ * @return mat4
  */
 mat4 Transform::add_rotation(vec3 point, vec3 axis, float degree) {
   vec3 origin = get_current_origin();
@@ -52,8 +53,7 @@ mat4 Transform::add_rotation(vec3 point, vec3 axis, float degree) {
   transform_point(rot, &v);
 
   // calculate translation from world origin to new pos
-  mat4 origin_to_pos =
-      get_translation_mat(v) * get_translation_mat(point);
+  mat4 origin_to_pos = get_translation_mat(v) * get_translation_mat(point);
 
   // calculate transformation to move object to new position
   mat4 t = origin_to_pos * rot * _mat_inv.translation;
@@ -69,9 +69,9 @@ mat4 Transform::add_rotation(vec3 point, vec3 axis, float degree) {
 
 /**
  * @brief add a rotation only to rotation matrix.
- * 
- * @param axis 
- * @param degree 
+ *
+ * @param axis
+ * @param degree
  */
 mat4 Transform::add_rotation_mat(vec3 axis, float degree) {
   axis = glm::normalize(axis);  // recommended for glm library
@@ -86,13 +86,10 @@ mat4 Transform::add_rotation_mat(vec3 axis, float degree) {
 
 void Transform::calculate_inverse_mat(void) {
   // translation T^-1(t) = T(-t)
-  _mat_inv.translation =  mat4(vec4(1, 0, 0, 0),
-                               vec4(0, 1, 0, 0),
-                               vec4(0, 0, 1, 0),
-                               vec4(_mat.translation[3][0] * -1,
-                                    _mat.translation[3][1] * -1,
-                                    _mat.translation[3][2] * -1,
-                                    1));
+  _mat_inv.translation =
+      mat4(vec4(1, 0, 0, 0), vec4(0, 1, 0, 0), vec4(0, 0, 1, 0),
+           vec4(_mat.translation[3][0] * -1, _mat.translation[3][1] * -1,
+                _mat.translation[3][2] * -1, 1));
   // rotation R^-1 = transpose(Rx)
   _mat_inv.rotation = glm::transpose(_mat.rotation);
   // scale S^-1 = S(1/s)
@@ -101,12 +98,12 @@ void Transform::calculate_inverse_mat(void) {
 
 /**
  * @brief Transform a point.
- * 
+ *
  * @param transformation transformation matrix.
  * @param point Point to be transformed.
  */
 void Transform::transform_point(mat4 transformation, vec3 *point) {
-  *point =  transformation * vec4(*point, 1);
+  *point = transformation * vec4(*point, 1);
 }
 
 vec3 Transform::transform_point(mat4 t, vec3 point) {
@@ -115,26 +112,21 @@ vec3 Transform::transform_point(mat4 t, vec3 point) {
 
 /**
  * @brief Get the combined matrix of current transformation.
- * 
- * @return mat4 
+ *
+ * @return mat4
  */
-mat4 Transform::get_combined(void) {
-  return _mat.translation * _mat.rotation;
-}
+mat4 Transform::get_combined(void) { return _mat.translation * _mat.rotation; }
 
 /**
  * @brief Get the combined inverse matrix of current transformation.
- * 
- * @return mat4 
+ *
+ * @return mat4
  */
 mat4 Transform::get_combined_inv(void) {
   return _mat_inv.rotation * _mat_inv.translation;
 }
 
-mat4 Transform::get_mat_rotation(void) {
-  return _mat.rotation;
-}
-
+mat4 Transform::get_mat_rotation(void) { return _mat.rotation; }
 
 /// @brief Calculate th angle between two directions
 Rotation Transform::calculate_rotation(vec3 dir1, vec3 dir2) {
@@ -146,8 +138,8 @@ Rotation Transform::calculate_rotation(vec3 dir1, vec3 dir2) {
     axis = vec3(0, 1, 0);
   }
 
-  float radian = glm::acos(glm::dot(dir1, dir2) /
-      glm::length(dir1) * glm::length(dir2));
+  float radian =
+      glm::acos(glm::dot(dir1, dir2) / glm::length(dir1) * glm::length(dir2));
 
   Rotation rot = {axis, glm::degrees(radian)};
 
@@ -172,8 +164,8 @@ void Transform::print() {
   std::cout << "---Transform----\n";
   std::cout << "translation:\n" << glm::to_string(_mat.translation) << "\n";
   std::cout << "rotation:\n" << glm::to_string(_mat.rotation) << "\n";
-  std::cout << "inv translation:\n" << glm::to_string(_mat_inv.translation) <<
-      "\n";
+  std::cout << "inv translation:\n"
+            << glm::to_string(_mat_inv.translation) << "\n";
   std::cout << "inv rotation:\n" << glm::to_string(_mat_inv.rotation) << "\n";
   std::cout << "----------------\n";
 }
@@ -187,12 +179,8 @@ mat4 Transform::get_rotation_mat(Rotation rot) {
 }
 
 mat4 Transform::get_translation_mat(vec3 v) {
-  return glm::mat4x4(vec4(1, 0, 0, 0),
-                vec4(0, 1, 0, 0),
-                vec4(0, 0, 1, 0),
-                vec4(v, 1));
+  return glm::mat4x4(vec4(1, 0, 0, 0), vec4(0, 1, 0, 0), vec4(0, 0, 1, 0),
+                     vec4(v, 1));
 }
 
-void Transform::apply_to_mat(mat4 *mat, mat4 t) {
-  *mat = t * *mat;
-}
+void Transform::apply_to_mat(mat4 *mat, mat4 t) { *mat = t * *mat; }

@@ -4,8 +4,8 @@
 
 #include "object.hpp"
 
-#include <glm/gtx/string_cast.hpp>
 #include <glm/gtx/component_wise.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 using glm::vec4;
 
@@ -16,10 +16,10 @@ Object::Object() {
 
 /**
  * @brief Calculate intersection with a Ray.
- * 
- * @param ray 
- * @return Intersection 
- * 
+ *
+ * @param ray
+ * @return Intersection
+ *
  * This function should be overriden by inheriting Objects.
  */
 Intersection Object::intersect(const Ray&) {
@@ -29,8 +29,8 @@ Intersection Object::intersect(const Ray&) {
 
 /**
  * @brief Check if Ray intersects.
- * 
- * @param ray 
+ *
+ * @param ray
  * @param t_max maximum length of Ray to check.
  * @return true if Ray intersects.
  * @return false else
@@ -49,25 +49,21 @@ bool Object::intersect_bool(const Ray& ray, float t_max) {
 
 /**
  * @brief Print all important information of the Object.
- * 
+ *
  * This function should be ovveridden by inheriting objects.
  */
-void Object::print(void) {
-  std::cout << "-----Object-----\n";
-}
+void Object::print(void) { std::cout << "-----Object-----\n"; }
 
 /**
  * @brief Print all the transformation infos.
  */
-void Object::print_matrices(void) {
-  _transform.print();
-}
+void Object::print_matrices(void) { _transform.print(); }
 
 /***** Transformations *****/
 
 /**
  * @brief Move Object.
- * 
+ *
  * @param a vector to move the object.
  */
 void Object::move(vec3 a) {
@@ -75,11 +71,10 @@ void Object::move(vec3 a) {
   transform(t);
 }
 
-
 /**
  * @brief Apply transformation to Object.
- * 
- * @param transformation 
+ *
+ * @param transformation
  */
 void Object::apply_transform(mat4 transformation) {
   _transform.transform_point(transformation, &_origin);
@@ -93,7 +88,7 @@ void Object::update_view_transform(Transformation view_transform) {
 
 /**
  * @brief Rotate Object around it's own origin.
- * 
+ *
  * @param axis Axis for the rotation.
  * @param degree Angle to rotate.
  */

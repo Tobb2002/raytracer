@@ -4,8 +4,9 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "object.hpp"
+
 #include "light.hpp"
+#include "object.hpp"
 
 using glm::vec3;
 

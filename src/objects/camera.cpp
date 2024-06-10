@@ -3,14 +3,14 @@
  */
 
 #include "camera.hpp"
-#include <stdexcept>
 
-#include <iostream>
 #include <glm/gtx/string_cast.hpp>
+#include <iostream>
+#include <stdexcept>
 
 /**
  * @brief Construct a new Camera:: Camera object
- * 
+ *
  * Standart resolution is (1000, 1000).
  * standart sensor size is (1, 1).
  */
@@ -21,7 +21,7 @@ Camera::Camera() {
 
 /**
  * @brief Construct a new Camera:: Camera object with specific resolution.
- * 
+ *
  * @param resolution_x amount of pixels in x direction.
  * @param resolution_y amount of pixels in y direction.
  */
@@ -36,7 +36,7 @@ Camera::Camera(float resolution_x, float resolution_y) {
 
 /**
  * @brief Change camera resolution.
- * 
+ *
  * @param resolution_x amount of pixels in x direction.
  * @param resolution_y amount of pixels in y direction.
  */
@@ -47,7 +47,7 @@ void Camera::set_resolution(float resolution_x, float resolution_y) {
 
 /**
  * @brief Change camera resoultion (square image).
- * 
+ *
  * @param resolution_x amount of pixels in x and y direction.
  */
 void Camera::set_resolution(float resolution) {
@@ -58,24 +58,21 @@ void Camera::set_resolution(float resolution) {
 void Camera::set_sensor_size(float x, float y) {
   _sensor_size = vec2(x, y);
 
-  _pixel_size = vec2(
-    _sensor_size.x / _resolution.x,
-    _sensor_size.y / _resolution.y);
+  _pixel_size =
+      vec2(_sensor_size.x / _resolution.x, _sensor_size.y / _resolution.y);
 }
 
 /***** Geters *****/
 
-vec2 Camera::get_resolution() {
-  return _resolution;
-}
+vec2 Camera::get_resolution() { return _resolution; }
 
 /***** Camera Functions *****/
 
 /**
  * @brief Generate Ray trough the middle of a pixel starting at the origin.
- * 
+ *
  * @param pixel {x, y} pixel for the ray direction.
- * @return Ray 
+ * @return Ray
  */
 Ray Camera::get_ray(vec2 pixel) {
   vec2 pos_image = pixel_to_image_pos(pixel, vec2(0.5, 0.5));
@@ -87,7 +84,7 @@ Ray Camera::get_ray(vec2 pixel) {
 
 Ray Camera::get_ray(vec2 pixel, vec2 relative_position, float random_range) {
   // random value between -1 and 1
-  double rand = (static_cast<double>(std::rand()) / RAND_MAX * 2) -1;
+  double rand = (static_cast<double>(std::rand()) / RAND_MAX * 2) - 1;
   vec2 range = vec2(rand * random_range * _pixel_size.x,
                     rand * random_range * _pixel_size.y);
   vec2 pos_image = pixel_to_image_pos(pixel, relative_position + range);
@@ -101,37 +98,31 @@ Ray Camera::get_ray(vec2 pixel, vec2 relative_position, float random_range) {
 
 /**
  * @brief Transform a pixel position to a virtual image position.
- * 
+ *
  * @param pixel vec3 to be transformed.
  * @return vec2 position on virtual image.
  */
 vec2 Camera::pixel_to_image_pos(vec2 pixel, vec2 relative_pos) {
   // check if pixel is valid
-  if (pixel.x < 0 ||
-      pixel.y < 0 ||
-      pixel.x >= _resolution.x ||
+  if (pixel.x < 0 || pixel.y < 0 || pixel.x >= _resolution.x ||
       pixel.y >= _resolution.y) {
     throw std::invalid_argument("pixel not in given resolution");
   }
 
-  vec2 res = vec2(
-    relative_pos.x * _pixel_size.x + _pixel_size.x * pixel.x,
-    relative_pos.y * _pixel_size.y + _pixel_size.y * pixel.y);
+  vec2 res = vec2(relative_pos.x * _pixel_size.x + _pixel_size.x * pixel.x,
+                  relative_pos.y * _pixel_size.y + _pixel_size.y * pixel.y);
 
   return res;
 }
 
 /**
  * @brief Transform point from virtual image to world coordinates.
- * 
+ *
  * @param pos_image position in image.
  * @return vec3
  */
 vec3 Camera::image_to_world(vec2 pos_image) {
-  vec3 start = vec3(
-    -0.5 * _sensor_size.x,
-    -0.5 * _sensor_size.y,
-    -1.f);
+  vec3 start = vec3(-0.5 * _sensor_size.x, -0.5 * _sensor_size.y, -1.f);
 
   vec3 p = vec3(pos_image.x, pos_image.y, 0.f);
 
@@ -140,19 +131,15 @@ vec3 Camera::image_to_world(vec2 pos_image) {
 
 /***** Transformations *****/
 
-void Camera::move(vec3 a) {
-  _transform.add_translation(a);
-}
+void Camera::move(vec3 a) { _transform.add_translation(a); }
 
 /**
  * @brief returns inverse of camera transformation.
- * 
- * @return Transformation 
+ *
+ * @return Transformation
  */
 Transformation Camera::get_view_transform(void) {
-  Transformation t = {
-      _transform.get_combined_inv(),
-      _transform.get_combined()};
+  Transformation t = {_transform.get_combined_inv(), _transform.get_combined()};
   return t;
 }
 void Camera::rotate(vec3 axis, float degree) {

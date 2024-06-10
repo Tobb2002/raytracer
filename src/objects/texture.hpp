@@ -5,15 +5,17 @@
 #pragma once
 
 #define GLM_ENABLE_EXPERIMENTAL
-#include<string>
-#include "glm/glm.hpp"
 #include <CImg.h>
+
+#include <string>
+
+#include "glm/glm.hpp"
 
 using glm::vec2, glm::vec3;
 
 using cimg_library::CImg, cimg_library::CImgDisplay;
 
-class Texture{
+class Texture {
  public:
   Texture();
   explicit Texture(std::string path_to_image);

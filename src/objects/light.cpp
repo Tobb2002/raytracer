@@ -23,4 +23,3 @@ float Light::get_distance(vec3 point) const {
 }
 
 vec3 Light::get_color() const { return _color; }
-

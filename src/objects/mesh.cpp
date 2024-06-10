@@ -3,20 +3,20 @@
  */
 
 #include "mesh.hpp"
-#include "lib/objloader.hpp"
-#include "bvh.hpp"
 
+#include <chrono>
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
-#include <chrono>
 
+#include "bvh.hpp"
+#include "lib/objloader.hpp"
 
 /**
  * @brief Construct a new Mesh:: Mesh object
- * 
+ *
  * @param input_file ppm file to generate mesh.
  * @param origin point to place the mesh.
- * 
+ *
  * The Mesh will use the standart Material.
  */
 Mesh::Mesh(std::string input_file, vec3 origin) {
@@ -26,7 +26,7 @@ Mesh::Mesh(std::string input_file, vec3 origin) {
 
 /**
  * @brief Construct a new Mesh:: Mesh object
- * 
+ *
  * @param input_file ppm file to generate mesh.
  * @param origin point to place the mesh.
  * @param material set material of mesh.
@@ -41,9 +41,12 @@ Mesh::Mesh(std::string input_file, vec3 origin, Material material) {
       std::chrono::steady_clock::now();
   _bvh.build_tree_axis(&_triangles);
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-  std::cout << "Time for building bvh (sec) = " <<
-    (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count())
-    / 1000000.0 << "\n";
+  std::cout << "Time for building bvh (sec) = "
+            << (std::chrono::duration_cast<std::chrono::microseconds>(end -
+                                                                      begin)
+                    .count()) /
+                   1000000.0
+            << "\n";
 }
 
 Mesh::Mesh(const Mesh &old_mesh) {
@@ -75,7 +78,7 @@ void Mesh::print(void) {
 
 /**
  * @brief Print all triangles of the mesh.
- * 
+ *
  */
 void Mesh::print_triangles(void) {
   for (int i = 0; i < _size; i++) {
@@ -87,24 +90,22 @@ void Mesh::print_triangles(void) {
 /**
  * @brief Print information about Boundingbox.
  */
-void Mesh::print_bounding_box(void) {
-  _bounding_box.print();
-}
+void Mesh::print_bounding_box(void) { _bounding_box.print(); }
 
 /***** Getters *****/
 
 /**
  * @brief Get number of triangles in mesh.
- * 
- * @return int 
+ *
+ * @return int
  */
 int Mesh::get_size(void) { return _size; }
 
 /**
  * @brief Get a specific Triangle from the mesh.
- * 
+ *
  * @param i id of that triangle.
- * @return Triangle 
+ * @return Triangle
  */
 Triangle Mesh::get_triangle(int i) {
   Triangle t = _triangles.at(i);
@@ -115,7 +116,7 @@ Triangle Mesh::get_triangle(int i) {
 
 /**
  * @brief Transform mesh (all triangles).
- * 
+ *
  * @param transformation transformation matrix.
  */
 void Mesh::apply_transform(mat4 transformation) {
@@ -132,25 +133,22 @@ void Mesh::apply_transform(mat4 transformation) {
 
 /**
  * @brief Check if Triangle is in bounding box and update if not.
- * 
+ *
  * @param t Triangle to check.
  */
-void Mesh::update_bounding_box(Triangle * t) {
-  _bounding_box.update_min_max(t->get_min_bounding(),
-                               t->get_max_bounding());
+void Mesh::update_bounding_box(Triangle *t) {
+  _bounding_box.update_min_max(t->get_min_bounding(), t->get_max_bounding());
 }
 
 /***** Functions *****/
 
-Intersection Mesh::intersect(const Ray& ray) {
-  return _bvh.intersect(ray);
-}
+Intersection Mesh::intersect(const Ray &ray) { return _bvh.intersect(ray); }
 
 /***** File input *****/
 
 /**
  * @brief read triangles from objfile.
- * 
+ *
  * @param inputfile path to obj file.
  */
 void Mesh::read_from_obj(std::string inputfile) {
@@ -161,9 +159,8 @@ void Mesh::read_from_obj(std::string inputfile) {
   std::string err;
   std::string warn;
 
-  bool ret = tinyobj::LoadObj(&attrib, &shapes,
-                              &materials, &warn,
-                              &err, inputfile.c_str());
+  bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err,
+                              inputfile.c_str());
 
   if (!err.empty()) {  // `err` may contain warning message.
     std::cerr << err << std::endl;
@@ -194,7 +191,6 @@ void Mesh::read_from_obj(std::string inputfile) {
     int size = shapes[s].mesh.num_face_vertices.size();
     std::cout << "size:" << size << "\n";
 
-
     size_t index_offset = 0;
     for (int f = 0; f < size; f++) {
       int fv = shapes[s].mesh.num_face_vertices[f];
@@ -206,17 +202,17 @@ void Mesh::read_from_obj(std::string inputfile) {
       for (int v = 0; v < fv; v++) {
         // access to vertex
         tinyobj::index_t idx = shapes[0].mesh.indices[index_offset + v];
-        tinyobj::real_t vx = attrib.vertices[3*idx.vertex_index+0];
-        tinyobj::real_t vy = attrib.vertices[3*idx.vertex_index+1];
-        tinyobj::real_t vz = attrib.vertices[3*idx.vertex_index+2];
+        tinyobj::real_t vx = attrib.vertices[3 * idx.vertex_index + 0];
+        tinyobj::real_t vy = attrib.vertices[3 * idx.vertex_index + 1];
+        tinyobj::real_t vz = attrib.vertices[3 * idx.vertex_index + 2];
 
         // texture coordinates
         tinyobj::real_t tx = -1;
         tinyobj::real_t ty = -1;
 
         if (texture_available) {
-          tx = attrib.texcoords[2*idx.texcoord_index+0];
-          ty = attrib.texcoords[2*idx.texcoord_index+1];
+          tx = attrib.texcoords[2 * idx.texcoord_index + 0];
+          ty = attrib.texcoords[2 * idx.texcoord_index + 1];
         }
 
         // vertex normals
@@ -225,9 +221,9 @@ void Mesh::read_from_obj(std::string inputfile) {
         tinyobj::real_t nz = 0;
 
         if (vertex_normals_available) {
-          nx = attrib.normals[3*idx.normal_index+0];
-          ny = attrib.normals[3*idx.normal_index+1];
-          nz = attrib.normals[3*idx.normal_index+2];
+          nx = attrib.normals[3 * idx.normal_index + 0];
+          ny = attrib.normals[3 * idx.normal_index + 1];
+          nz = attrib.normals[3 * idx.normal_index + 2];
         }
         // Optional: vertex colors
         // tinyobj::real_t red = attrib.colors[3*idx.vertex_index+0];
@@ -235,9 +231,8 @@ void Mesh::read_from_obj(std::string inputfile) {
         // tinyobj::real_t blue = attrib.colors[3*idx.vertex_index+2];
 
         // insert point into triangle_points
-        triangle_points[v] = vec3(vx +_origin.x,
-                                  vy + _origin.y,
-                                  vz + _origin.z);
+        triangle_points[v] =
+            vec3(vx + _origin.x, vy + _origin.y, vz + _origin.z);
         triangle_points_uv[v] = vec2(tx, ty);
         triangle_normals[v] = vec3(nx, ny, nz);
       }

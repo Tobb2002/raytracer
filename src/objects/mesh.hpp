@@ -6,17 +6,18 @@
 
 #include <iostream>
 #include <vector>
-#include "triangle.hpp"
-#include "box.hpp"
-#include "object.hpp"
-#include "bvh.hpp"
 
-class Mesh : public Object{
+#include "box.hpp"
+#include "bvh.hpp"
+#include "object.hpp"
+#include "triangle.hpp"
+
+class Mesh : public Object {
  public:
   Mesh(std::string input_file, vec3 origin);
   Mesh(std::string input_file, vec3 origin, Material material);
 
-  Mesh(const Mesh &old_mesh);
+  Mesh(const Mesh& old_mesh);
   ~Mesh();
 
   /***** Print Debug information *****/
@@ -27,7 +28,6 @@ class Mesh : public Object{
   /***** Transformations *****/
 
   void apply_transform(mat4 transformation) override;
-
 
   /***** getters *****/
   int get_size(void);
@@ -48,6 +48,6 @@ class Mesh : public Object{
 
   Material _material;
 
-  void update_bounding_box(Triangle * t);
+  void update_bounding_box(Triangle* t);
   void read_from_obj(std::string input_file);
 };

@@ -3,11 +3,10 @@
  */
 
 #include <glm/glm.hpp>
+
 #include "image.hpp"
 #include "scene.hpp"
-
 #include "scenes/performance.hpp"
-
 
 using glm::vec3, glm::vec2;
 

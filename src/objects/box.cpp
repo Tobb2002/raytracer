@@ -3,9 +3,9 @@
  */
 
 #include "box.hpp"
-#include <iostream>
-#include <glm/gtx/string_cast.hpp>
 
+#include <glm/gtx/string_cast.hpp>
+#include <iostream>
 
 Box::Box() {
   _min = vec3(FLT_MAX);
@@ -13,17 +13,15 @@ Box::Box() {
 }
 /**
  * @brief Construct a new Box:: Box object
- * 
+ *
  * @param min vec3 defines min corner.
  * @param max vec3 defines max corner.
  */
-Box::Box(vec3 min, vec3 max) {
-  set_min_max(min, max);
-}
+Box::Box(vec3 min, vec3 max) { set_min_max(min, max); }
 
 /**
  * @brief Set new position and size for the box.
- * 
+ *
  * @param min vec3 defines min corner.
  * @param max vec3 defines max corner.
  */
@@ -36,7 +34,7 @@ void Box::set_min_max(vec3 min, vec3 max) {
 
 /**
  * @brief Update values of min max if nessecary.
- * 
+ *
  * @param min new possible min value.
  * @param max new possible min value.
  */
@@ -62,16 +60,14 @@ void Box::print(void) {
 
 /**
  * @brief Get middle point of the Box.
- * 
- * @return vec3 
+ *
+ * @return vec3
  */
-vec3 Box::get_middle(void) {
-  return (_min + _max) * 0.5f;
-}
+vec3 Box::get_middle(void) { return (_min + _max) * 0.5f; }
 
 /**
  * @brief Ensure that all the min values are smaller than the max values.
- * 
+ *
  */
 void Box::ensure_min_max(void) {
   for (int i = 0; i < 3; i++) {
@@ -85,20 +81,20 @@ void Box::ensure_min_max(void) {
 
 /**
  * @brief Check for intersection with ray.
- * 
+ *
  * @param ray ray to check for intersection.
  * @return true if intersection found.
  * @return false else.
  */
 bool Box::intersect_bool(Ray ray) {
   interval tx = {(_min.x - ray.get_origin().x) / ray.get_direction().x,
-                (_max.x - ray.get_origin().x) / ray.get_direction().x};
+                 (_max.x - ray.get_origin().x) / ray.get_direction().x};
 
   interval ty = {(_min.y - ray.get_origin().y) / ray.get_direction().y,
-                (_max.y - ray.get_origin().y) / ray.get_direction().y};
+                 (_max.y - ray.get_origin().y) / ray.get_direction().y};
 
   interval tz = {(_min.z - ray.get_origin().z) / ray.get_direction().z,
-                (_max.z - ray.get_origin().z) / ray.get_direction().z};
+                 (_max.z - ray.get_origin().z) / ray.get_direction().z};
 
   // overlapping intervals indicate intersection
   // check box intersection

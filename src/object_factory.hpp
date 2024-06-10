@@ -4,8 +4,9 @@
 
 #pragma once
 
-#include "scene.hpp"
 #include <glm/glm.hpp>
+
+#include "scene.hpp"
 
 using glm::vec3;
 
@@ -13,12 +14,8 @@ class ObjectFactory {
  public:
   explicit ObjectFactory(Scene *scene);
 
-  void new_xy_square_light(
-    const vec3 &position,
-    const int &strength,
-    const uint &amount,
-    const float &space);
-
+  void new_xy_square_light(const vec3 &position, const int &strength,
+                           const uint &amount, const float &space);
 
  private:
   Scene *_scene;

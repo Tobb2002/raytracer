@@ -6,17 +6,17 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 
-#include <iostream>
 #include <glm/glm.hpp>
+#include <iostream>
 
-#include "ray.hpp"
 #include "material.hpp"
+#include "ray.hpp"
 #include "transform.hpp"
 
+using glm::mat4;
 using glm::vec2;
 using glm::vec3;
 using glm::vec4;
-using glm::mat4;
 
 /**
  * @brief Datastructure holding all relevant information of an intersection.
@@ -62,9 +62,8 @@ class Object {
 
   void update_view_transform(Transformation view_transform);
 
-
  protected:
-  vec3 _origin;  // standart 0,0,0
+  vec3 _origin;     // standart 0,0,0
   vec3 _direction;  // standart 0,0,1
 
   /***** Transformations *****/

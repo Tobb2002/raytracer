@@ -11,9 +11,9 @@ using glm::vec3;
 // Material propities with standart values.
 /**
  * @brief Definition of a Material.
- * 
+ *
  * Material::diffuse
- * 
+ *
  */
 struct Material {
   /// @brief color of the Material.

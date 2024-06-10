@@ -5,13 +5,12 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "ray.hpp"
-#include "object.hpp"
+
 #include "material.hpp"
+#include "object.hpp"
+#include "ray.hpp"
 
-
-
-class Triangle : public Object{
+class Triangle : public Object {
  public:
   Triangle();
   Triangle(vec3 points[3], Material material);

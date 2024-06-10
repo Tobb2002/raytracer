@@ -4,11 +4,12 @@
 #pragma once
 
 #include <glm/glm.hpp>
+
 #include "ray.hpp"
 #include "transform.hpp"
 
-using glm::vec3;
 using glm::vec2;
+using glm::vec3;
 
 class Camera {
  public:

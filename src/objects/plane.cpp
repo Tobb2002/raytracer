@@ -26,7 +26,7 @@ void Plane::set_start_position(vec3 position, vec3 normal) {
 
 /**
  * @brief Construct a new Plane:: Plane object
- * 
+ *
  * @param position One point on the plane (origin of plane).
  * @param normal normal of the plane.
  * @param material material of the plane.
@@ -41,28 +41,23 @@ Plane::Plane(vec3 position, vec3 normal, Material material) {
 
 /**
  * @brief Construct a new Plane:: Plane object with two materials
- * 
+ *
  * @param position One point on the plane (origin of plane).
  * @param normal normal of the plane.
  * @param material1
  * @param material2
- * 
+ *
  * The plane consits of two materials ordere like a chess board.
  */
-Plane::Plane(vec3 position,
-    vec3 normal,
-    Material material1,
-    Material material2) {
+Plane::Plane(vec3 position, vec3 normal, Material material1,
+             Material material2) {
   set_start_position(position, normal);
 
   _material = material1;
   _material2 = material2;
   _two_colored = true;
 }
-Plane::Plane(vec3 position,
-             vec3 normal,
-             Material material1,
-             Material material2,
+Plane::Plane(vec3 position, vec3 normal, Material material1, Material material2,
              vec2 size) {
   set_start_position(position, normal);
 
@@ -73,8 +68,8 @@ Plane::Plane(vec3 position,
   _size = size;
 }
 
-Plane::Plane(vec3 pos, vec3 normal, Material material,
-             vec2 size, std::string path_to_file) {
+Plane::Plane(vec3 pos, vec3 normal, Material material, vec2 size,
+             std::string path_to_file) {
   set_start_position(pos, normal);
 
   _material = material;
@@ -84,15 +79,13 @@ Plane::Plane(vec3 pos, vec3 normal, Material material,
   _textured = true;
 }
 /***** settings *****/
-void Plane::set_axis(bool enable) {
-  _axis_enable = enable;
-}
+void Plane::set_axis(bool enable) { _axis_enable = enable; }
 
 /***** Intersection *****/
 
 Intersection Plane::intersect(const Ray& ray) {
-  float t = -(glm::dot(ray.get_origin() - _origin, _normal)
-            / glm::dot(ray.get_direction(), _normal));
+  float t = -(glm::dot(ray.get_origin() - _origin, _normal) /
+              glm::dot(ray.get_direction(), _normal));
 
   bool found = false;
   if (t >= 0) {
@@ -100,29 +93,25 @@ Intersection Plane::intersect(const Ray& ray) {
   }
   vec3 point = ray.get_point(t);
   vec3 point_origin = _transform.virtual_to_origin(
-    _transform.transform_point(_view_transform.inv, point));
-  if (_enable_size && (point_origin.x > _size.x ||
-      point_origin.x < -_size.x ||
-      point_origin.y > _size.y ||
-      point_origin.y < -_size.y)) {
+      _transform.transform_point(_view_transform.inv, point));
+  if (_enable_size && (point_origin.x > _size.x || point_origin.x < -_size.x ||
+                       point_origin.y > _size.y || point_origin.y < -_size.y)) {
     found = false;
   }
-  Intersection i = {found, t, point,
-      _normal, get_material(point)};
+  Intersection i = {found, t, point, _normal, get_material(point)};
 
   return i;
 }
 
 /**
- * @brief 
- * 
- * @param point 
- * @return Material 
+ * @brief
+ *
+ * @param point
+ * @return Material
  */
 Material Plane::get_material(vec3 point) {
   // calculate point relative to standart plane (at origin)
-  vec3 point_origin =
-    _transform.virtual_to_origin(
+  vec3 point_origin = _transform.virtual_to_origin(
       _transform.transform_point(_view_transform.inv, point));
 
   if (_textured) {
@@ -147,11 +136,8 @@ Material Plane::get_material(vec3 point) {
       return {.color = vec3(0, 1, 0)};
     }
   }
-  if ((point_origin_mod.x < 2 &&
-      point_origin_mod.y < 2)
-      ||
-      (point_origin_mod.x > 2 &&
-      point_origin_mod.y > 2)) {
+  if ((point_origin_mod.x < 2 && point_origin_mod.y < 2) ||
+      (point_origin_mod.x > 2 && point_origin_mod.y > 2)) {
     return _material;
   } else {
     return _material2;
@@ -180,7 +166,7 @@ void Plane::apply_transform(mat4 transformation) {
 
 /**
  * @brief Set new direction and update rotation matrix.
- * 
+ *
  * @param new_dir
  */
 void Plane::calculate_direction(vec3 new_dir, vec3 old_direction) {
@@ -190,6 +176,4 @@ void Plane::calculate_direction(vec3 new_dir, vec3 old_direction) {
   apply_transform(t);
 }
 
-void Plane::calculate_normal() {
-  _normal = glm::normalize(_point - _origin);
-}
+void Plane::calculate_normal() { _normal = glm::normalize(_point - _origin); }
