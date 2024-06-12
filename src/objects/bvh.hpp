@@ -47,7 +47,7 @@ struct SAH_buckets {
 };
 
 struct split_point {
-  size_t axis = 0;
+  size_t axis = 0;  // axis > 2 --> no valid split
   size_t id = 0;
   bvh_box left;
   bvh_box right;

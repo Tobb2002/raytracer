@@ -164,13 +164,6 @@ bool BVH::update_intersection(Intersection *intersect,
   return false;
 }
 
-/// @brief swap Triangle ids in BVH_data.
-void BVH::swap_triangle(bvh_node_pointer *node1, bvh_node_pointer *node2) {
-  // uint tmp = _data.triangle_ids[id1];
-  // _data.triangle_ids[id1] = _data.triangle_ids[id2];
-  // _data.triangle_ids[id2] = tmp;
-}
-
 uint BVH::get_longest_axis(bvh_node_pointer *node) {
   float longest = 0;
   uint res = 0;
@@ -270,15 +263,13 @@ void BVH::print_node(bvh_node_pointer *node) {
 }
 
 void BVH::print_node_triangles(bvh_node_pointer *node) {
-  // std::cout << "-------bvh_node_triangles------\n";
-  // std::cout << "id: " << id << "\n";
-  // for (size_t i = 0; i < _data.tree[id].count; i++) {
-  //   Triangle *t =
-  //     _data.triangles->data() + (_data.triangle_ids.at(i +
-  //     _data.tree[id].first));
-  //   t->print();
-  // }
-  // std::cout << "----------------------\n";
+  std::cout << "-------bvh_node_triangles------\n";
+  for (uint id : _data.tree.get_data(node)->triangle_ids) {
+    Triangle *t =
+      _data.triangles->data() + id;
+    t->print();
+  }
+  std::cout << "----------------------\n";
 }
 
 /**
@@ -436,7 +427,7 @@ split_point BVH::calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets) {
       }
     }
     if (run_trough) {
-      split.id = -1;  // Fallback to middle split
+      split.axis = 3;  // Fallback to middle split
     }
   }
   return split;
@@ -498,7 +489,7 @@ void BVH::split(bvh_node_pointer *node, const SAH_buckets &buckets,
                 const split_point &splitp) {
   // Split node at triangle with split id
   // update node
-  if (splitp.id == -1) {
+  if (splitp.axis > 2) {
     split_middle_node(node);
     return;
   }
