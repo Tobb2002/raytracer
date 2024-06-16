@@ -54,7 +54,7 @@ docs:
 compile_commands:
 	compiledb --command-style -o src/compile_commands.json make
 
-files = main ray triangle camera image mesh pointlight box plane scene object objloader object_factory transform bvh light sphere texture bvh_tree lbvh
+files = main ray triangle camera image mesh pointlight box plane scene object objloader object_factory transform bvh light sphere texture bvh_tree sah lbvh
 
 targets = $(addsuffix .o,$(addprefix obj/,$(files)))
 

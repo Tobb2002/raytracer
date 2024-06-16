@@ -26,10 +26,10 @@ void BVH::build_tree_axis(std::vector<Triangle> *triangles) {
   for (size_t i = 0; i < size; i++) {
     root_data.triangle_ids.push_back(i);
   }
-  _data.tree = BVH_tree(root_data);
+  _data.tree = BVH_tree(root_data, triangles);
   bvh_node_pointer *root = _data.tree.get_root();
 
-  calculate_bounds(root);
+  _data.tree.calculate_bounds(root);
 
 #ifdef SPLIT_MID
   split_middle(root);
@@ -42,6 +42,7 @@ void BVH::build_tree_axis(std::vector<Triangle> *triangles) {
 
 void BVH::set_triangles(std::vector<Triangle> *triangles) {
   _data.triangles = triangles;
+  _data.tree.set_triangles(triangles);
 }
 
 Intersection BVH::intersect(const Ray &ray) {
@@ -165,86 +166,6 @@ bool BVH::update_intersection(Intersection *intersect,
   return false;
 }
 
-uint BVH::get_longest_axis(bvh_node_pointer *node) {
-  float longest = 0;
-  uint res = 0;
-  for (int i = 0; i < 3; i++) {
-    float length = _data.tree.get_data(node)->bounds.max[i] -
-                   _data.tree.get_data(node)->bounds.min[i];
-    if (length > longest) {
-      longest = length;
-      res = i;
-    }
-  }
-  return res;
-}
-
-bvh_box BVH::update_box(bvh_node_pointer *node) {
-  if (_data.tree.is_leaf(node)) {
-    calculate_bounds(node);
-    return {_data.tree.get_data(node)->bounds.min,
-            _data.tree.get_data(node)->bounds.max};
-  }
-  bvh_box left = update_box(_data.tree.get_left(node));
-  bvh_box right = update_box(_data.tree.get_left(node));
-  update_min(&left.min, right.min);
-  update_max(&left.max, right.max);
-
-  _data.tree.get_data(node)->bounds.min = left.min;
-  _data.tree.get_data(node)->bounds.max = left.max;
-
-  return {_data.tree.get_data(node)->bounds.min,
-          _data.tree.get_data(node)->bounds.max};
-}
-
-/**
- * @brief Goes throug all triangles in node and calculates min value;
- *
- * @param node_id
- * @return vec3
- */
-void BVH::calculate_min(bvh_node_pointer *node) {
-  for (uint i : _data.tree.get_data(node)->triangle_ids) {
-    Triangle *t = (_data.triangles->data() + i);
-    update_min(&_data.tree.get_data(node)->bounds.min, t->get_min_bounding());
-  }
-}
-
-void BVH::calculate_max(bvh_node_pointer *node) {
-  for (uint i : _data.tree.get_data(node)->triangle_ids) {
-    Triangle *t = (_data.triangles->data() + i);
-    update_max(&_data.tree.get_data(node)->bounds.max, t->get_max_bounding());
-  }
-}
-
-void BVH::calculate_bounds(bvh_node_pointer *node) {
-  calculate_min(node);
-  calculate_max(node);
-}
-
-void BVH::update_min(vec3 *min, const vec3 &min_value) {
-  for (int i = 0; i < 3; i++) {
-    // update min
-    if (min_value[i] < (*min)[i]) {
-      (*min)[i] = min_value[i];
-    }
-  }
-}
-
-void BVH::update_max(vec3 *max, const vec3 &max_value) {
-  for (int i = 0; i < 3; i++) {
-    // update min
-    if (max_value[i] > (*max)[i]) {
-      (*max)[i] = max_value[i];
-    }
-  }
-}
-
-void BVH::update_bounds(vec3 *min, const vec3 &min_value, vec3 *max,
-                        const vec3 &max_value) {
-  update_min(min, min_value);
-  update_max(max, max_value);
-}
 
 void BVH::print_node(bvh_node_pointer *node) {
   BVH_node_data *n = _data.tree.get_data(node);
@@ -273,11 +194,6 @@ void BVH::print_node_triangles(bvh_node_pointer *node) {
   std::cout << "----------------------\n";
 }
 
-/**
- * @brief recursivley update the bounding boxes bottom up.
- *
- */
-void BVH::update_boxes() { update_box(0); }
 
 bool comp(BVH_data *data, uint id1, uint id2, uint axis) {
   if (data->triangles->at(id1).get_pos()[axis] <
@@ -339,7 +255,7 @@ void BVH::triangles_into_buckets(bvh_node_pointer *node, SAH_buckets *buckets) {
       // calculate bounding box
       for (uint i : buckets->buckets[a][b].ids) {
         Triangle *t = _data.triangles->data() + i;
-        update_bounds(&buckets->buckets[a][b].box.min, t->get_min_bounding(),
+        _data.tree.update_bounds(&buckets->buckets[a][b].box.min, t->get_min_bounding(),
                       &buckets->buckets[a][b].box.max, t->get_max_bounding());
       }
     }
@@ -360,8 +276,8 @@ bvh_box BVH::combine_box(SAH_buckets *buckets, const uint &axis,
   for (size_t i = bid_min; i <= bid_max; i++) {
     // update bounding box only if there are triangles
     if (buckets->buckets[axis][i].ids.size() > 0) {
-      update_min(&res.min, buckets->buckets[axis][i].box.min);
-      update_max(&res.max, buckets->buckets[axis][i].box.max);
+      _data.tree.update_min(&res.min, buckets->buckets[axis][i].box.min);
+      _data.tree.update_max(&res.max, buckets->buckets[axis][i].box.max);
     }
   }
   return res;
@@ -454,7 +370,7 @@ void BVH::split_middle_node(bvh_node_pointer *node) {
   bvh_node_pointer *node_left = _data.tree.insert_child(data_left, node);
   bvh_node_pointer *node_right = _data.tree.insert_child(data_right, node);
 
-  uint axis = get_longest_axis(node);
+  uint axis = _data.tree.get_longest_axis(node);
 
   uint size = _data.tree.get_data(node)->triangle_ids.size();
 
@@ -470,11 +386,11 @@ void BVH::split_middle_node(bvh_node_pointer *node) {
   }
 
   // calculate bounding boxes
-  calculate_min(node_left);
-  calculate_max(node_left);
+  _data.tree.calculate_min(node_left);
+  _data.tree.calculate_max(node_left);
 
-  calculate_min(node_right);
-  calculate_max(node_right);
+  _data.tree.calculate_min(node_right);
+  _data.tree.calculate_max(node_right);
 
   _data.tree.free_triangles(node);
 }

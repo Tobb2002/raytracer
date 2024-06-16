@@ -5,19 +5,22 @@
 
 #include <stdexcept>
 
-BVH_tree::BVH_tree(BVH_node_data root_data) {
+BVH_tree::BVH_tree(BVH_node_data root_data, std::vector<Triangle> *triangles) {
   root = new bvh_node_pointer;
   root->data = root_data;
+  _triangles = triangles;
 }
 
 /// @brif copy_constructor to initialize new tree
 BVH_tree::BVH_tree(const BVH_tree& old_tree) {
   triangles_flat = old_tree.triangles_flat;
+  _triangles = old_tree._triangles;
   root = copy_node(old_tree.root);
 }
 
 BVH_tree& BVH_tree::operator=(const BVH_tree& old_tree) {
   triangles_flat = old_tree.triangles_flat;
+  _triangles = old_tree._triangles;
   root = copy_node(old_tree.root);
   return *this;
 }
@@ -34,6 +37,10 @@ bvh_node_pointer* BVH_tree::copy_node(bvh_node_pointer* old_node) {
 }
 
 BVH_tree::~BVH_tree() { destroy_tree(); }
+
+void BVH_tree::set_triangles(std::vector<Triangle> *triangles) {
+  _triangles = triangles;
+}
 
 bvh_node_pointer* BVH_tree::insert_child(BVH_node_data data,
                                          bvh_node_pointer* node) {
@@ -86,6 +93,89 @@ BVH_node_data* BVH_tree::get_data(bvh_node_pointer* node) {
     throw std::runtime_error("Node does not exist!");
   }
   return &node->data;
+}
+
+// ----------------------------------------------------------------------------
+// Operations
+uint BVH_tree::get_longest_axis(bvh_node_pointer *node) {
+  float longest = 0;
+  uint res = 0;
+  for (int i = 0; i < 3; i++) {
+    float length = get_data(node)->bounds.max[i] -
+                   get_data(node)->bounds.min[i];
+    if (length > longest) {
+      longest = length;
+      res = i;
+    }
+  }
+  return res;
+}
+
+bvh_box BVH_tree::update_box(bvh_node_pointer *node) {
+  if (is_leaf(node)) {
+    calculate_bounds(node);
+    return {get_data(node)->bounds.min,
+            get_data(node)->bounds.max};
+  }
+  bvh_box left = update_box(get_left(node));
+  bvh_box right = update_box(get_left(node));
+  update_min(&left.min, right.min);
+  update_max(&left.max, right.max);
+
+  get_data(node)->bounds.min = left.min;
+  get_data(node)->bounds.max = left.max;
+
+  return {get_data(node)->bounds.min,
+          get_data(node)->bounds.max};
+}
+
+/**
+ * @brief Goes throug all triangles in node and calculates min value;
+ *
+ * @param node_id
+ * @return vec3
+ */
+void BVH_tree::calculate_min(bvh_node_pointer *node) {
+  for (uint i : get_data(node)->triangle_ids) {
+    Triangle *t = (_triangles->data() + i);
+    update_min(&get_data(node)->bounds.min, t->get_min_bounding());
+  }
+}
+
+void BVH_tree::calculate_max(bvh_node_pointer *node) {
+  for (uint i : get_data(node)->triangle_ids) {
+    Triangle *t = (_triangles->data() + i);
+    update_max(&get_data(node)->bounds.max, t->get_max_bounding());
+  }
+}
+
+void BVH_tree::calculate_bounds(bvh_node_pointer *node) {
+  calculate_min(node);
+  calculate_max(node);
+}
+
+void BVH_tree::update_min(vec3 *min, const vec3 &min_value) {
+  for (int i = 0; i < 3; i++) {
+    // update min
+    if (min_value[i] < (*min)[i]) {
+      (*min)[i] = min_value[i];
+    }
+  }
+}
+
+void BVH_tree::update_max(vec3 *max, const vec3 &max_value) {
+  for (int i = 0; i < 3; i++) {
+    // update min
+    if (max_value[i] > (*max)[i]) {
+      (*max)[i] = max_value[i];
+    }
+  }
+}
+
+void BVH_tree::update_bounds(vec3 *min, const vec3 &min_value, vec3 *max,
+                        const vec3 &max_value) {
+  update_min(min, min_value);
+  update_max(max, max_value);
 }
 
 bvh_node_flat* BVH_tree::get_left(bvh_node_flat* node) {}

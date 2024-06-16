@@ -7,13 +7,9 @@
 #include <vector>
 
 #include "bvh_tree.hpp"
+#include "sah.hpp"
 #include "ray.hpp"
 #include "triangle.hpp"
-
-#define SAH_NUM_BUCKETS 13
-
-#define COST_TRAVERSAL 1
-#define COST_INTERSECT 1
 
 using glm::vec3;
 
@@ -25,32 +21,6 @@ struct Triangle_set {
 struct Interval {
   float min;
   float max;
-};
-
-/// @brief Axis (X, Y, Z)
-enum Axis { X, Y, Z };
-
-/**
- * @class SAH_bucket
- * @brief Sturct holding all the information of a bucket
- *
- */
-struct SAH_bucket {
-  std::vector<uint> ids;
-  bvh_box box;
-  float cost;
-};
-
-/// @brief Struct containing two-dimensional array of all buckets
-struct SAH_buckets {
-  SAH_bucket buckets[3][SAH_NUM_BUCKETS];
-};
-
-struct split_point {
-  size_t axis = 0;  // axis > 2 --> no valid split
-  size_t id = 0;
-  bvh_box left;
-  bvh_box right;
 };
 
 /// @brief struct for BVH arrays data.
@@ -76,19 +46,8 @@ class BVH {
   /// @brief swaps to triangle ids in BVHdata
   void swap_triangle(bvh_node_pointer *node1, bvh_node_pointer *node2);
 
-  /// @brief get longest axis of bounding box.
-  uint get_longest_axis(bvh_node_pointer *node);
 
-  bvh_box update_box(bvh_node_pointer *node);
 
-  void calculate_min(bvh_node_pointer *node);
-  void calculate_max(bvh_node_pointer *node);
-  void calculate_bounds(bvh_node_pointer *node);
-
-  void update_min(vec3 *min, const vec3 &min_value);
-  void update_max(vec3 *min, const vec3 &min_value);
-  void update_bounds(vec3 *min, const vec3 &min_value, vec3 *max,
-                     const vec3 &max_value);
 
   uint get_lowest_hitbox();
 
@@ -131,6 +90,7 @@ class BVH {
   void print_node(bvh_node_pointer *node);
   void print_node_triangles(bvh_node_pointer *node);
 
+  void update_boxes() { _data.tree.update_box(0); }
   /***** SAH ******/
 
   split_point calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets);
@@ -148,5 +108,4 @@ class BVH {
    * @param t Transformation matrix
    */
   void apply_transform(const mat4 &t);
-  void update_boxes();
 };

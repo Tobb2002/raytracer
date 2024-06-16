@@ -4,6 +4,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <vector>
+#include "triangle.hpp"
 
 using glm::vec3;
 
@@ -38,11 +39,13 @@ union bvh_node {
 class BVH_tree {
  public:
   BVH_tree() {}
-  explicit BVH_tree(BVH_node_data root_data);
+  explicit BVH_tree(BVH_node_data root_data, std::vector<Triangle> *triangles);
   BVH_tree(const BVH_tree& old_tree);
   BVH_tree& operator=(const BVH_tree& old_tree);
   bvh_node_pointer* copy_node(bvh_node_pointer* old_node);
   ~BVH_tree();
+
+  void set_triangles(std::vector<Triangle> *triangles);
 
   /// inserts data to first free child (left, right) ASSERTION if both full
   bvh_node_pointer* insert_child(BVH_node_data data, bvh_node_pointer* node);
@@ -54,6 +57,24 @@ class BVH_tree {
   bvh_node_pointer* get_right(bvh_node_pointer* node);
 
   BVH_node_data* get_data(bvh_node_pointer* node);
+
+  // --------------------------------------------------------------------------
+  // operations
+
+  void calculate_min(bvh_node_pointer *node);
+  void calculate_max(bvh_node_pointer *node);
+  void calculate_bounds(bvh_node_pointer *node);
+
+  void update_min(vec3 *min, const vec3 &min_value);
+  void update_max(vec3 *min, const vec3 &min_value);
+  void update_bounds(vec3 *min, const vec3 &min_value, vec3 *max,
+                     const vec3 &max_value);
+
+  /// @brief get longest axis of bounding box.
+  uint get_longest_axis(bvh_node_pointer *node);
+
+  bvh_box update_box(bvh_node_pointer *node);
+  void update_boxes();
 
   // operations on flattend tree
 
@@ -69,10 +90,12 @@ class BVH_tree {
 
   void flatten();
   // void build_from_flattened();
+
  private:
   void destroy_node(bvh_node_pointer* node);
   void destroy_tree();
 
   std::vector<bvh_node_flat> triangles_flat;
   bvh_node_pointer* root = nullptr;
+  std::vector<Triangle> *_triangles;
 };
