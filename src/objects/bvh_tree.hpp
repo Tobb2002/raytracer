@@ -70,6 +70,8 @@ class BVH_tree {
   void update_bounds(vec3 *min, const vec3 &min_value, vec3 *max,
                      const vec3 &max_value);
 
+  Triangle *get_triangle(uint id);
+
   /// @brief get longest axis of bounding box.
   uint get_longest_axis(bvh_node_pointer *node);
 

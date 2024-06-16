@@ -51,23 +51,9 @@ class BVH {
 
   uint get_lowest_hitbox();
 
-  /// @brief sorts the array beetween first and first + count INPLACE
-  void sort(std::vector<uint>::iterator begin, const uint &count,
-            const uint &axis);
-
-  /// @brief Splits node a long longest axis
-  void triangles_into_buckets(bvh_node_pointer *node, SAH_buckets *buckets);
-
-  void split_middle(bvh_node_pointer *node);
-  void split_middle_node(bvh_node_pointer *node);
-  void split_SAH(bvh_node_pointer *node);
-  void split(bvh_node_pointer *node, const SAH_buckets &buckets,
-             const split_point &splitp);
 
   /// @brief calculate costs of given split
   float get_cost();
-
-  uint _max_triangles = 1;
 
   uint _intersect_count = 0;
 
@@ -91,14 +77,6 @@ class BVH {
   void print_node_triangles(bvh_node_pointer *node);
 
   void update_boxes() { _data.tree.update_box(0); }
-  /***** SAH ******/
-
-  split_point calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets);
-  bvh_box combine_box(SAH_buckets *buckets, const uint &axis, const uint &min,
-                      const uint &max);
-  void combine_ids(std::vector<uint> *result, const SAH_buckets &buckets,
-                   const uint &axis, const uint &min, const uint &max);
-  float get_surface_area(const bvh_box &box);
 
   /***** Transformation *****/
 

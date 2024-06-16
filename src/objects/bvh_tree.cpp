@@ -97,6 +97,7 @@ BVH_node_data* BVH_tree::get_data(bvh_node_pointer* node) {
 
 // ----------------------------------------------------------------------------
 // Operations
+
 uint BVH_tree::get_longest_axis(bvh_node_pointer *node) {
   float longest = 0;
   uint res = 0;
@@ -176,6 +177,10 @@ void BVH_tree::update_bounds(vec3 *min, const vec3 &min_value, vec3 *max,
                         const vec3 &max_value) {
   update_min(min, min_value);
   update_max(max, max_value);
+}
+
+Triangle * BVH_tree::get_triangle(uint id) {
+  return _triangles->data() + id;
 }
 
 bvh_node_flat* BVH_tree::get_left(bvh_node_flat* node) {}
