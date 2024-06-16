@@ -7,8 +7,8 @@
 #include <vector>
 
 #include "bvh_tree.hpp"
-#include "sah.hpp"
 #include "ray.hpp"
+#include "sah.hpp"
 #include "triangle.hpp"
 
 using glm::vec3;
@@ -46,11 +46,7 @@ class BVH {
   /// @brief swaps to triangle ids in BVHdata
   void swap_triangle(bvh_node_pointer *node1, bvh_node_pointer *node2);
 
-
-
-
   uint get_lowest_hitbox();
-
 
   /// @brief calculate costs of given split
   float get_cost();

@@ -4,12 +4,10 @@
 
 #include "sah.hpp"
 
-#include <boost/lambda/bind.hpp>
 #include <algorithm>
+#include <boost/lambda/bind.hpp>
 
-SAH::SAH(BVH_tree *tree) {
-  _tree = tree;
-}
+SAH::SAH(BVH_tree *tree) { _tree = tree; }
 
 bool comp(BVH_tree *tree, uint id1, uint id2, uint axis) {
   if (tree->get_triangle(id1)->get_pos()[axis] <
@@ -71,8 +69,9 @@ void SAH::triangles_into_buckets(bvh_node_pointer *node, SAH_buckets *buckets) {
       // calculate bounding box
       for (uint i : buckets->buckets[a][b].ids) {
         Triangle *t = _tree->get_triangle(i);
-        _tree->update_bounds(&buckets->buckets[a][b].box.min, t->get_min_bounding(),
-                      &buckets->buckets[a][b].box.max, t->get_max_bounding());
+        _tree->update_bounds(
+            &buckets->buckets[a][b].box.min, t->get_min_bounding(),
+            &buckets->buckets[a][b].box.max, t->get_max_bounding());
       }
     }
   }
@@ -235,10 +234,10 @@ void SAH::split(bvh_node_pointer *node, const SAH_buckets &buckets,
   bvh_node_pointer *node_left = _tree->insert_child(data_left, node);
   bvh_node_pointer *node_right = _tree->insert_child(data_right, node);
 
-  combine_ids(&_tree->get_data(node_left)->triangle_ids, buckets,
-              splitp.axis, 0, splitp.id);
-  combine_ids(&_tree->get_data(node_right)->triangle_ids, buckets,
-              splitp.axis, splitp.id + 1, SAH_NUM_BUCKETS - 1);
+  combine_ids(&_tree->get_data(node_left)->triangle_ids, buckets, splitp.axis,
+              0, splitp.id);
+  combine_ids(&_tree->get_data(node_right)->triangle_ids, buckets, splitp.axis,
+              splitp.id + 1, SAH_NUM_BUCKETS - 1);
 
   _tree->get_data(node_left)->bounds.min = splitp.left.min;
   _tree->get_data(node_left)->bounds.max = splitp.left.max;

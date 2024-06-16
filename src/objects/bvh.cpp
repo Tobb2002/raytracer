@@ -30,12 +30,12 @@ void BVH::build_tree_axis(std::vector<Triangle> *triangles) {
   _data.tree.calculate_bounds(root);
 
 #ifdef SPLIT_MID
-  SAH sah = SAH(&_data.tree); 
+  SAH sah = SAH(&_data.tree);
   sah.split_middle(root);
 #endif
 
 #ifdef SPLIT_SAH
-  SAH sah = SAH(&_data.tree); 
+  SAH sah = SAH(&_data.tree);
   sah.split(root);
 #endif
 }
@@ -166,7 +166,6 @@ bool BVH::update_intersection(Intersection *intersect,
   return false;
 }
 
-
 void BVH::print_node(bvh_node_pointer *node) {
   BVH_node_data *n = _data.tree.get_data(node);
 
@@ -174,11 +173,11 @@ void BVH::print_node(bvh_node_pointer *node) {
   std::cout << "count: " << n->triangle_ids.size() << "\n";
   std::cout << "min: " << glm::to_string(n->bounds.min) << "\n";
   std::cout << "max: " << glm::to_string(n->bounds.max) << "\n";
-  std::cout << "leaf: " << _data.tree.is_leaf(node)<< "\n";
+  std::cout << "leaf: " << _data.tree.is_leaf(node) << "\n";
 
   // triangle ids
   for (uint id : _data.tree.get_data(node)->triangle_ids) {
-    std::cout << id <<",";
+    std::cout << id << ",";
   }
   std::cout << "\n";
   std::cout << "----------------------\n";
@@ -187,11 +186,8 @@ void BVH::print_node(bvh_node_pointer *node) {
 void BVH::print_node_triangles(bvh_node_pointer *node) {
   std::cout << "-------bvh_node_triangles------\n";
   for (uint id : _data.tree.get_data(node)->triangle_ids) {
-    Triangle *t =
-      _data.triangles->data() + id;
+    Triangle *t = _data.triangles->data() + id;
     t->print();
   }
   std::cout << "----------------------\n";
 }
-
-

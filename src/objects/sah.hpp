@@ -2,7 +2,6 @@
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
 
-
 #include "bvh_tree.hpp"
 
 #define SAH_NUM_BUCKETS 13
@@ -36,7 +35,7 @@ struct split_point {
 class SAH {
  public:
   explicit SAH(BVH_tree *tree);
-  
+
   void split_middle(bvh_node_pointer *node);
   void split(bvh_node_pointer *node);
 

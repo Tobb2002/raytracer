@@ -37,6 +37,9 @@ source_hpp = $(call rwildcard, src, *.hpp)
 checkstyle:
 	cclint --filter=-build/include,-build/header_guard,-build/c++11 $(source_cpp) $(source_hpp)
 
+format:
+	clang-format -i -style=google $(source_cpp) $(source_hpp)
+
 run: compile
 	./bin/main
 

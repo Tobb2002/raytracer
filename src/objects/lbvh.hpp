@@ -2,14 +2,15 @@
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
 
-#include "bvh_tree.hpp"
 #include <cstdint>
 #include <glm/glm.hpp>
+
+#include "bvh_tree.hpp"
 
 using glm::vec3;
 
 // number of zells to divide space in one dimension
-#define GRID_SIZE 1024 // 2^10 --> morton code fits in uint32
+#define GRID_SIZE 1024  // 2^10 --> morton code fits in uint32
 
 struct morton_data {
   uint triangle_id;
@@ -24,14 +25,14 @@ class LBVH {
 
  private:
   /**
-   * @brief convert float to an integer number considering decimal places. 
+   * @brief convert float to an integer number considering decimal places.
    *
-   * @param f 
+   * @param f
    */
   uint64_t float_to_int(float f);
-  
+
   uint64_t split3(uint64_t i);
-  
+
   /**
    * @brief return morton value for a given vector.
    *
@@ -41,6 +42,3 @@ class LBVH {
 
   BVH_tree *_tree;
 };
-
-
-
