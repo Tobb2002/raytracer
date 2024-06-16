@@ -12,6 +12,7 @@
 #include <glm/gtx/string_cast.hpp>
 
 #include "bvh.hpp"
+#include "lbvh.hpp"
 
 #define SPLIT_SAH  // SPLIT_MID, SPLIT_SAH, ...
 
