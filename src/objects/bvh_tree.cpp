@@ -13,13 +13,13 @@ BVH_tree::BVH_tree(BVH_node_data root_data, std::vector<Triangle>* triangles) {
 
 /// @brif copy_constructor to initialize new tree
 BVH_tree::BVH_tree(const BVH_tree& old_tree) {
-  triangles_flat = old_tree.triangles_flat;
+  _triangles_flat = old_tree._triangles_flat;
   _triangles = old_tree._triangles;
   root = copy_node(old_tree.root);
 }
 
 BVH_tree& BVH_tree::operator=(const BVH_tree& old_tree) {
-  triangles_flat = old_tree.triangles_flat;
+  _triangles_flat = old_tree._triangles_flat;
   _triangles = old_tree._triangles;
   root = copy_node(old_tree.root);
   return *this;
@@ -72,7 +72,7 @@ bvh_node_pointer* BVH_tree::get_root() {
   return root;
 }
 
-bvh_node_flat* BVH_tree::get_root_flat() { return triangles_flat.data(); }
+bvh_node_flat* BVH_tree::get_root_flat() { return _triangles_flat.data(); }
 
 bvh_node_pointer* BVH_tree::get_left(bvh_node_pointer* node) {
   if (node == nullptr || node->left == nullptr) {
@@ -179,10 +179,20 @@ void BVH_tree::update_bounds(vec3* min, const vec3& min_value, vec3* max,
 
 Triangle* BVH_tree::get_triangle(uint id) { return _triangles->data() + id; }
 
-bvh_node_flat* BVH_tree::get_left(bvh_node_flat* node) {}
-bvh_node_flat* BVH_tree::get_right(bvh_node_flat* node) {}
+uint BVH_tree::get_left(uint id_flat) {
+  return id_flat + 1;
+}
+uint BVH_tree::get_right(uint id_flat) {
+  return id_flat + get_node(id_flat)->offset_right;
+}
 
-bvh_node_flat* BVH_tree::get_data(bvh_node_flat* node) {}
+bvh_node_flat* BVH_tree::get_node(uint id_flat) {
+  return _triangles_flat.data() + id_flat;
+}
+
+BVH_node_data* BVH_tree::get_data(uint id_flat) {
+  return &(_triangles_flat.data() + id_flat)->data;
+}
 
 bool BVH_tree::is_leaf(bvh_node_pointer* node) {
   if (!node->left && !node->right) {
@@ -194,7 +204,27 @@ void BVH_tree::free_triangles(bvh_node_pointer* node) {
   node->data.triangle_ids.clear();
 }
 
-void BVH_tree::flatten() {}
+void BVH_tree::flatten_tree(){
+  // traverse in depth first search order and append items to array.
+  flatten_node(get_root());
+  destroy_tree();
+}
+
+uint BVH_tree::flatten_node(bvh_node_pointer* node) {
+  uint index = _triangles_flat.size();
+  bvh_node_flat data = bvh_node_flat(node->data, 0, is_leaf(node));
+  _triangles_flat.push_back(data);
+
+  if (is_leaf(node)) {
+    return index;
+  }
+  flatten_node(get_left(node));
+  uint index_right = flatten_node(get_right(node));
+
+  (_triangles_flat.data() + index)->offset_right = index_right - index;
+
+  return index;
+}
 // private
 
 void BVH_tree::destroy_node(bvh_node_pointer* node) {
@@ -207,4 +237,7 @@ void BVH_tree::destroy_node(bvh_node_pointer* node) {
   // destroy this node
   delete node;
 }
-void BVH_tree::destroy_tree() { destroy_node(root); }
+void BVH_tree::destroy_tree() {
+  destroy_node(root);
+  root = nullptr;
+}

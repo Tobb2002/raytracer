@@ -30,6 +30,7 @@ struct bvh_node_pointer {
 struct bvh_node_flat {
   BVH_node_data data;
   uint offset_right;
+  bool is_leaf;
 };
 
 union bvh_node {
@@ -81,24 +82,31 @@ class BVH_tree {
 
   // operations on flattend tree
 
-  bvh_node_flat* get_left(bvh_node_flat* node);
-  bvh_node_flat* get_right(bvh_node_flat* node);
+  uint get_left(uint id_flat);
+  uint get_right(uint id_flat);
 
-  bvh_node_flat* get_data(bvh_node_flat* node);
+  BVH_node_data* get_data(uint id_flat);
+  bvh_node_flat* get_node(uint id_flat);
 
   bool is_leaf(bvh_node_pointer* node);
   void free_triangles(bvh_node_pointer* node);
 
   void print_inorder();
 
-  void flatten();
+    
+  /**
+   * @brief Saves the tree content in depth first search order into an array.
+   */
+  void flatten_tree();
   // void build_from_flattened();
 
  private:
   void destroy_node(bvh_node_pointer* node);
   void destroy_tree();
 
-  std::vector<bvh_node_flat> triangles_flat;
+  uint flatten_node(bvh_node_pointer* node);
+
+  std::vector<bvh_node_flat> _triangles_flat;
   bvh_node_pointer* root = nullptr;
   std::vector<Triangle>* _triangles;
 };
