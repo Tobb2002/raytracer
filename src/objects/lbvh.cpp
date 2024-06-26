@@ -22,23 +22,11 @@ uint64_t LBVH::split3(uint32_t i) {
 
   // for explenation
   // see:https://www.forceflow.be/2013/10/07/morton-encodingdecoding-through-bit-interleaving-implementations/
-  //
-  res =
-      (res | res << 32) &
-      0x1f00000000ffff;  // shift left 32 bits, OR with self, and
-                         // 00011111000000000000000000000000000000001111111111111111
-  res =
-      (res | res << 16) &
-      0x1f0000ff0000ff;  // shift left 32 bits, OR with self, and
-                         // 00011111000000000000000011111111000000000000000011111111
-  res =
-      (res | res << 8) &
-      0x100f00f00f00f00f;  // shift left 32 bits, OR with self, and
-                           // 0001000000001111000000001111000000001111000000001111000000000000
-  res =
-      (res | res << 4) &
-      0x10c30c30c30c30c3;  // shift left 32 bits, OR with self, and
-                           // 0001000011000011000011000011000011000011000011000011000100000000
+
+  res = (res | res << 32) & 0x1f00000000ffff;
+  res = (res | res << 16) & 0x1f0000ff0000ff;
+  res = (res | res << 8) & 0x100f00f00f00f00f;
+  res = (res | res << 4) & 0x10c30c30c30c30c3;
   res = (res | res << 2) & 0x1249249249249249;
 
   return res;
