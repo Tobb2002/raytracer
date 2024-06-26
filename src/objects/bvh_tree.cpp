@@ -179,9 +179,7 @@ void BVH_tree::update_bounds(vec3* min, const vec3& min_value, vec3* max,
 
 Triangle* BVH_tree::get_triangle(uint id) { return _triangles->data() + id; }
 
-uint BVH_tree::get_left(uint id_flat) {
-  return id_flat + 1;
-}
+uint BVH_tree::get_left(uint id_flat) { return id_flat + 1; }
 uint BVH_tree::get_right(uint id_flat) {
   return id_flat + get_node(id_flat)->offset_right;
 }
@@ -204,7 +202,7 @@ void BVH_tree::free_triangles(bvh_node_pointer* node) {
   node->data.triangle_ids.clear();
 }
 
-void BVH_tree::flatten_tree(){
+void BVH_tree::flatten_tree() {
   // traverse in depth first search order and append items to array.
   flatten_node(get_root());
   destroy_tree();

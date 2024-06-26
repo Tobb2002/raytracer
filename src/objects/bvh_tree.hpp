@@ -93,7 +93,6 @@ class BVH_tree {
 
   void print_inorder();
 
-    
   /**
    * @brief Saves the tree content in depth first search order into an array.
    */
