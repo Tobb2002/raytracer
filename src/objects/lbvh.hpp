@@ -26,11 +26,6 @@ class LBVH {
   explicit LBVH(BVH_tree *tree);
 
   /**
-   * @brief Sort the triangles according to their position (morton codes)
-   */
-  void sort();
-
-  /**
    * @brief Build tree from sorted triangles in root node.
    */
   void build();
@@ -58,6 +53,15 @@ class LBVH {
    * @param v input vector. with values between 0,1
    */
   uint64_t get_morton_value(vec3 v);
+
+  /**
+   * @brief Sort the triangles according to their position (morton codes)
+   */
+  void sort();
+
+  void generate_morton_codes();
+
+  void split_first_bit();
 
   BVH_tree *_tree;
   // Saves morton code for triangle with id i at index i

@@ -42,6 +42,8 @@ void BVH_tree::set_triangles(std::vector<Triangle>* triangles) {
   _triangles = triangles;
 }
 
+std::vector<Triangle>* BVH_tree::get_triangle_vec() { return _triangles; }
+
 bvh_node_pointer* BVH_tree::insert_child(BVH_node_data data,
                                          bvh_node_pointer* node) {
   if (node == nullptr) {

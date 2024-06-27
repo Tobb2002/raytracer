@@ -5,6 +5,8 @@
 
 #include <cstdint>
 #include <glm/gtx/string_cast.hpp>
+#include <boost/lambda/bind.hpp>
+#include <algorithm>
 
 #include "bvh_tree.hpp"
 
@@ -41,4 +43,46 @@ uint64_t LBVH::get_morton_value(vec3 v) {
   return res;
 }
 
-void LBVH::build() {}
+void LBVH::generate_morton_codes() {
+  for (size_t i = 0; i < _tree->get_triangle_vec()->size(); i++) {
+    Triangle *t = _tree->get_triangle(i);
+    // get normalized triangle position dependent on bounding box
+    vec3 pos = t->get_pos();
+    vec3 bounds_min = _tree->get_data(_tree->get_root())->bounds.min;
+    vec3 bounds_max = _tree->get_data(_tree->get_root())->bounds.max;
+
+    vec3 pos_normalized = (pos - bounds_min) / (bounds_max - bounds_min);
+
+    // save respective morten code trianlge with id i -> morton code at index i
+    _morton_codes.push_back(get_morton_value(pos_normalized));
+  }
+}
+
+bool comp(std::vector<uint64_t> *morton_codes, uint id1, uint id2) {
+  if (morton_codes->at(id1) < morton_codes->at(id2)) {
+    return true;
+  }
+  return false;
+}
+
+void LBVH::sort() {
+  namespace boo = boost::lambda;
+
+  BVH_node_data *data = _tree->get_data(_tree->get_root());
+  
+  std::vector<uint>::iterator it = data->triangle_ids.begin();
+  std::sort(it, it + data->triangle_ids.size(),
+            boo::bind(&comp, &_morton_codes, boo::_1, boo::_2));
+}
+
+void LBVH::split_first_bit() {}
+
+void LBVH::build() {
+  generate_morton_codes();
+  sort();
+  
+  for (uint id : _tree->get_data(_tree->get_root())->triangle_ids) {
+    std::cout << _morton_codes.at(id) << "\n";
+  }
+  split_first_bit();
+}

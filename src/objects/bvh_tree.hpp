@@ -49,6 +49,8 @@ class BVH_tree {
 
   void set_triangles(std::vector<Triangle>* triangles);
 
+  std::vector<Triangle>* get_triangle_vec();
+
   /// inserts data to first free child (left, right) ASSERTION if both full
   bvh_node_pointer* insert_child(BVH_node_data data, bvh_node_pointer* node);
 

@@ -43,6 +43,7 @@ void BVH::build_tree_axis(std::vector<Triangle> *triangles) {
   LBVH l = LBVH(&_data.tree);
   // lbvh.sort();
   l.build();
+  _data.tree.flatten_tree();
 #endif
 }
 
