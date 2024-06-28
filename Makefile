@@ -40,6 +40,9 @@ checkstyle:
 format:
 	clang-format -i -style=google $(source_cpp) $(source_hpp)
 
+stats:
+	cloc $(source_cpp) $(source_hpp)
+
 run: compile
 	./bin/main
 

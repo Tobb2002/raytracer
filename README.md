@@ -11,3 +11,4 @@ the system:
 
 - [cclint](https://github.com/ollix/cclint) optional for style checking
 - [compiledb](https://pypi.org/project/compiledb/) optional for generating compile commands
+- [cloc](https://github.com/AlDanial/cloc) optional for code statistics
