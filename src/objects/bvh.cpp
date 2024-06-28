@@ -32,6 +32,7 @@ void BVH::build_tree_axis(std::vector<Triangle> *triangles) {
 #ifdef SPLIT_MID
   SAH sah = SAH(&_data.tree);
   sah.split_middle(root);
+  _data.tree.flatten_tree();
 #endif
 
 #ifdef SPLIT_SAH
