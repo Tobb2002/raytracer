@@ -7,6 +7,8 @@
 
 #include "triangle.hpp"
 
+#define MAX_TRIANGLES 1
+
 using glm::vec3;
 
 struct bvh_box {

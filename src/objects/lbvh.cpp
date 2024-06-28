@@ -69,20 +69,75 @@ void LBVH::sort() {
   namespace boo = boost::lambda;
 
   BVH_node_data *data = _tree->get_data(_tree->get_root());
-  
+
   std::vector<uint>::iterator it = data->triangle_ids.begin();
   std::sort(it, it + data->triangle_ids.size(),
             boo::bind(&comp, &_morton_codes, boo::_1, boo::_2));
 }
 
-void LBVH::split_first_bit() {}
+void LBVH::split(bvh_node_pointer *node, uint split_id) {
+  // asing child nodes
+  BVH_node_data data_left;
+  BVH_node_data data_right;
+
+  bvh_node_pointer *node_left = _tree->insert_child(data_left, node);
+  bvh_node_pointer *node_right = _tree->insert_child(data_right, node);
+
+  // push back triangles
+  BVH_node_data *data = _tree->get_data(node);
+  size_t size = _tree->get_data(node)->triangle_ids.size();
+  for (size_t i = 0; i < size; i++) {
+    if (i < split_id) {
+      node_left->data.triangle_ids.push_back(data->triangle_ids.at(i));
+    }
+    else {
+      node_right->data.triangle_ids.push_back(data->triangle_ids.at(i));
+    }
+  }
+
+  // calculate bounding boxes
+  _tree->calculate_min(node_left);
+  _tree->calculate_max(node_left);
+
+  _tree->calculate_min(node_right);
+  _tree->calculate_max(node_right);
+
+  _tree->free_triangles(node);
+}
+
+void LBVH::split_first_bit(bvh_node_pointer *node, uint current_bit) {
+
+  BVH_node_data *data = _tree->get_data(node);
+
+  uint first_id = _tree->get_data(node)->triangle_ids.at(0);
+  size_t size = _tree->get_data(node)->triangle_ids.size();
+
+  if (size <= MAX_TRIANGLES) {
+    return;
+  }
+  //std::cout << "curren_bit: " << current_bit << "\n";
+  for (size_t i = current_bit; i > 0; i --) {
+    bool first_bit = _morton_codes.at(first_id) & (1 << i); 
+    for (size_t a = 0; a < size; a++) {
+      uint id = _tree->get_data(node)->triangle_ids.at(a);
+      bool sig_bit = _morton_codes.at(id) & (1 << i); 
+      // iterate until most significant bit is different
+      if (sig_bit != first_bit) {
+        split(node,a);
+
+        split_first_bit(_tree->get_left(node), i - 1);
+        split_first_bit(_tree->get_right(node), i - 1);
+        return;
+      }
+    }
+  }
+  // no split all childs should stay in the same child node 
+
+}
 
 void LBVH::build() {
   generate_morton_codes();
   sort();
-  
-  for (uint id : _tree->get_data(_tree->get_root())->triangle_ids) {
-    std::cout << _morton_codes.at(id) << "\n";
-  }
-  split_first_bit();
+  split_first_bit(_tree->get_root(),
+                  GRID_SIZE * 3); // highest bit of morton code
 }
