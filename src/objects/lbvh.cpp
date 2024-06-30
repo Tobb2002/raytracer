@@ -3,10 +3,10 @@
  */
 #include "lbvh.hpp"
 
+#include <algorithm>
+#include <boost/lambda/bind.hpp>
 #include <cstdint>
 #include <glm/gtx/string_cast.hpp>
-#include <boost/lambda/bind.hpp>
-#include <algorithm>
 
 #include "bvh_tree.hpp"
 
@@ -89,8 +89,7 @@ void LBVH::split(bvh_node_pointer *node, uint split_id) {
   for (size_t i = 0; i < size; i++) {
     if (i < split_id) {
       node_left->data.triangle_ids.push_back(data->triangle_ids.at(i));
-    }
-    else {
+    } else {
       node_right->data.triangle_ids.push_back(data->triangle_ids.at(i));
     }
   }
@@ -106,7 +105,6 @@ void LBVH::split(bvh_node_pointer *node, uint split_id) {
 }
 
 void LBVH::split_first_bit(bvh_node_pointer *node, uint current_bit) {
-
   BVH_node_data *data = _tree->get_data(node);
 
   uint first_id = _tree->get_data(node)->triangle_ids.at(0);
@@ -115,15 +113,15 @@ void LBVH::split_first_bit(bvh_node_pointer *node, uint current_bit) {
   if (size <= MAX_TRIANGLES) {
     return;
   }
-  //std::cout << "curren_bit: " << current_bit << "\n";
-  for (size_t i = current_bit; i > 0; i --) {
-    bool first_bit = _morton_codes.at(first_id) & (1 << i); 
+  // std::cout << "curren_bit: " << current_bit << "\n";
+  for (size_t i = current_bit; i > 0; i--) {
+    bool first_bit = _morton_codes.at(first_id) & (1 << i);
     for (size_t a = 0; a < size; a++) {
       uint id = _tree->get_data(node)->triangle_ids.at(a);
-      bool sig_bit = _morton_codes.at(id) & (1 << i); 
+      bool sig_bit = _morton_codes.at(id) & (1 << i);
       // iterate until most significant bit is different
       if (sig_bit != first_bit) {
-        split(node,a);
+        split(node, a);
 
         split_first_bit(_tree->get_left(node), i - 1);
         split_first_bit(_tree->get_right(node), i - 1);
@@ -131,13 +129,12 @@ void LBVH::split_first_bit(bvh_node_pointer *node, uint current_bit) {
       }
     }
   }
-  // no split all childs should stay in the same child node 
-
+  // no split all childs should stay in the same child node
 }
 
 void LBVH::build() {
   generate_morton_codes();
   sort();
   split_first_bit(_tree->get_root(),
-                  GRID_SIZE * 3); // highest bit of morton code
+                  GRID_SIZE * 3);  // highest bit of morton code
 }

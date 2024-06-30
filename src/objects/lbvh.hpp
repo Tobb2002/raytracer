@@ -12,7 +12,8 @@
 using glm::vec3;
 
 // number of zells to divide space in one dimension
-// Grid size time 3 should be less than 64 to fit the morton code into 64 bit integer
+// Grid size time 3 should be less than 64 to fit the morton code into 64 bit
+// integer
 #define GRID_SIZE 10
 
 struct morton_data {
@@ -63,16 +64,17 @@ class LBVH {
   /**
    * @brief Split current node into two childs at given id.
    *
-   * @param node 
-   * @param id 
+   * @param node
+   * @param id
    */
   void split(bvh_node_pointer *node, uint id);
-    
+
   /**
-   * @brief Split current node at the first differing bit of the triangles morton codes.
+   * @brief Split current node at the first differing bit of the triangles
+   * morton codes.
    *
-   * @param node 
-   * @param current_bit 
+   * @param node
+   * @param current_bit
    */
   void split_first_bit(bvh_node_pointer *node, uint current_bit);
 
