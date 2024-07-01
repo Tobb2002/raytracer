@@ -32,6 +32,8 @@ struct Intersection {
   vec3 normal = vec3(0, 0, 0);
   /// @brief Material of the interscting surface.
   Material material;
+  /// @brief texture coordinates if available.
+  vec2 texture_uv = vec2(-1, -1);
 };
 
 /**

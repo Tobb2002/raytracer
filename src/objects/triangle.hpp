@@ -23,6 +23,7 @@ class Triangle : public Object {
 
   // setters
   void set_vertex_normals(vec3 normals[3]);
+  void set_vertex_texture(vec2 texture_uv[3]);
 
   // getters
   vec3 get_normal();
@@ -48,5 +49,6 @@ class Triangle : public Object {
 
   vec3 calculate_normal(void);
   vec3 calculate_normal_interpolated(vec3 uvw);
+  vec2 calculate_texture_interpolated(vec3 uvw);
   vec3 calculate_middle(void);
 };

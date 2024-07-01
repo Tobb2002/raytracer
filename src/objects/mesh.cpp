@@ -49,6 +49,29 @@ Mesh::Mesh(std::string input_file, vec3 origin, Material material) {
             << "\n";
 }
 
+Mesh::Mesh(std::string input_file, vec3 origin, Material material,
+           std::string texture_path) {
+  _origin = origin;
+  _material = material;
+  read_from_obj(input_file);  // read file with origin as offset
+
+  // load and enable texture
+  _enable_texture = true;
+  _texture.load_image(texture_path);
+
+  // stop time needed to build bvh
+  std::chrono::steady_clock::time_point begin =
+      std::chrono::steady_clock::now();
+  _bvh.build_tree_axis(&_triangles);
+  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+  std::cout << "Time for building bvh (sec) = "
+            << (std::chrono::duration_cast<std::chrono::microseconds>(end -
+                                                                      begin)
+                    .count()) /
+                   1000000.0
+            << "\n";
+}
+
 Mesh::Mesh(const Mesh &old_mesh) {
   _triangles = old_mesh._triangles;
   _size = old_mesh._size;
@@ -57,6 +80,7 @@ Mesh::Mesh(const Mesh &old_mesh) {
   _enable_smooth_shading = old_mesh._enable_smooth_shading;
   _material = old_mesh._material;
   _bvh = old_mesh._bvh;
+  _texture = old_mesh._texture;
 
   // set new triangle reference
   _bvh.set_triangles(&_triangles);
@@ -142,7 +166,13 @@ void Mesh::update_bounding_box(Triangle *t) {
 
 /***** Functions *****/
 
-Intersection Mesh::intersect(const Ray &ray) { return _bvh.intersect(ray); }
+Intersection Mesh::intersect(const Ray &ray) {
+  Intersection res = _bvh.intersect(ray);
+  if (_enable_texture) {
+    res.material.color = _texture.get_color_uv(res.texture_uv);
+  }
+  return res;
+}
 
 /***** File input *****/
 
@@ -240,6 +270,9 @@ void Mesh::read_from_obj(std::string inputfile) {
       Triangle t = Triangle(triangle_points, _material);
       if (vertex_normals_available && _enable_smooth_shading) {
         t.set_vertex_normals(triangle_normals);
+      }
+      if (texture_available) {
+        t.set_vertex_texture(triangle_points_uv);
       }
       _triangles.push_back(t);
 

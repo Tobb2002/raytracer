@@ -10,12 +10,15 @@
 #include "box.hpp"
 #include "bvh.hpp"
 #include "object.hpp"
+#include "texture.hpp"
 #include "triangle.hpp"
 
 class Mesh : public Object {
  public:
   Mesh(std::string input_file, vec3 origin);
   Mesh(std::string input_file, vec3 origin, Material material);
+  Mesh(std::string input_file, vec3 origin, Material material,
+       std::string texture_path);
 
   Mesh(const Mesh& old_mesh);
   ~Mesh();
@@ -47,6 +50,8 @@ class Mesh : public Object {
   bool _enable_smooth_shading = true;
 
   Material _material;
+  Texture _texture;
+  bool _enable_texture;
 
   void update_bounding_box(Triangle* t);
   void read_from_obj(std::string input_file);

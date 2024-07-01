@@ -49,8 +49,11 @@ vec3 Triangle::calculate_normal(void) {
 }
 
 vec3 Triangle::calculate_normal_interpolated(vec3 uvw) {
-  return glm::normalize((1 - uvw.y - uvw.z) * _p_normal[0] +
-                        uvw.y * _p_normal[1] + uvw.y * _p_normal[2]);
+  return (1 - uvw.y - uvw.z) * _p_normal[0] + uvw.y * _p_normal[1] +
+         uvw.y * _p_normal[2];
+}
+vec2 Triangle::calculate_texture_interpolated(vec3 uvw) {
+  return (1 - uvw.y - uvw.z) * _p_uv[0] + uvw.y * _p_uv[1] + uvw.z * _p_uv[2];
 }
 
 vec3 Triangle::calculate_middle(void) {
@@ -84,7 +87,7 @@ Intersection Triangle::intersect(const Ray& ray) {
                  (glm::dot(glm::cross(d, e[1]), s)),
                  (glm::dot(glm::cross(s, e[0]), d)));
 
-  // res: (w, u, v) barycentric coordinates of hit point
+  // res: (t, u, v) barycentric coordinates of hit point
   vec3 res = p1 * p2;
 
   bool found = true;
@@ -100,8 +103,14 @@ Intersection Triangle::intersect(const Ray& ray) {
   if (_enable_smooth_normals) {
     normal = calculate_normal_interpolated(res);
   }
+  // textures enabled
+  vec2 texture = vec2(-1);
+  if (_p_uv[0].x != -1) {
+    texture = calculate_texture_interpolated(res);
+  }
 
-  Intersection i = {found, res[0], ray.get_point(res[0]), normal, _material};
+  Intersection i = {found,  res[0],    ray.get_point(res[0]),
+                    normal, _material, texture};
 
   return i;
 }
@@ -111,6 +120,12 @@ void Triangle::set_vertex_normals(vec3 normals[3]) {
   _enable_smooth_normals = true;
   for (int i = 0; i < 3; i++) {
     _p_normal[i] = normals[i];
+  }
+}
+void Triangle::set_vertex_texture(vec2 texture_uv[3]) {
+  // _enable_texture = true;
+  for (int i = 0; i < 3; i++) {
+    _p_uv[i] = texture_uv[i];
   }
 }
 
