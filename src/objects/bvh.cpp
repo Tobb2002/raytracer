@@ -14,7 +14,7 @@
 
 #define VISUALIZE_INTERSECT
 
-//#define FLATTEN_TREE
+// #define FLATTEN_TREE
 
 #define USE_LBVH  // SPLIT_MID, SPLIT_SAH, USE_LBVH ...
 
@@ -191,7 +191,8 @@ Intersection BVH::intersect_leaf(BVH_node_data *node_data, const Ray &ray) {
 #ifndef VISUALIZE_INTERSECT
   return (_data.triangles->data() + best_triangle_id)->intersect(ray);
 #else
-  Intersection res = (_data.triangles->data() + best_triangle_id)->intersect(ray);
+  Intersection res =
+      (_data.triangles->data() + best_triangle_id)->intersect(ray);
   if (_intersect_count < 255) {
     res.material.color.x = _intersect_count;
     res.material.color.y = 255 - _intersect_count;

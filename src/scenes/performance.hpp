@@ -12,13 +12,12 @@ Scene get_scene() {
 
   vec3 origin_plane = vec3(0, -0.7, -2);
 
-  Mesh m = Mesh("data/input/dragon.obj",
-                origin_plane + vec3(0, 0, 0),
+  Mesh m = Mesh("data/input/dragon.obj", origin_plane + vec3(0, 0, 0),
                 {.color = vec3(0.2, 0.2, 0.2), .specular = 0.2});
 
-  //Mesh m = Mesh("data/input/kingshall.obj", origin_plane + vec3(0, 0, -18),
-  //              {.color = vec3(0.2, 0.2, 0.2), .specular = 0.2});
-  //              //"data/input/textures/kingshall.png");
+  // Mesh m = Mesh("data/input/kingshall.obj", origin_plane + vec3(0, 0, -18),
+  //               {.color = vec3(0.2, 0.2, 0.2), .specular = 0.2});
+  //               //"data/input/textures/kingshall.png");
 
   Plane plane =
       Plane(origin_plane, vec3(0, 1, 0),
@@ -27,9 +26,8 @@ Scene get_scene() {
             vec2(100, 15));
 
   Pointlight light1 = Pointlight(origin_plane + vec3(-3, 2, 4), 450);
-  //ObjectFactory factory = ObjectFactory(&scene);
-  //factory.new_xy_square_light(origin_plane + vec3(-3, 2, 4), 400, 1, 0.1);
-
+  // ObjectFactory factory = ObjectFactory(&scene);
+  // factory.new_xy_square_light(origin_plane + vec3(-3, 2, 4), 400, 1, 0.1);
 
   scene.get_camera()->set_resolution(500);
   scene.get_camera()->set_sensor_size(1, 1);
