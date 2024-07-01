@@ -45,6 +45,7 @@ stats:
 
 run: compile
 	./bin/main
+	magick data/output/out.ppm data/output/out.png
 
 profile_valgrind: ./bin/main
 	valgrind --tool=callgrind --dump-instr=yes --simulate-cache=yes --collect-jumps=yes bin/main
