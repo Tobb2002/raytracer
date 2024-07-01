@@ -12,6 +12,8 @@
 #include "bvh.hpp"
 #include "lbvh.hpp"
 
+//#define FLATTEN_TREE
+
 #define USE_LBVH  // SPLIT_MID, SPLIT_SAH, USE_LBVH ...
 
 void BVH::build_tree_axis(std::vector<Triangle> *triangles) {
@@ -32,18 +34,19 @@ void BVH::build_tree_axis(std::vector<Triangle> *triangles) {
 #ifdef SPLIT_MID
   SAH sah = SAH(&_data.tree);
   sah.split_middle(root);
-  _data.tree.flatten_tree();
 #endif
 
 #ifdef SPLIT_SAH
   SAH sah = SAH(&_data.tree);
   sah.split(root);
-  _data.tree.flatten_tree();
 #endif
 #ifdef USE_LBVH
   LBVH l = LBVH(&_data.tree);
   // lbvh.sort();
   l.build();
+#endif
+
+#ifdef FLATTEN_TREE
   _data.tree.flatten_tree();
 #endif
 }
@@ -55,7 +58,11 @@ void BVH::set_triangles(std::vector<Triangle> *triangles) {
 
 Intersection BVH::intersect(const Ray &ray) {
   _intersect_count = 0;
+#ifdef FLATTEN_TREE
   return intersect_node((uint)0, ray);
+#else
+  return intersect_node(_data.tree.get_root(), ray);
+#endif
 }
 
 /**
