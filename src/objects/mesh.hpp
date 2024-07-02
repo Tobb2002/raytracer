@@ -52,7 +52,7 @@ class Mesh : public Object {
 
   Material _material;
   Texture _texture;
-  bool _enable_texture;
+  bool _enable_texture = false;
 
   void update_bounding_box(Triangle* t);
   void read_from_obj(std::string input_file);
