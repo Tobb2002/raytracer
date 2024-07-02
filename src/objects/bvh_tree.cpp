@@ -120,7 +120,7 @@ bvh_box BVH_tree::update_box(bvh_node_pointer* node) {
     return {get_data(node)->bounds.min, get_data(node)->bounds.max};
   }
   bvh_box left = update_box(get_left(node));
-  bvh_box right = update_box(get_left(node));
+  bvh_box right = update_box(get_right(node));
   update_min(&left.min, right.min);
   update_max(&left.max, right.max);
 

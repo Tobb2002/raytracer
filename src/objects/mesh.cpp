@@ -90,7 +90,7 @@ Mesh::Mesh(const Mesh &old_mesh) {
 }
 
 Mesh& Mesh::operator=(const Mesh& old_mesh) {
-  std::cout << "mesh copy assign\n";
+  std::cout << "mesh copy\n";
   _triangles = old_mesh._triangles;
   _triangle_exists = old_mesh._triangle_exists;
   _size = old_mesh._size;
@@ -175,7 +175,7 @@ void Mesh::apply_transform(mat4 transformation) {
     Triangle *t = &_triangles[i];
     t->apply_transform(transformation);
   }
-  _bvh.update_boxes();
+  _bvh.build_tree_axis(&_triangles);
 }
 
 /**

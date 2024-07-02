@@ -30,6 +30,9 @@ class Scene {
   size_t add_object(Sphere sphere);
   size_t add_object(Mesh mesh);
 
+  void rotate_obj_mesh(size_t id, vec3 axis, float degree);
+  Mesh * get_obj_mesh(size_t id);
+
 
   /***** Change Scene Settings *****/
 

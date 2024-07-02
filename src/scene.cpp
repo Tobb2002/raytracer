@@ -105,9 +105,16 @@ size_t Scene::add_object(Sphere sphere) {
 size_t Scene::add_object(Mesh mesh) {
   _obj_meshes.push_back(mesh);
   //_objects.push_back(_obj_meshes.data() + (_obj_meshes.size() - 1));
-  return 0; //_objects.size() - 1;
+  return _obj_meshes.size() - 1;
 }
 
+void Scene::rotate_obj_mesh(size_t id, vec3 axis, float degree) {
+  _obj_meshes.at(id).rotate(axis, degree);
+}
+Mesh * Scene::get_obj_mesh(size_t id) {
+  std::cout << "mesh size: " << _obj_meshes.size() << "\n";
+  return &_obj_meshes.at(id);
+}
 /**
  * @brief set number of rays to calculate per pixel
  *
@@ -414,7 +421,7 @@ vec3 Scene::get_light(const Ray &ray) {
     Intersection intersect = (_obj_spheres.data() + i)->intersect(ray);
 
     if (intersect.found) {
-      if (intersect.t < best_intersection.t) {
+      if (intersect.t <= best_intersection.t) {
         best_intersection = intersect;
       }
     }
@@ -423,7 +430,7 @@ vec3 Scene::get_light(const Ray &ray) {
     Intersection intersect = (_obj_planes.data() + i)->intersect(ray);
 
     if (intersect.found) {
-      if (intersect.t < best_intersection.t) {
+      if (intersect.t <= best_intersection.t) {
         best_intersection = intersect;
       }
     }
@@ -432,7 +439,7 @@ vec3 Scene::get_light(const Ray &ray) {
     Intersection intersect = (_obj_meshes.data() + i)->intersect(ray);
 
     if (intersect.found) {
-      if (intersect.t < best_intersection.t) {
+      if (intersect.t <= best_intersection.t) {
         best_intersection = intersect;
       }
     }
