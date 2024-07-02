@@ -15,12 +15,14 @@ BVH_tree::BVH_tree(BVH_node_data root_data, std::vector<Triangle>* triangles) {
 BVH_tree::BVH_tree(const BVH_tree& old_tree) {
   _triangles_flat = old_tree._triangles_flat;
   _triangles = old_tree._triangles;
+  destroy_tree();
   root = copy_node(old_tree.root);
 }
 
 BVH_tree& BVH_tree::operator=(const BVH_tree& old_tree) {
   _triangles_flat = old_tree._triangles_flat;
   _triangles = old_tree._triangles;
+  destroy_tree();
   root = copy_node(old_tree.root);
   return *this;
 }
