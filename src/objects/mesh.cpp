@@ -175,6 +175,7 @@ void Mesh::apply_transform(mat4 transformation) {
     Triangle *t = &_triangles[i];
     t->apply_transform(transformation);
   }
+  _bvh = BVH();
   _bvh.build_tree_axis(&_triangles);
 }
 

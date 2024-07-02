@@ -34,3 +34,7 @@ Scene get_scene() {
 
   return scene;
 }
+
+void animation_step(Scene *scene) {
+  scene->rotate_obj_mesh(0, vec3(0, 0, 1), 30);
+}

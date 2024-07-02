@@ -21,6 +21,27 @@ Image::Image(int resolution_x, int resolution_y) {
   initialize_matrix(vec3(0, 0, 0));
 }
 
+Image::Image(const Image& old_image) {
+  std::cout << "copy image\n";
+  _resolution[0] = old_image._resolution[0];
+  _resolution[1] = old_image._resolution[1];
+
+  delete_matrix();
+  initialize_matrix(vec3(0));
+  copy_matrix(_matrix, old_image._matrix);
+}
+Image& Image::operator=(const Image& old_image) {
+  std::cout << "copy assign image\n";
+  _resolution[0] = old_image._resolution[0];
+  _resolution[1] = old_image._resolution[1];
+
+  delete_matrix();
+  initialize_matrix(vec3(0));
+  copy_matrix(_matrix, old_image._matrix);
+
+  return *this;
+}
+
 Image::~Image() { delete_matrix(); }
 
 /**
@@ -72,6 +93,7 @@ void Image::write_to_file(std::string filename) {
            << " " << static_cast<int>(color[2]) << "\n";
     }
   }
+  file.close();
 }
 
 /**
@@ -110,6 +132,15 @@ void Image::initialize_matrix(vec3 standart_color) {
   for (int x = 0; x < _resolution[0]; x++) {
     for (int y = 0; y < _resolution[1]; y++) {
       _matrix[x][y] = standart_color;
+    }
+  }
+}
+
+void Image::copy_matrix(vec3** new_matrix, vec3** old_matrix) {
+  // set values
+  for (int x = 0; x < _resolution[0]; x++) {
+    for (int y = 0; y < _resolution[1]; y++) {
+      new_matrix[x][y] = old_matrix[x][y];
     }
   }
 }

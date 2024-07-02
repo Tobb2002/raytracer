@@ -24,6 +24,8 @@ struct point {
 class Image {
  public:
   Image(int resolution_x, int resolution_y);
+  Image(const Image& old_image);
+  Image& operator=(const Image& old_image);
   ~Image();
 
   void write_to_file(std::string filename);
@@ -38,6 +40,7 @@ class Image {
   void apply_luminance(vec3* color, float luminance);
   void initialize_matrix(vec3 standart_color);
   void delete_matrix();
+  void copy_matrix(vec3** new_matrix, vec3** old_matrix);
 
   // --- data ---
   int _resolution[2];

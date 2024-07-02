@@ -3,19 +3,18 @@
  */
 
 #include <glm/glm.hpp>
+#include <memory>
 
 #include "image.hpp"
 #include "scene.hpp"
-#include "scenes/bvh_test.hpp"
+#include "scenes/performance.hpp"
 
 using glm::vec3, glm::vec2;
 
 // #define ANIMATION
 #define FRAMES 1
 
-// void animation_step(Scene *scene) {
-//   scene->get_obj_mesh(0)->rotate(vec3(0,0,1), 10);
-// }
+Image get_image() { return Image(100, 100); }
 
 int main(void) {
   Scene scene = get_scene();
@@ -26,13 +25,14 @@ int main(void) {
   snprintf(filename, sizeof(filename), "data/output/out.ppm");
   out.write_to_file(filename);
 #else
+  Image out = scene.trace_image();
   for (size_t i = 0; i < 3; i++) {
-    Image out = scene.trace_image();
+    animation_step(&scene);
     char filename[50];
     snprintf(filename, sizeof(filename), "data/output/animation/out%zu.ppm", i);
     out.write_to_file(filename);
 
-    // animation_step(&scene);
+    out = scene.trace_image();
   }
 #endif
 
