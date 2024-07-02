@@ -21,6 +21,7 @@ class Mesh : public Object {
        std::string texture_path);
 
   Mesh(const Mesh& old_mesh);
+  Mesh& operator=(const Mesh& old_mesh);
   ~Mesh();
 
   /***** Print Debug information *****/

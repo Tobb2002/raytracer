@@ -12,12 +12,12 @@ Scene get_scene() {
 
   vec3 origin_plane = vec3(0, -0.7, -2);
 
-  Mesh m = Mesh("data/input/dragon.obj", origin_plane + vec3(0, 0, 0),
-                {.color = vec3(0.2, 0.2, 0.2), .specular = 0.2});
+  //Mesh m = Mesh("data/input/dragon.obj", origin_plane + vec3(0, 0, 0),
+  //              {.color = vec3(0.2, 0.2, 0.2), .specular = 0.2});
 
-  // Mesh m = Mesh("data/input/kingshall.obj", origin_plane + vec3(0, 0, -18),
-  //               {.color = vec3(0.2, 0.2, 0.2), .specular = 0.2});
-  //               //"data/input/textures/kingshall.png");
+  Mesh m = Mesh("data/input/kingshall.obj", origin_plane + vec3(0, 0, -18),
+                {.color = vec3(0.2, 0.2, 0.2), .specular = 0.2},
+                "data/input/textures/kingshall.png");
 
   Plane plane =
       Plane(origin_plane, vec3(0, 1, 0),
@@ -39,4 +39,12 @@ Scene get_scene() {
   scene.add_light(light1);
 
   return scene;
+}
+
+Mesh get_m() {
+  vec3 origin_plane = vec3(0, -0.7, -2);
+  Mesh m = Mesh("data/input/dragon.obj", origin_plane + vec3(0, 0, 0),
+                {.color = vec3(0.2, 0.2, 0.2), .specular = 0.2});
+
+  return m;
 }

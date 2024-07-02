@@ -14,6 +14,10 @@
 
 // #define DEBUG
 
+Scene::Scene() {
+  _standart_light = vec3(0);
+  set_aliasing(1);
+}
 /**
  * @brief Construct a new Scene:: Scene object
  *
@@ -24,6 +28,38 @@ Scene::Scene(vec3 standart_color) {
   _standart_light = standart_color;
   set_aliasing(1);
 }
+
+Scene::Scene(const Scene &old_scene) {
+  std::cout << "copy scene\n";
+  _lights = old_scene._lights;
+  _obj_planes = old_scene._obj_planes;
+  _obj_spheres = old_scene._obj_spheres;
+  _obj_meshes = old_scene._obj_meshes;
+
+
+  _camera = old_scene._camera;
+  _standart_light = old_scene._standart_light;
+  _tonemapping_gray = old_scene._tonemapping_gray;
+  _aliasing_positions = old_scene._aliasing_positions;
+}
+
+Scene& Scene::operator=(const Scene& old_scene) {
+  _lights = old_scene._lights;
+  _obj_planes = old_scene._obj_planes;
+  _obj_spheres = old_scene._obj_spheres;
+  _obj_meshes = old_scene._obj_meshes;
+
+  std::cout << "copy assign scene\n";
+
+
+  _camera = old_scene._camera;
+  _standart_light = old_scene._standart_light;
+  _tonemapping_gray = old_scene._tonemapping_gray;
+  _aliasing_positions = old_scene._aliasing_positions;
+
+  return *this;
+}
+
 
 /**
  * @brief Add a Pointlight to the scene.
@@ -44,8 +80,8 @@ size_t Scene::add_light(Pointlight light) {
  */
 size_t Scene::add_object(Plane plane) {
   _obj_planes.push_back(plane);
-  _objects.push_back(std::make_shared<Plane>(plane));
-  return _objects.size() - 1;
+  //_objects.push_back(_obj_planes.data() + (_obj_planes.size() - 1));
+  return 0; //_objects.size() - 1;
 }
 
 /**
@@ -56,8 +92,8 @@ size_t Scene::add_object(Plane plane) {
  */
 size_t Scene::add_object(Sphere sphere) {
   _obj_spheres.push_back(sphere);
-  _objects.push_back(std::make_shared<Sphere>(sphere));
-  return _objects.size() - 1;
+  //_objects.push_back(_obj_spheres.data() + (_obj_spheres.size() - 1));
+  return 0; //_objects.size() - 1;
 }
 
 /**
@@ -68,8 +104,8 @@ size_t Scene::add_object(Sphere sphere) {
  */
 size_t Scene::add_object(Mesh mesh) {
   _obj_meshes.push_back(mesh);
-  _objects.push_back(std::make_shared<Mesh>(mesh));
-  return _objects.size() - 1;
+  //_objects.push_back(_obj_meshes.data() + (_obj_meshes.size() - 1));
+  return 0; //_objects.size() - 1;
 }
 
 /**
@@ -129,8 +165,18 @@ Camera *Scene::get_camera(void) { return &_camera; }
  * @return false else
  */
 bool Scene::check_intersection(Ray ray, float t_max) {
-  for (auto object : _objects) {
-    if (object->intersect_bool(ray, t_max)) {
+  for (size_t i = 0; i < _obj_spheres.size(); i++) {
+    if ((_obj_spheres.data() + i)->intersect_bool(ray, t_max)) {
+      return true;
+    }
+  }
+  for (size_t i = 0; i < _obj_planes.size(); i++) {
+    if ((_obj_planes.data() + i)->intersect_bool(ray, t_max)) {
+      return true;
+    }
+  }
+  for (size_t i = 0; i < _obj_meshes.size(); i++) {
+    if ((_obj_meshes.data() + i)->intersect_bool(ray, t_max)) {
       return true;
     }
   }
@@ -145,6 +191,7 @@ bool Scene::check_intersection(Ray ray, float t_max) {
  * @return Image rendered image.
  */
 Image Scene::trace_image() {
+  //initialize_objects();
   Image image = Image(_camera.get_resolution().x, _camera.get_resolution().y);
 
   int resolution[2] = {static_cast<int>(_camera.get_resolution().x),
@@ -336,8 +383,14 @@ Ray Scene::generate_reflection_ray(vec3 point, vec3 normal,
 
 void Scene::update_view_transform(void) {
   Transformation view_transform = _camera.get_view_transform();
-  for (auto object : _objects) {
-    object->update_view_transform(view_transform);
+  for (size_t i = 0; i < _obj_spheres.size(); i++) {
+    (_obj_spheres.data() + i)->update_view_transform(view_transform);
+  }
+  for (size_t i = 0; i < _obj_planes.size(); i++) {
+    (_obj_planes.data() + i)->update_view_transform(view_transform);
+  }
+  for (size_t i = 0; i < _obj_meshes.size(); i++) {
+    (_obj_meshes.data() + i)->update_view_transform(view_transform);
   }
   for (Pointlight light : _lights) {
     light.update_view_transform(view_transform);
@@ -357,8 +410,26 @@ vec3 Scene::get_light(const Ray &ray) {
                                     vec3(0, 0, 0), material};
 
   // find closest intersection in Scene
-  for (auto object : _objects) {
-    Intersection intersect = object->intersect(ray);
+  for (size_t i = 0; i < _obj_spheres.size(); i++) {
+    Intersection intersect = (_obj_spheres.data() + i)->intersect(ray);
+
+    if (intersect.found) {
+      if (intersect.t < best_intersection.t) {
+        best_intersection = intersect;
+      }
+    }
+  }
+  for (size_t i = 0; i < _obj_planes.size(); i++) {
+    Intersection intersect = (_obj_planes.data() + i)->intersect(ray);
+
+    if (intersect.found) {
+      if (intersect.t < best_intersection.t) {
+        best_intersection = intersect;
+      }
+    }
+  }
+  for (size_t i = 0; i < _obj_meshes.size(); i++) {
+    Intersection intersect = (_obj_meshes.data() + i)->intersect(ray);
 
     if (intersect.found) {
       if (intersect.t < best_intersection.t) {

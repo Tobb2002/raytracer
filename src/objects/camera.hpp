@@ -35,8 +35,8 @@ class Camera {
   Transformation get_view_transform(void);
 
  private:
-  const vec3 _origin = vec3(0, 0, 0);
-  const vec3 _direction = vec3(0, 0, -1);
+  vec3 _origin = vec3(0, 0, 0);
+  vec3 _direction = vec3(0, 0, -1);
   vec2 _resolution;
   vec2 _sensor_size;
   vec2 _pixel_size;

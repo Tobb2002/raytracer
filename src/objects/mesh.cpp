@@ -73,7 +73,9 @@ Mesh::Mesh(std::string input_file, vec3 origin, Material material,
 }
 
 Mesh::Mesh(const Mesh &old_mesh) {
+  std::cout << "mesh copy\n";
   _triangles = old_mesh._triangles;
+  _triangle_exists = old_mesh._triangle_exists;
   _size = old_mesh._size;
   _origin = old_mesh._origin;
   _bounding_box = old_mesh._bounding_box;
@@ -81,9 +83,30 @@ Mesh::Mesh(const Mesh &old_mesh) {
   _material = old_mesh._material;
   _bvh = old_mesh._bvh;
   _texture = old_mesh._texture;
+  _enable_texture = old_mesh._enable_texture;
 
   // set new triangle reference
   _bvh.set_triangles(&_triangles);
+}
+
+Mesh& Mesh::operator=(const Mesh& old_mesh) {
+  std::cout << "mesh copy assign\n";
+  _triangles = old_mesh._triangles;
+  _triangle_exists = old_mesh._triangle_exists;
+  _size = old_mesh._size;
+  _origin = old_mesh._origin;
+  _bounding_box = old_mesh._bounding_box;
+  _enable_smooth_shading = old_mesh._enable_smooth_shading;
+  _material = old_mesh._material;
+  _bvh = old_mesh._bvh;
+  _texture = old_mesh._texture;
+  _enable_texture = old_mesh._enable_texture;
+
+  // set new triangle reference
+  std::cout << "copy assign\n";
+  _bvh.set_triangles(&_triangles);
+
+  return *this; 
 }
 
 Mesh::~Mesh() {}

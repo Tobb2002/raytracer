@@ -17,7 +17,11 @@
 
 class Scene {
  public:
-  explicit Scene(vec3 standart_color);
+  Scene();
+  Scene(vec3 standart_color);
+
+  Scene(const Scene& old_scene);
+  Scene& operator=(const Scene& old_scene);
 
   /***** Adding things to scene *****/
 
@@ -25,6 +29,7 @@ class Scene {
   size_t add_object(Plane plane);
   size_t add_object(Sphere sphere);
   size_t add_object(Mesh mesh);
+
 
   /***** Change Scene Settings *****/
 
@@ -45,7 +50,6 @@ class Scene {
 
  private:
   std::vector<Pointlight> _lights;
-  std::vector<std::shared_ptr<Object>> _objects;
 
   std::vector<Plane> _obj_planes;
   std::vector<Sphere> _obj_spheres;
@@ -57,6 +61,8 @@ class Scene {
   vec3 _standart_light;
   float _tonemapping_gray = 0.8;
   std::vector<vec2> _aliasing_positions;
+
+    
 
   Ray generate_reflection_ray(vec3 point, vec3 normal, vec3 viewer_direction);
 

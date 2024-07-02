@@ -3,7 +3,7 @@
 #BUILD=debug
 
 CC = clang++
-FLAGS = -std=c++2a -W -fopenmp
+FLAGS = -std=c++2a -W -fopenmp #-fno-elide-constructors
 LINKER_FLAGS = -lm -lpthread -lX11 -lprofiler
 
 ifeq ($(BUILD),debug)   
