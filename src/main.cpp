@@ -12,7 +12,7 @@
 using glm::vec3, glm::vec2;
 
 #define ANIMATION
-#define FRAMES 1
+#define FRAMES 3
 
 Image get_image() { return Image(100, 100); }
 
@@ -25,14 +25,14 @@ int main(void) {
   snprintf(filename, sizeof(filename), "data/output/out.ppm");
   out.write_to_file(filename);
 #else
-  Image out = scene.trace_image();
-  for (size_t i = 0; i < 3; i++) {
-    animation_step(&scene);
+  for (size_t i = 0; i < FRAMES; i++) {
+    if (i != 0) {
+      animation_step(&scene);
+    }
+    Image out = scene.trace_image();
     char filename[50];
     snprintf(filename, sizeof(filename), "data/output/animation/out%zu.ppm", i);
     out.write_to_file(filename);
-
-    out = scene.trace_image();
   }
 #endif
 
