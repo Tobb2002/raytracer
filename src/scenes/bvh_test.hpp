@@ -29,10 +29,8 @@ Scene get_scene() {
   scene.set_aliasing(1);
   scene.set_tonemapping_value(-1);
 
-
   scene.add_object(m);
   scene.add_light(light1);
 
   return scene;
 }
-

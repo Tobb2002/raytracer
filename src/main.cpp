@@ -10,16 +10,16 @@
 
 using glm::vec3, glm::vec2;
 
-//#define ANIMATION
+// #define ANIMATION
 #define FRAMES 1
 
-//void animation_step(Scene *scene) {
-//  scene->get_obj_mesh(0)->rotate(vec3(0,0,1), 10);
-//}
+// void animation_step(Scene *scene) {
+//   scene->get_obj_mesh(0)->rotate(vec3(0,0,1), 10);
+// }
 
 int main(void) {
   Scene scene = get_scene();
-  
+
 #ifndef ANIMATION
   Image out = scene.trace_image();
   char filename[50];
@@ -32,7 +32,7 @@ int main(void) {
     snprintf(filename, sizeof(filename), "data/output/animation/out%zu.ppm", i);
     out.write_to_file(filename);
 
-    //animation_step(&scene);
+    // animation_step(&scene);
   }
 #endif
 

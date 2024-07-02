@@ -89,7 +89,7 @@ Mesh::Mesh(const Mesh &old_mesh) {
   _bvh.set_triangles(&_triangles);
 }
 
-Mesh& Mesh::operator=(const Mesh& old_mesh) {
+Mesh &Mesh::operator=(const Mesh &old_mesh) {
   std::cout << "mesh copy\n";
   _triangles = old_mesh._triangles;
   _triangle_exists = old_mesh._triangle_exists;
@@ -106,7 +106,7 @@ Mesh& Mesh::operator=(const Mesh& old_mesh) {
   std::cout << "copy assign\n";
   _bvh.set_triangles(&_triangles);
 
-  return *this; 
+  return *this;
 }
 
 Mesh::~Mesh() {}

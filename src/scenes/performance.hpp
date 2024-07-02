@@ -12,8 +12,8 @@ Scene get_scene() {
 
   vec3 origin_plane = vec3(0, -0.7, -2);
 
-  //Mesh m = Mesh("data/input/dragon.obj", origin_plane + vec3(0, 0, 0),
-  //              {.color = vec3(0.2, 0.2, 0.2), .specular = 0.2});
+  // Mesh m = Mesh("data/input/dragon.obj", origin_plane + vec3(0, 0, 0),
+  //               {.color = vec3(0.2, 0.2, 0.2), .specular = 0.2});
 
   Mesh m = Mesh("data/input/kingshall.obj", origin_plane + vec3(0, 0, -18),
                 {.color = vec3(0.2, 0.2, 0.2), .specular = 0.2},

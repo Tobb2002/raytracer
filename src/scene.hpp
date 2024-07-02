@@ -18,10 +18,10 @@
 class Scene {
  public:
   Scene();
-  Scene(vec3 standart_color);
+  explicit Scene(vec3 standart_color);
 
-  Scene(const Scene& old_scene);
-  Scene& operator=(const Scene& old_scene);
+  Scene(const Scene &old_scene);
+  Scene &operator=(const Scene &old_scene);
 
   /***** Adding things to scene *****/
 
@@ -31,8 +31,7 @@ class Scene {
   size_t add_object(Mesh mesh);
 
   void rotate_obj_mesh(size_t id, vec3 axis, float degree);
-  Mesh * get_obj_mesh(size_t id);
-
+  Mesh *get_obj_mesh(size_t id);
 
   /***** Change Scene Settings *****/
 
@@ -64,8 +63,6 @@ class Scene {
   vec3 _standart_light;
   float _tonemapping_gray = 0.8;
   std::vector<vec2> _aliasing_positions;
-
-    
 
   Ray generate_reflection_ray(vec3 point, vec3 normal, vec3 viewer_direction);
 

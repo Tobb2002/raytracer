@@ -12,7 +12,7 @@
 #include "bvh.hpp"
 #include "lbvh.hpp"
 
-//#define VISUALIZE_INTERSECT
+// #define VISUALIZE_INTERSECT
 
 // #define FLATTEN_TREE
 

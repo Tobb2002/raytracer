@@ -36,21 +36,19 @@ Scene::Scene(const Scene &old_scene) {
   _obj_spheres = old_scene._obj_spheres;
   _obj_meshes = old_scene._obj_meshes;
 
-
   _camera = old_scene._camera;
   _standart_light = old_scene._standart_light;
   _tonemapping_gray = old_scene._tonemapping_gray;
   _aliasing_positions = old_scene._aliasing_positions;
 }
 
-Scene& Scene::operator=(const Scene& old_scene) {
+Scene &Scene::operator=(const Scene &old_scene) {
   _lights = old_scene._lights;
   _obj_planes = old_scene._obj_planes;
   _obj_spheres = old_scene._obj_spheres;
   _obj_meshes = old_scene._obj_meshes;
 
   std::cout << "copy assign scene\n";
-
 
   _camera = old_scene._camera;
   _standart_light = old_scene._standart_light;
@@ -59,7 +57,6 @@ Scene& Scene::operator=(const Scene& old_scene) {
 
   return *this;
 }
-
 
 /**
  * @brief Add a Pointlight to the scene.
@@ -80,8 +77,7 @@ size_t Scene::add_light(Pointlight light) {
  */
 size_t Scene::add_object(Plane plane) {
   _obj_planes.push_back(plane);
-  //_objects.push_back(_obj_planes.data() + (_obj_planes.size() - 1));
-  return 0; //_objects.size() - 1;
+  return _obj_planes.size() - 1;
 }
 
 /**
@@ -92,8 +88,7 @@ size_t Scene::add_object(Plane plane) {
  */
 size_t Scene::add_object(Sphere sphere) {
   _obj_spheres.push_back(sphere);
-  //_objects.push_back(_obj_spheres.data() + (_obj_spheres.size() - 1));
-  return 0; //_objects.size() - 1;
+  return _obj_spheres.size() - 1;
 }
 
 /**
@@ -104,14 +99,13 @@ size_t Scene::add_object(Sphere sphere) {
  */
 size_t Scene::add_object(Mesh mesh) {
   _obj_meshes.push_back(mesh);
-  //_objects.push_back(_obj_meshes.data() + (_obj_meshes.size() - 1));
   return _obj_meshes.size() - 1;
 }
 
 void Scene::rotate_obj_mesh(size_t id, vec3 axis, float degree) {
   _obj_meshes.at(id).rotate(axis, degree);
 }
-Mesh * Scene::get_obj_mesh(size_t id) {
+Mesh *Scene::get_obj_mesh(size_t id) {
   std::cout << "mesh size: " << _obj_meshes.size() << "\n";
   return &_obj_meshes.at(id);
 }
@@ -198,7 +192,7 @@ bool Scene::check_intersection(Ray ray, float t_max) {
  * @return Image rendered image.
  */
 Image Scene::trace_image() {
-  //initialize_objects();
+  // initialize_objects();
   Image image = Image(_camera.get_resolution().x, _camera.get_resolution().y);
 
   int resolution[2] = {static_cast<int>(_camera.get_resolution().x),

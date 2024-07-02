@@ -49,8 +49,8 @@ vec3 Triangle::calculate_normal(void) {
 }
 
 vec3 Triangle::calculate_normal_interpolated(vec3 uvw) {
-  return glm::normalize((1 - uvw.y - uvw.z) * _p_normal[0] + uvw.y * _p_normal[1] +
-         uvw.z * _p_normal[2]);
+  return glm::normalize((1 - uvw.y - uvw.z) * _p_normal[0] +
+                        uvw.y * _p_normal[1] + uvw.z * _p_normal[2]);
 }
 vec2 Triangle::calculate_texture_interpolated(vec3 uvw) {
   return (1 - uvw.y - uvw.z) * _p_uv[0] + uvw.y * _p_uv[1] + uvw.z * _p_uv[2];
