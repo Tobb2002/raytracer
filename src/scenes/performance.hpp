@@ -26,8 +26,8 @@ Scene get_scene() {
             vec2(100, 15));
 
   Pointlight light1 = Pointlight(origin_plane + vec3(-3, 2, 4), 450);
-  // ObjectFactory factory = ObjectFactory(&scene);
-  // factory.new_xy_square_light(origin_plane + vec3(-3, 2, 4), 400, 1, 0.1);
+  ObjectFactory factory = ObjectFactory(&scene);
+  factory.new_xy_square_light(origin_plane + vec3(-3, 2, 4), 300, 2, 0.05);
 
   scene.get_camera()->set_resolution(500);
   scene.get_camera()->set_sensor_size(1, 1);
@@ -36,15 +36,12 @@ Scene get_scene() {
   scene.set_tonemapping_value(-1);
 
   scene.add_object(m);
-  scene.add_light(light1);
+  // scene.add_light(light1);
 
   return scene;
 }
 
-Mesh get_m() {
-  vec3 origin_plane = vec3(0, -0.7, -2);
-  Mesh m = Mesh("data/input/dragon.obj", origin_plane + vec3(0, 0, 0),
-                {.color = vec3(0.2, 0.2, 0.2), .specular = 0.2});
-
-  return m;
+void animation_step(Scene *scene) {
+  scene->get_camera()->rotate(vec3(0, 0, -5), vec3(0, 1, 0), 30);
+  scene->update_view_transform();
 }
