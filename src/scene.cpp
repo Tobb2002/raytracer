@@ -30,7 +30,6 @@ Scene::Scene(vec3 standart_color) {
 }
 
 Scene::Scene(const Scene &old_scene) {
-  std::cout << "copy scene\n";
   _lights = old_scene._lights;
   _obj_planes = old_scene._obj_planes;
   _obj_spheres = old_scene._obj_spheres;
@@ -47,8 +46,6 @@ Scene &Scene::operator=(const Scene &old_scene) {
   _obj_planes = old_scene._obj_planes;
   _obj_spheres = old_scene._obj_spheres;
   _obj_meshes = old_scene._obj_meshes;
-
-  std::cout << "copy assign scene\n";
 
   _camera = old_scene._camera;
   _standart_light = old_scene._standart_light;
@@ -203,6 +200,7 @@ Image Scene::trace_image() {
   // start time
   std::chrono::steady_clock::time_point begin =
       std::chrono::steady_clock::now();
+  std::cout << "------------------------------------------------\n";
   std::cout << "rendering\n\n";
 
   // #pragma omp parallel for num_threads(5)
@@ -246,6 +244,7 @@ Image Scene::trace_image() {
                     .count()) /
                    1000000.0
             << "\n";
+  std::cout << "------------------------------------------------\n";
   return image;
 }
 

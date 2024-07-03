@@ -41,12 +41,15 @@ Mesh::Mesh(std::string input_file, vec3 origin, Material material) {
       std::chrono::steady_clock::now();
   _bvh.build_tree_axis(&_triangles);
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+  std::cout << "------------------------------------------------\n";
   std::cout << "Time for building bvh (sec) = "
             << (std::chrono::duration_cast<std::chrono::microseconds>(end -
                                                                       begin)
                     .count()) /
                    1000000.0
             << "\n";
+  std::cout << "------------------------------------------------\n";
 }
 
 Mesh::Mesh(std::string input_file, vec3 origin, Material material,
@@ -64,16 +67,18 @@ Mesh::Mesh(std::string input_file, vec3 origin, Material material,
       std::chrono::steady_clock::now();
   _bvh.build_tree_axis(&_triangles);
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+  std::cout << "------------------------------------------------\n";
   std::cout << "Time for building bvh (sec) = "
             << (std::chrono::duration_cast<std::chrono::microseconds>(end -
                                                                       begin)
                     .count()) /
                    1000000.0
             << "\n";
+  std::cout << "------------------------------------------------\n";
 }
 
 Mesh::Mesh(const Mesh &old_mesh) {
-  std::cout << "mesh copy\n";
   _triangles = old_mesh._triangles;
   _triangle_exists = old_mesh._triangle_exists;
   _size = old_mesh._size;
@@ -90,7 +95,6 @@ Mesh::Mesh(const Mesh &old_mesh) {
 }
 
 Mesh &Mesh::operator=(const Mesh &old_mesh) {
-  std::cout << "mesh copy\n";
   _triangles = old_mesh._triangles;
   _triangle_exists = old_mesh._triangle_exists;
   _size = old_mesh._size;
@@ -103,7 +107,6 @@ Mesh &Mesh::operator=(const Mesh &old_mesh) {
   _enable_texture = old_mesh._enable_texture;
 
   // set new triangle reference
-  std::cout << "copy assign\n";
   _bvh.set_triangles(&_triangles);
 
   return *this;
@@ -226,24 +229,32 @@ void Mesh::read_from_obj(std::string inputfile) {
   // shapes.size() number of objects
   // shapes[s].mesh.num_face_vertices.size() -> number of triangle
 
-  std::cout << "shapes:" << shapes.size() << "\n";
+  std::cout << "------------------------------------------------\n";
+  std::cout << "obj file:\n";
+
+  std::cout << "number of objects:" << shapes.size() << "  ";
+
+  std::cout << "vertex data: ";
 
   // check if texture coordinates available
   bool texture_available = false;
   if (attrib.texcoords.size() > 0) {
     texture_available = true;
+    std::cout << "texture ";
   }
 
   // check if vertex normals are available
   bool vertex_normals_available = false;
   if (attrib.normals.size() > 0) {
     vertex_normals_available = true;
-    std::cout << "normals available\n";
+    std::cout << "normals";
   }
+
+  std::cout << "\n";
 
   for (size_t s = 0; s < shapes.size(); s++) {
     int size = shapes[s].mesh.num_face_vertices.size();
-    std::cout << "size:" << size << "\n";
+    std::cout << "object(" << s << ") size:" << size << "\n";
 
     size_t index_offset = 0;
     for (int f = 0; f < size; f++) {
@@ -308,6 +319,7 @@ void Mesh::read_from_obj(std::string inputfile) {
       // shapes[s].mesh.material_ids[f];
     }
   }
+  std::cout << "------------------------------------------------\n";
   _origin = _bounding_box.get_middle();
   _transform.add_translation(_origin);
 }

@@ -16,7 +16,6 @@ Plane::Plane() {
 void Plane::set_start_position(vec3 position, vec3 normal) {
   _point = vec3(0, 0, 1);
   _origin = vec3(0, 0, 0);
-  std::cout << "norm: " << glm::to_string(normal) << "\n";
   calculate_direction(normal, vec3(0, 0, 1));
 
   // move to position

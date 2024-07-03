@@ -113,7 +113,6 @@ void LBVH::split_first_bit(bvh_node_pointer *node, uint current_bit) {
   if (size <= MAX_TRIANGLES) {
     return;
   }
-  // std::cout << "curren_bit: " << current_bit << "\n";
   for (size_t i = current_bit; i > 0; i--) {
     bool first_bit = _morton_codes.at(first_id) & (1 << i);
     for (size_t a = 0; a < size; a++) {
