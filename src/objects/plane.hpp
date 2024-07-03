@@ -51,8 +51,8 @@ class Plane : public Object {
   Material _material2;
   Texture _texture;
 
-  bool _two_colored;
-  bool _textured;
+  bool _two_colored = false;
+  bool _textured = false;
   bool _axis_enable = false;
   bool _enable_size = false;
 };
