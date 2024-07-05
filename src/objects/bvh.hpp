@@ -36,10 +36,14 @@ class BVH {
   BVH_data _data;
 
   /***** Funcitons *****/
+
+  
+  /// @brief store the currently best intersection.
+  Intersection _best_intersection;
   bool intersect_node_bool(BVH_node_data *node_data, const Ray &ray);
-  Intersection intersect_node(bvh_node_pointer *node, const Ray &ray);
-  Intersection intersect_node(uint id_flat, const Ray &ray);
-  Intersection intersect_leaf(BVH_node_data *node_data, const Ray &ray);
+  void intersect_node(bvh_node_pointer *node, const Ray &ray);
+  void intersect_node(uint id_flat, const Ray &ray);
+  void intersect_leaf(BVH_node_data *node_data, const Ray &ray);
 
   bool update_intersection(Intersection *intersect,
                            const Intersection &new_intersect);
