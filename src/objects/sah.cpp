@@ -186,6 +186,7 @@ void SAH::split_middle_node(bvh_node_pointer *node) {
   bvh_node_pointer *node_right = _tree->insert_child(data_right, node);
 
   uint axis = _tree->get_longest_axis(node);
+  node->data.axis = axis;
 
   uint size = _tree->get_data(node)->triangle_ids.size();
 
@@ -226,6 +227,7 @@ void SAH::split(bvh_node_pointer *node, const SAH_buckets &buckets,
     return;
   }
 
+  node->data.axis = splitp.axis;
   // asing child nodes
   BVH_node_data data_left;
   BVH_node_data data_right;

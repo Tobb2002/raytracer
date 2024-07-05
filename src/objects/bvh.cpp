@@ -89,8 +89,14 @@ void BVH::intersect_node(bvh_node_pointer *node, const Ray &ray) {
     return intersect_leaf(_data.tree.get_data(node), ray);
   }
 
-  intersect_node(_data.tree.get_left(node), ray);
-  intersect_node(_data.tree.get_right(node), ray);
+  if (ray.get_direction()[node->data.axis] < 0) {
+    intersect_node(_data.tree.get_left(node), ray);
+    intersect_node(_data.tree.get_right(node), ray);
+  }
+  else {
+    intersect_node(_data.tree.get_right(node), ray);
+    intersect_node(_data.tree.get_left(node), ray);
+  }
 }
 
 void BVH::intersect_node(uint id_flat, const Ray &ray) {
@@ -110,7 +116,7 @@ void BVH::intersect_node(uint id_flat, const Ray &ray) {
   intersect_node(_data.tree.get_right(id_flat), ray);
 }
 /**
- * @brief check if hitbox of node has intersection.
+ * @brief check if hitbox of node has intersection. that is closer than t of _current_best.
  *
  * @param id
  * @param ray
@@ -124,11 +130,13 @@ bool BVH::intersect_node_bool(BVH_node_data *node_data, const Ray &ray) {
   vec3 box_min = node_data->bounds.min;
   vec3 box_max = node_data->bounds.max;
 
+
   Interval tx = {(box_min.x - o.x) / d.x, (box_max.x - o.x) / d.x};
 
   Interval ty = {(box_min.y - o.y) / d.y, (box_max.y - o.y) / d.y};
 
   Interval tz = {(box_min.z - o.z) / d.z, (box_max.z - o.z) / d.z};
+
 
   // overlapping intervals indicate intersection
   // check box intersection
@@ -147,6 +155,13 @@ bool BVH::intersect_node_bool(BVH_node_data *node_data, const Ray &ray) {
     float t = tz.min;
     tz.min = tz.max;
     tz.max = t;
+  }
+
+  // discard if _best_intersection is closer than bounding box
+  if (_best_intersection.t <= tx.min ||
+      _best_intersection.t <= ty.min ||
+      _best_intersection.t <= tz.min) {
+    return false;
   }
 
   if (tx.min > ty.max || ty.min > tx.max) {

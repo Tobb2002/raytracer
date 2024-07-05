@@ -19,6 +19,7 @@ struct bvh_box {
 /// @brief Struct for bounding volume node.
 struct BVH_node_data {
   bvh_box bounds = bvh_box(vec3(MAXFLOAT), vec3(-MAXFLOAT));
+  uint axis = 0;
   std::vector<uint> triangle_ids;
 };
 
