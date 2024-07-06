@@ -37,7 +37,6 @@ class BVH {
 
   /***** Funcitons *****/
 
-  
   /// @brief store the currently best intersection.
   Intersection _best_intersection;
   bool intersect_node_bool(BVH_node_data *node_data, const Ray &ray);

@@ -12,7 +12,7 @@
 #include "bvh.hpp"
 #include "lbvh.hpp"
 
-//#define VISUALIZE_INTERSECT
+#define VISUALIZE_INTERSECT
 
 #define FLATTEN_TREE
 
@@ -83,7 +83,6 @@ void BVH::intersect_node(bvh_node_pointer *node, const Ray &ray) {
     return;
   }
 
-  _intersect_count += 1;
   // check if leaf
   if (_data.tree.is_leaf(node)) {
     return intersect_leaf(_data.tree.get_data(node), ray);
@@ -92,8 +91,7 @@ void BVH::intersect_node(bvh_node_pointer *node, const Ray &ray) {
   if (ray.get_direction()[node->data.axis] < 0) {
     intersect_node(_data.tree.get_left(node), ray);
     intersect_node(_data.tree.get_right(node), ray);
-  }
-  else {
+  } else {
     intersect_node(_data.tree.get_right(node), ray);
     intersect_node(_data.tree.get_left(node), ray);
   }
@@ -105,7 +103,6 @@ void BVH::intersect_node(uint id_flat, const Ray &ray) {
     return;
   }
 
-  _intersect_count += 1;
   // check if leaf
   if (_data.tree.get_node(id_flat)->is_leaf) {
     intersect_leaf(_data.tree.get_data(id_flat), ray);
@@ -116,7 +113,8 @@ void BVH::intersect_node(uint id_flat, const Ray &ray) {
   intersect_node(_data.tree.get_right(id_flat), ray);
 }
 /**
- * @brief check if hitbox of node has intersection. that is closer than t of _current_best.
+ * @brief check if hitbox of node has intersection. that is closer than t of
+ * _current_best.
  *
  * @param id
  * @param ray
@@ -124,19 +122,18 @@ void BVH::intersect_node(uint id_flat, const Ray &ray) {
  * @return false
  */
 bool BVH::intersect_node_bool(BVH_node_data *node_data, const Ray &ray) {
+  _intersect_count += 1;
   vec3 d = ray.get_direction();
   vec3 o = ray.get_origin();
 
   vec3 box_min = node_data->bounds.min;
   vec3 box_max = node_data->bounds.max;
 
-
   Interval tx = {(box_min.x - o.x) / d.x, (box_max.x - o.x) / d.x};
 
   Interval ty = {(box_min.y - o.y) / d.y, (box_max.y - o.y) / d.y};
 
   Interval tz = {(box_min.z - o.z) / d.z, (box_max.z - o.z) / d.z};
-
 
   // overlapping intervals indicate intersection
   // check box intersection
@@ -158,8 +155,7 @@ bool BVH::intersect_node_bool(BVH_node_data *node_data, const Ray &ray) {
   }
 
   // discard if _best_intersection is closer than bounding box
-  if (_best_intersection.t <= tx.min ||
-      _best_intersection.t <= ty.min ||
+  if (_best_intersection.t <= tx.min || _best_intersection.t <= ty.min ||
       _best_intersection.t <= tz.min) {
     return false;
   }
@@ -198,18 +194,21 @@ void BVH::intersect_leaf(BVH_node_data *node_data, const Ray &ray) {
     }
   }
 
-Intersection res =
-    (_data.triangles->data() + best_triangle_id)->intersect(ray);
+  Intersection res =
+      (_data.triangles->data() + best_triangle_id)->intersect(ray);
 #ifdef VISUALIZE_INTERSECT
-  _intersect_count *= 0.2;
-  if (_intersect_count < 255) {
-    res.material.color.x = _intersect_count;
-    res.material.color.y = _intersect_count;
-    res.material.color.z = _intersect_count;
-  }
-  _intersect_count = 0;
+  vec2 input_area = vec2(0, 200);
+  vec2 output_area = vec2(0, 1);
+
+  float value = (_intersect_count - input_area.x) *
+                    (output_area.y - output_area.x) /
+                    (input_area.y - input_area.x) +
+                output_area.x;
+  res.material.color.x = value;
+  res.material.color.y = value;
+  res.material.color.z = value;
 #endif
-update_intersection(&_best_intersection, res);
+  update_intersection(&_best_intersection, res);
 }
 
 bool BVH::update_intersection(Intersection *intersect,
