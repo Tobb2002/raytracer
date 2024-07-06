@@ -84,7 +84,7 @@ void LBVH::split(bvh_node_pointer *node, uint split_id) {
   bvh_node_pointer *node_right = _tree->insert_child(data_right, node);
 
   // get split axis
-  node->data.axis = glm::mod((float)split_id, 3.f);
+  node->data.axis = glm::mod(static_cast<float>(split_id), 3.f);
 
   // push back triangles
   BVH_node_data *data = _tree->get_data(node);

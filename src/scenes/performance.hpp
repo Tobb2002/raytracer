@@ -16,7 +16,7 @@ Scene get_scene() {
   //               {.color = vec3(0.2, 0.2, 0.2), .specular = 0.2});
 
   Mesh m = Mesh("data/input/kingshall.obj", origin_plane + vec3(0, 0, -18),
-                {.color = vec3(0.2, 0.2, 0.2), .specular = 0.2},
+                {.color = vec3(0.2, 0.2, 0.2), .specular = 0.0},
                 "data/input/textures/kingshall.png");
 
   Plane plane =

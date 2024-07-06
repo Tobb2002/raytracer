@@ -208,11 +208,13 @@ Image Scene::trace_image() {
 
   // #pragma omp parallel for num_threads(5)
   for (int x = 0; x < resolution[0]; x++) {
+#ifdef PRINT_PROGRESS
     std::cout << "\e[2K\e[1A"
               << "Progress: "
               << floorf(static_cast<float>(count_pix) /
                         (resolution[0] * resolution[1]) * 100)
               << "%\n";
+#endif
 
     for (int y = 0; y < resolution[1]; y++) {
 #ifdef DEBUG

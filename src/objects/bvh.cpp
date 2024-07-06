@@ -16,7 +16,7 @@
 
 #define FLATTEN_TREE
 
-#define SPLIT_SAH// SPLIT_MID, SPLIT_SAH, USE_LBVH, USE_HLBVH...
+#define SPLIT_SAH  // SPLIT_MID, SPLIT_SAH, USE_LBVH, USE_HLBVH...
 
 void BVH::build_tree_axis(std::vector<Triangle> *triangles) {
   // initialize data structure
