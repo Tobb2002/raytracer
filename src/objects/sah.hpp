@@ -9,6 +9,8 @@
 #define COST_TRAVERSAL 1
 #define COST_INTERSECT 1
 
+//#define SPLIT_LONGEST_AXIS
+
 /**
  * @class SAH_bucket
  * @brief Sturct holding all the information of a bucket
@@ -22,7 +24,11 @@ struct SAH_bucket {
 
 /// @brief Struct containing two-dimensional array of all buckets
 struct SAH_buckets {
+#ifdef SPLIT_LONGEST_AXIS
+  SAH_bucket buckets[1][SAH_NUM_BUCKETS];
+#else
   SAH_bucket buckets[3][SAH_NUM_BUCKETS];
+#endif
 };
 
 struct split_point {
@@ -46,12 +52,14 @@ class SAH {
 
   /// @brief Splits node a long longest axis
   void triangles_into_buckets(bvh_node_pointer *node, SAH_buckets *buckets);
+  uint triangles_into_buckets_axis(bvh_node_pointer *node, SAH_buckets *buckets);
 
   void split_middle_node(bvh_node_pointer *node);
   void split(bvh_node_pointer *node, const SAH_buckets &buckets,
              const split_point &splitp);
 
   split_point calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets);
+  split_point calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets, uint axis);
   bvh_box combine_box(SAH_buckets *buckets, const uint &axis, const uint &min,
                       const uint &max);
   void combine_ids(std::vector<uint> *result, const SAH_buckets &buckets,
