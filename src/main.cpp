@@ -7,11 +7,11 @@
 
 #include "image.hpp"
 #include "scene.hpp"
-#include "scenes/bvh_test.hpp"
+#include "scenes/performance.hpp"
 
 using glm::vec3, glm::vec2;
 
-#define ANIMATION
+// #define ANIMATION
 #define FRAMES 3
 
 Image get_image() { return Image(100, 100); }

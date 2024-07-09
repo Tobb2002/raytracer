@@ -12,7 +12,7 @@
 #include "bvh.hpp"
 #include "lbvh.hpp"
 
-#define VISUALIZE_INTERSECT
+// #define VISUALIZE_INTERSECT
 
 #define FLATTEN_TREE
 
@@ -109,8 +109,13 @@ void BVH::intersect_node(uint id_flat, const Ray &ray) {
     return;
   }
 
-  intersect_node(id_flat + 1, ray);
-  intersect_node(_data.tree.get_right(id_flat), ray);
+  if (ray.get_direction()[_data.tree.get_data(id_flat)->axis] < 0) {
+    intersect_node(id_flat + 1, ray);
+    intersect_node(_data.tree.get_right(id_flat), ray);
+  } else {
+    intersect_node(_data.tree.get_right(id_flat), ray);
+    intersect_node(id_flat + 1, ray);
+  }
 }
 /**
  * @brief check if hitbox of node has intersection. that is closer than t of

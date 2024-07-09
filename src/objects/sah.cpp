@@ -77,7 +77,8 @@ void SAH::triangles_into_buckets(bvh_node_pointer *node, SAH_buckets *buckets) {
   }
 }
 
-uint SAH::triangles_into_buckets_axis(bvh_node_pointer *node, SAH_buckets *buckets) {
+uint SAH::triangles_into_buckets_axis(bvh_node_pointer *node,
+                                      SAH_buckets *buckets) {
   vec3 min = _tree->get_data(node)->bounds.min;
   vec3 max = _tree->get_data(node)->bounds.max;
 
@@ -149,7 +150,6 @@ void SAH::combine_ids(std::vector<uint> *res, const SAH_buckets &buckets,
       res->push_back(id);
     }
   }
-
 }
 
 split_point SAH::calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets) {
@@ -216,7 +216,8 @@ split_point SAH::calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets) {
   return split;
 }
 
-split_point SAH::calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets, uint axis) {
+split_point SAH::calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets,
+                                uint axis) {
   // go trough all buckets and generate split
 
   float min_cost = MAXFLOAT;
@@ -230,8 +231,7 @@ split_point SAH::calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets, ui
   for (size_t split_id = 0; split_id < SAH_NUM_BUCKETS - 1;
        split_id++) {  // for every bucket
     bvh_box left = combine_box(buckets, 0, 0, split_id);
-    bvh_box right =
-        combine_box(buckets, 0, split_id + 1, SAH_NUM_BUCKETS - 1);
+    bvh_box right = combine_box(buckets, 0, split_id + 1, SAH_NUM_BUCKETS - 1);
 
     // calc probabilities that random ray hits box
     float prob_left = get_surface_area(left);
@@ -344,8 +344,8 @@ void SAH::split(bvh_node_pointer *node, const SAH_buckets &buckets,
   bvh_node_pointer *node_right = _tree->insert_child(data_right, node);
 
 #ifdef SPLIT_LONGEST_AXIS
-  combine_ids(&_tree->get_data(node_left)->triangle_ids, buckets, 0,
-              0, splitp.id);
+  combine_ids(&_tree->get_data(node_left)->triangle_ids, buckets, 0, 0,
+              splitp.id);
   combine_ids(&_tree->get_data(node_right)->triangle_ids, buckets, 0,
               splitp.id + 1, SAH_NUM_BUCKETS - 1);
 #else
