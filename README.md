@@ -8,6 +8,7 @@ the system:
 
 - [glm](https://glm.g-truc.net/0.9.9/)
 - [cimg](https://cimg.eu/)
+- [boost](https://www.boost.org/doc/libs/1_31_0/libs/lambda/doc/lambda_docs_as_one_file.html)
 
 - [cclint](https://github.com/ollix/cclint) optional for style checking
 - [compiledb](https://pypi.org/project/compiledb/) optional for generating compile commands
