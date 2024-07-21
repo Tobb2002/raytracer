@@ -36,11 +36,6 @@ struct bvh_node_flat {
   bool is_leaf;
 };
 
-union bvh_node {
-  bvh_node_pointer pointer;
-  bvh_node_flat flat;
-};
-
 class BVH_tree {
  public:
   BVH_tree() {}
@@ -58,10 +53,16 @@ class BVH_tree {
   bvh_node_pointer* insert_child(BVH_node_data data, bvh_node_pointer* node);
 
   bvh_node_pointer* get_root();
+  void set_root(BVH_node_data data);
+  void delete_root();
   bvh_node_flat* get_root_flat();
 
   bvh_node_pointer* get_left(bvh_node_pointer* node);
   bvh_node_pointer* get_right(bvh_node_pointer* node);
+
+  void add_treelet(const std::vector<uint>& treelet_ids);
+  std::vector<bvh_node_pointer*> get_treelets();
+  void clear_treelets();
 
   BVH_node_data* get_data(bvh_node_pointer* node);
 
@@ -103,14 +104,16 @@ class BVH_tree {
    */
   void flatten_tree();
   // void build_from_flattened();
+  void destroy_tree();
 
  private:
   void destroy_node(bvh_node_pointer* node);
-  void destroy_tree();
+  void destroy_treelets();
 
   uint flatten_node(bvh_node_pointer* node);
 
   std::vector<bvh_node_flat> _triangles_flat;
   bvh_node_pointer* root = nullptr;
   std::vector<Triangle>* _triangles;
+  std::vector<bvh_node_pointer*> _treelets;
 };

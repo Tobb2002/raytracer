@@ -24,6 +24,10 @@ BVH_tree& BVH_tree::operator=(const BVH_tree& old_tree) {
   _triangles = old_tree._triangles;
   destroy_tree();
   root = copy_node(old_tree.root);
+  // copy treelets
+  for (bvh_node_pointer* treelet : old_tree._treelets) {
+    _treelets.push_back(copy_node(treelet));
+  }
   return *this;
 }
 
@@ -38,7 +42,10 @@ bvh_node_pointer* BVH_tree::copy_node(bvh_node_pointer* old_node) {
   return new_node;
 }
 
-BVH_tree::~BVH_tree() { destroy_tree(); }
+BVH_tree::~BVH_tree() {
+  destroy_tree();
+  destroy_treelets();
+}
 
 void BVH_tree::set_triangles(std::vector<Triangle>* triangles) {
   _triangles = triangles;
@@ -75,6 +82,15 @@ bvh_node_pointer* BVH_tree::get_root() {
   }
   return root;
 }
+void BVH_tree::set_root(BVH_node_data data) {
+  if (root != nullptr) {
+    throw std::runtime_error("tree already has a root node!");
+  }
+
+  root = new bvh_node_pointer(data);
+}
+
+void BVH_tree::delete_root() { delete root; }
 
 bvh_node_flat* BVH_tree::get_root_flat() { return _triangles_flat.data(); }
 
@@ -243,3 +259,25 @@ void BVH_tree::destroy_tree() {
   destroy_node(root);
   root = nullptr;
 }
+
+void BVH_tree::destroy_treelets() {
+  for (bvh_node_pointer* node : _treelets) {
+    destroy_node(node);
+  }
+}
+
+// treelets
+void BVH_tree::add_treelet(const std::vector<uint>& treelet_ids) {
+  BVH_node_data data;
+  for (uint id : treelet_ids) {
+    data.triangle_ids.push_back(id);
+  }
+
+  bvh_node_pointer* node = new bvh_node_pointer(data);
+  calculate_bounds(node);
+
+  _treelets.push_back(node);
+}
+
+std::vector<bvh_node_pointer*> BVH_tree::get_treelets() { return _treelets; }
+void BVH_tree::clear_treelets() { _treelets.clear(); }

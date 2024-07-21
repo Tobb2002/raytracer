@@ -112,8 +112,6 @@ Mesh &Mesh::operator=(const Mesh &old_mesh) {
   return *this;
 }
 
-Mesh::~Mesh() {}
-
 /***** Print DEBUG information *****/
 
 /**

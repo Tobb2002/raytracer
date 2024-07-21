@@ -6,6 +6,9 @@
 
 #include <algorithm>
 #include <boost/lambda/bind.hpp>
+#include <cmath>
+
+#include "bvh_tree.hpp"
 
 SAH::SAH(BVH_tree *tree) { _tree = tree; }
 
@@ -142,6 +145,16 @@ bvh_box SAH::combine_box(SAH_buckets *buckets, const uint &axis,
   }
   return res;
 }
+
+bvh_box SAH::combine_box_treelets(uint id_start, uint count) {
+  bvh_box res = bvh_box(vec3(MAXFLOAT), vec3(-MAXFLOAT));
+  for (uint id = id_start; id < id_start + count; id++) {
+    bvh_box current_box = _tree->get_treelets().at(id)->data.bounds;
+    _tree->update_bounds(&res.min, current_box.min, &res.max, current_box.max);
+  }
+  return res;
+}
+
 void SAH::combine_ids(std::vector<uint> *res, const SAH_buckets &buckets,
                       const uint &axis, const uint &bid_min,
                       const uint &bid_max) {
@@ -388,4 +401,54 @@ void SAH::split(bvh_node_pointer *node) {
   // recursivley continue splitting
   split(_tree->get_left(node));
   split(_tree->get_right(node));
+}
+
+void SAH::built_on_treelets() {
+  // define new root node
+  _tree->set_root(BVH_node_data());
+
+  split_treelets(0, _tree->get_treelets().size(), _tree->get_root());
+
+  _tree->clear_treelets();
+}
+void SAH::split_treelets(uint id_start, uint count, bvh_node_pointer *parent) {
+  // calculate bounding box
+  parent->data.bounds = combine_box_treelets(id_start, count);
+
+  if (count == 1) {
+    // add treelet to tree
+    bvh_node_pointer *old_node = parent;
+    if (parent->parent->left == old_node) {
+      parent->parent->left = *(_tree->get_treelets().data() + id_start);
+      *(_tree->get_treelets().data() + id_start) = nullptr;
+      delete old_node;
+    } else if (parent->parent->right == old_node) {
+      parent->parent->right = *(_tree->get_treelets().data() + id_start);
+      *(_tree->get_treelets().data() + id_start) = nullptr;
+      delete old_node;
+    } else {
+      throw std::runtime_error("parent is not a child of this node!");
+    }
+    // old_node->left = _tree->get_treelets().at(id_start);
+    //
+    return;
+  } else if (count < 1) {
+    return;
+  }
+
+  uint split_id = id_start + (count / 2);
+  // TODO(tobi) use SAH to find split id
+
+  BVH_node_data data_left = BVH_node_data();
+  BVH_node_data data_right = BVH_node_data();
+
+  _tree->insert_child(data_left, parent);
+  _tree->insert_child(data_right, parent);
+
+  uint count_left = split_id - id_start;
+  uint count_right = count - count_left;
+
+  split_treelets(id_start, count_left, parent->left);
+  split_treelets(split_id, count_right, parent->right);
+  //
 }

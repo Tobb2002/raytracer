@@ -59,7 +59,6 @@ class BVH {
 
  public:
   BVH() {}
-  ~BVH() {}
 
   void build_tree_axis(std::vector<Triangle> *triangles);
   void set_triangles(std::vector<Triangle> *triangles);

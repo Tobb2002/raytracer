@@ -16,6 +16,13 @@ using glm::vec3;
 // integer
 #define GRID_SIZE 10
 
+// number of bits for the morton code
+#define MORTON_SIZE GRID_SIZE * 3
+
+// number of first morton code bits to be identical in the same treelet
+// 0 = only use lbvh since just one treelet get's added
+#define TREELET_BITS 2
+
 struct morton_data {
   uint triangle_id;
   uint32_t morton_code;
@@ -29,6 +36,11 @@ class LBVH {
    * @brief Build tree from sorted triangles in root node.
    */
   void build();
+
+  /**
+   * @brief build lbvh for every treelet.
+   */
+  void build_treelets();
 
  private:
   /**
@@ -68,6 +80,13 @@ class LBVH {
    * @param id
    */
   void split(bvh_node_pointer *node, uint id);
+
+  /**
+   * @brief split node into treelets and free node afterwards.
+   *
+   * @param node
+   */
+  void add_treelets(bvh_node_pointer *node);
 
   /**
    * @brief Split current node at the first differing bit of the triangles

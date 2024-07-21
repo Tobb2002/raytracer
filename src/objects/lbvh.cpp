@@ -134,9 +134,57 @@ void LBVH::split_first_bit(bvh_node_pointer *node, uint current_bit) {
   // no split all childs should stay in the same child node
 }
 
+void LBVH::add_treelets(bvh_node_pointer *node) {
+  BVH_node_data *data = _tree->get_data(node);
+
+  uint64_t current_top_bits = 0;
+  bool new_treelet = true;
+
+  std::vector<uint> current_treelet;
+  for (uint id : data->triangle_ids) {
+    uint64_t morton_code = _morton_codes.at(id);
+    uint64_t top_bits = (morton_code >> (MORTON_SIZE - TREELET_BITS));
+
+    if (new_treelet) {
+      current_top_bits = top_bits;
+      new_treelet = false;
+    }
+
+    if (current_top_bits == top_bits) {
+      current_treelet.push_back(id);
+    } else {
+      // insert treelet
+      _tree->add_treelet(current_treelet);
+      current_treelet.clear();
+      // initialize new treelet
+      current_treelet.push_back(id);
+      current_top_bits = top_bits;
+    }
+  }
+
+  // at the rest to last treelet
+  if (current_treelet.size() > 0) {
+    _tree->add_treelet(current_treelet);
+  }
+
+  std::cout << "size: " << _tree->get_treelets().size();
+}
+
+void LBVH::build_treelets() {
+  generate_morton_codes();
+  sort();
+  add_treelets(_tree->get_root());
+
+  for (bvh_node_pointer *treelet : _tree->get_treelets()) {
+    split_first_bit(treelet, MORTON_SIZE - TREELET_BITS);
+  }
+
+  _tree->destroy_tree();
+}
+
 void LBVH::build() {
   generate_morton_codes();
   sort();
   split_first_bit(_tree->get_root(),
-                  GRID_SIZE * 3);  // highest bit of morton code
+                  MORTON_SIZE);  // highest bit of morton code
 }

@@ -4,12 +4,12 @@
 
 #include "bvh_tree.hpp"
 
-#define SAH_NUM_BUCKETS 13
+#define SAH_NUM_BUCKETS 9
 
 #define COST_TRAVERSAL 1
 #define COST_INTERSECT 1
 
-#define SPLIT_LONGEST_AXIS
+// #define SPLIT_LONGEST_AXIS
 
 /**
  * @class SAH_bucket
@@ -44,6 +44,15 @@ class SAH {
 
   void split_middle(bvh_node_pointer *node);
   void split(bvh_node_pointer *node);
+  void built_on_treelets();
+
+  /**
+   * @brief split the list of nodes (treelets recursivly using sah)
+   *
+   * @param id_start id of first item
+   * @param count number of items to consider for split.
+   */
+  void split_treelets(uint id_start, uint count, bvh_node_pointer *parent);
 
  private:
   /// @brief sorts the array beetween first and first + count INPLACE
@@ -64,6 +73,7 @@ class SAH {
                              uint axis);
   bvh_box combine_box(SAH_buckets *buckets, const uint &axis, const uint &min,
                       const uint &max);
+  bvh_box combine_box_treelets(uint id_start, uint count);
   void combine_ids(std::vector<uint> *result, const SAH_buckets &buckets,
                    const uint &axis, const uint &min, const uint &max);
   float get_surface_area(const bvh_box &box);

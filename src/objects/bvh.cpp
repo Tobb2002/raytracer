@@ -14,9 +14,9 @@
 
 // #define VISUALIZE_INTERSECT
 
-#define FLATTEN_TREE
+// #define FLATTEN_TREE
 
-#define SPLIT_SAH  // SPLIT_MID, SPLIT_SAH, USE_LBVH, USE_HLBVH...
+#define USE_HLBVH  // SPLIT_MID, SPLIT_SAH, USE_LBVH, USE_HLBVH...
 
 void BVH::build_tree_axis(std::vector<Triangle> *triangles) {
   // initialize data structure
@@ -46,6 +46,13 @@ void BVH::build_tree_axis(std::vector<Triangle> *triangles) {
   LBVH l = LBVH(&_data.tree);
   // lbvh.sort();
   l.build();
+#endif
+#ifdef USE_HLBVH
+  LBVH lbvh = LBVH(&_data.tree);
+  SAH sah = SAH(&_data.tree);
+
+  lbvh.build_treelets();
+  sah.built_on_treelets();
 #endif
 
 #ifdef FLATTEN_TREE
@@ -88,7 +95,7 @@ void BVH::intersect_node(bvh_node_pointer *node, const Ray &ray) {
     return intersect_leaf(_data.tree.get_data(node), ray);
   }
 
-  if (ray.get_direction()[node->data.axis] < 0) {
+  if (ray.get_direction()[node->data.axis] > 0) {
     intersect_node(_data.tree.get_left(node), ray);
     intersect_node(_data.tree.get_right(node), ray);
   } else {
@@ -109,7 +116,7 @@ void BVH::intersect_node(uint id_flat, const Ray &ray) {
     return;
   }
 
-  if (ray.get_direction()[_data.tree.get_data(id_flat)->axis] < 0) {
+  if (ray.get_direction()[_data.tree.get_data(id_flat)->axis] > 0) {
     intersect_node(id_flat + 1, ray);
     intersect_node(_data.tree.get_right(id_flat), ray);
   } else {

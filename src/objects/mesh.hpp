@@ -22,7 +22,6 @@ class Mesh : public Object {
 
   Mesh(const Mesh& old_mesh);
   Mesh& operator=(const Mesh& old_mesh);
-  ~Mesh();
 
   /***** Print Debug information *****/
   void print_triangles(void);
