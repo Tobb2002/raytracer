@@ -3,15 +3,17 @@
 #BUILD=debug
 
 CC = clang++
-FLAGS = -std=c++2a -W -fopenmp #-fno-elide-constructors
-LINKER_FLAGS = -lm -lpthread -lX11 -lprofiler
+FLAGS = -std=c++2a -W  #-fno-elide-constructors
+LINKER_FLAGS = -lm -lX11 
 
 ifeq ($(BUILD),debug)   
 # "Debug" build - no optimization, and debugging symbols
 FLAGS += -fsanitize=address -O0 -g -pg
+OBJ_DIR = obj/debug
 else
 # "Release" build - optimization, and no debug symbols
 FLAGS += -O2 -DNDEBUG
+OBJ_DIR = obj/release
 endif
 
 # tasks
@@ -19,7 +21,7 @@ all: compile
 
 compile: bin/main
 
-BUILDDIRS= obj bin
+BUILDDIRS= $(OBJ_DIR) bin
 
 $(BUILDDIRS):
 	mkdir -p $(BUILDDIRS)
@@ -63,24 +65,24 @@ compile_commands:
 
 files = main ray triangle camera image mesh pointlight box plane scene object objloader object_factory transform bvh light sphere texture bvh_tree sah lbvh
 
-targets = $(addsuffix .o,$(addprefix obj/,$(files)))
+targets = $(addsuffix .o,$(addprefix $(OBJ_DIR)/,$(files)))
 
 # linke everything
 bin/main: $(targets) | $(BUILDDIRS)
 	$(CC) $(FLAGS) $(LINKER_FLAGS) -o bin/main $(targets)
 
 # main
-obj/main.o: src/main.cpp src/scenes/ | $(BUILDDIRS)
-	$(CC) $(FLAGS) -c src/main.cpp -o obj/main.o
+$(OBJ_DIR)/main.o: src/main.cpp src/scenes/ | $(BUILDDIRS)
+	$(CC) $(FLAGS) -c src/main.cpp -o $(OBJ_DIR)/main.o
 
 # modules
-obj/%.o: src/%.cpp src/%.hpp | $(BUILDDIRS)
+$(OBJ_DIR)/%.o: src/%.cpp src/%.hpp | $(BUILDDIRS)
 	$(CC) $(FLAGS) -c $< -o $@
 
 #objects
-obj/%.o: src/objects/%.cpp src/objects/%.hpp | $(BUILDDIRS)
+$(OBJ_DIR)/%.o: src/objects/%.cpp src/objects/%.hpp | $(BUILDDIRS)
 	$(CC) $(FLAGS) -c $< -o $@
 
 # lib obj
-obj/%.o: src/objects/lib/%.cpp src/objects/lib/%.hpp | $(BUILDDIRS)
+$(OBJ_DIR)/%.o: src/objects/lib/%.cpp src/objects/lib/%.hpp | $(BUILDDIRS)
 	$(CC) $(FLAGS) -c $< -o $@
