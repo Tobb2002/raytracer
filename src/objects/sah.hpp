@@ -71,6 +71,9 @@ class SAH {
   split_point calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets);
   split_point calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets,
                              uint axis);
+
+  split_point calc_min_split_treelets(uint id_start, uint count);
+
   bvh_box combine_box(SAH_buckets *buckets, const uint &axis, const uint &min,
                       const uint &max);
   bvh_box combine_box_treelets(uint id_start, uint count);

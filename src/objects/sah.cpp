@@ -9,6 +9,7 @@
 #include <cmath>
 
 #include "bvh_tree.hpp"
+#include "lbvh.hpp"
 
 SAH::SAH(BVH_tree *tree) { _tree = tree; }
 
@@ -148,8 +149,12 @@ bvh_box SAH::combine_box(SAH_buckets *buckets, const uint &axis,
 
 bvh_box SAH::combine_box_treelets(uint id_start, uint count) {
   bvh_box res = bvh_box(vec3(MAXFLOAT), vec3(-MAXFLOAT));
+  if (count == 0) {
+    return res;
+  }
+  std::vector<bvh_node_pointer *> treelets = _tree->get_treelets();
   for (uint id = id_start; id < id_start + count; id++) {
-    bvh_box current_box = _tree->get_treelets().at(id)->data.bounds;
+    bvh_box current_box = treelets.at(id)->data.bounds;
     _tree->update_bounds(&res.min, current_box.min, &res.max, current_box.max);
   }
   return res;
@@ -274,6 +279,62 @@ split_point SAH::calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets,
       min_cost = cost;
       split.id = split_id;
       split.axis = axis;
+      split.left = left;
+      split.right = right;
+      run_trough = false;
+    }
+  }
+  if (run_trough) {
+    split.axis = 3;  // Fallback to middle split
+  }
+  return split;
+}
+
+split_point SAH::calc_min_split_treelets(uint id_start, uint count) {
+  // go trough all buckets and generate split
+
+  float min_cost = MAXFLOAT;
+  split_point split;
+
+  bvh_box box = combine_box_treelets(id_start, count);
+  float surface_box = get_surface_area(box);
+
+  bool run_trough = true;
+  for (size_t split_id = id_start; split_id < id_start + count - 1;
+       split_id++) {  // for every bucket
+    uint count_left = split_id - id_start + 1;
+    uint count_right = count - (split_id - id_start + 1);
+    bvh_box left = combine_box_treelets(id_start, count_left);
+    bvh_box right = combine_box_treelets(split_id + 1, count_right);
+
+    // calc probabilities that random ray hits box
+    float prob_left = get_surface_area(left);
+    float prob_right = get_surface_area(right);
+
+    std::vector<bvh_node_pointer *> treelets = _tree->get_treelets();
+    // get number of triangles
+    uint left_amount = 0;
+    for (size_t i = id_start; i < count_left; i++) {
+      left_amount += treelets.at(i)->data.triangle_ids.size();
+    }
+
+    uint right_amount = 0;
+    for (size_t i = split_id + 1; i < count_right; i++) {
+      right_amount += treelets.at(i)->data.triangle_ids.size();
+    }
+
+    // calculate costs
+    float cost =
+        MAXFLOAT - 1;  // to ensure that split gets set at least one time
+    cost = COST_TRAVERSAL + prob_left * left_amount * COST_INTERSECT +
+           prob_right * right_amount * COST_INTERSECT;
+
+    // update min cost
+    if (cost < min_cost) {
+      min_cost = cost;
+      split.id = split_id;
+      split.axis =
+          glm::mod(static_cast<float>(MORTON_SIZE - TREELET_BITS), 3.f);
       split.left = left;
       split.right = right;
       run_trough = false;
@@ -432,23 +493,36 @@ void SAH::split_treelets(uint id_start, uint count, bvh_node_pointer *parent) {
     // old_node->left = _tree->get_treelets().at(id_start);
     //
     return;
-  } else if (count < 1) {
+  }
+  if (count < 1) {
     return;
   }
 
-  uint split_id = id_start + (count / 2);
   // TODO(tobi) use SAH to find split id
+  split_point split = calc_min_split_treelets(id_start, count);
 
   BVH_node_data data_left = BVH_node_data();
   BVH_node_data data_right = BVH_node_data();
 
-  _tree->insert_child(data_left, parent);
-  _tree->insert_child(data_right, parent);
+  bvh_node_pointer *left = _tree->insert_child(data_left, parent);
+  bvh_node_pointer *right = _tree->insert_child(data_right, parent);
 
-  uint count_left = split_id - id_start;
+  uint split_id;
+  if (split.axis == 3) {
+    // fallback to middle split
+    split_id = id_start + (count / 2) - 1;
+    left->data.axis = 0;
+    right->data.axis = 0;
+  } else {
+    split_id = split.id;
+    left->data.axis = split.axis;
+    right->data.axis = split.axis;
+  }
+
+  uint count_left = split_id - id_start + 1;  // first split has id zero
   uint count_right = count - count_left;
 
-  split_treelets(id_start, count_left, parent->left);
-  split_treelets(split_id, count_right, parent->right);
+  split_treelets(id_start, count_left, left);
+  split_treelets(split_id + 1, count_right, right);
   //
 }
