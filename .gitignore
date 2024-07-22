@@ -21,3 +21,6 @@ data/input/no_git
 data/input/blender
 
 test/
+
+# profiling files
+*.out
