@@ -166,14 +166,13 @@ void LBVH::add_treelets(bvh_node_pointer *node) {
   if (current_treelet.size() > 0) {
     _tree->add_treelet(current_treelet);
   }
-
-  std::cout << "size: " << _tree->get_treelets().size();
 }
 
 void LBVH::build_treelets() {
   generate_morton_codes();
   sort();
   add_treelets(_tree->get_root());
+  std::cout << "number of treelets: " << _tree->get_treelets().size();
 
   for (bvh_node_pointer *treelet : _tree->get_treelets()) {
     split_first_bit(treelet, MORTON_SIZE - TREELET_BITS);

@@ -197,6 +197,10 @@ void BVH_tree::update_bounds(vec3* min, const vec3& min_value, vec3* max,
   update_max(max, max_value);
 }
 
+vec3 BVH_tree::get_middle(bvh_box box) {
+  return box.min + (box.max - box.min) * 0.5f;
+}
+
 Triangle* BVH_tree::get_triangle(uint id) { return _triangles->data() + id; }
 
 uint BVH_tree::get_left(uint id_flat) { return id_flat + 1; }
@@ -280,4 +284,9 @@ void BVH_tree::add_treelet(const std::vector<uint>& treelet_ids) {
 }
 
 std::vector<bvh_node_pointer*> BVH_tree::get_treelets() { return _treelets; }
+std::vector<uint> BVH_tree::get_treelet_ids() { return _treelet_ids; }
+bvh_node_pointer* BVH_tree::get_treelet(uint id) { return _treelets.at(id); }
+void BVH_tree::add_treelet_id(uint id) {
+  _treelet_ids.push_back(id);
+}
 void BVH_tree::clear_treelets() { _treelets.clear(); }

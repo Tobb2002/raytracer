@@ -290,7 +290,7 @@ split_point SAH::calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets,
   return split;
 }
 
-split_point SAH::calc_min_split_treelets(uint id_start, uint count) {
+split_point SAH::calc_min_split_treelets(uint id_start, uint count, SAH_buckets *buckets) {
   // go trough all buckets and generate split
 
   float min_cost = MAXFLOAT;
@@ -299,49 +299,62 @@ split_point SAH::calc_min_split_treelets(uint id_start, uint count) {
   bvh_box box = combine_box_treelets(id_start, count);
   float surface_box = get_surface_area(box);
 
+  // sort treelets respective to axis
+
   bool run_trough = true;
-  for (size_t split_id = id_start; split_id < id_start + count - 1;
-       split_id++) {  // for every bucket
-    uint count_left = split_id - id_start + 1;
-    uint count_right = count - (split_id - id_start + 1);
-    bvh_box left = combine_box_treelets(id_start, count_left);
-    bvh_box right = combine_box_treelets(split_id + 1, count_right);
+  for (size_t a = 0; a < 3; a++) {  // for every axis
+    for (size_t split_id = 0; split_id < SAH_NUM_BUCKETS - 1;
+         split_id++) {  // for every bucket
+#ifdef SPLIT_LONGEST_AXIS
+      bvh_box left = combine_box(buckets, 0, 0, split_id);
+      bvh_box right =
+          combine_box(buckets, 0, split_id + 1, SAH_NUM_BUCKETS - 1);
+#else
+      bvh_box left = combine_box(buckets, a, 0, split_id);
+      bvh_box right =
+          combine_box(buckets, a, split_id + 1, SAH_NUM_BUCKETS - 1);
+#endif
 
-    // calc probabilities that random ray hits box
-    float prob_left = get_surface_area(left);
-    float prob_right = get_surface_area(right);
+      // calc probabilities that random ray hits box
+      float prob_left = get_surface_area(left);
+      float prob_right = get_surface_area(right);
 
-    std::vector<bvh_node_pointer *> treelets = _tree->get_treelets();
-    // get number of triangles
-    uint left_amount = 0;
-    for (size_t i = id_start; i < count_left; i++) {
-      left_amount += treelets.at(i)->data.triangle_ids.size();
+      // get number of triangles
+      uint left_amount = 0;
+      for (size_t i = 0; i <= split_id; i++) {
+        for (uint id : buckets->buckets[a][i].ids) {
+          left_amount += _tree->get_treelet(id)->data.triangle_ids.size();
+        }
+      }
+
+      uint right_amount = 0;
+      for (size_t i = split_id + 1; i < SAH_NUM_BUCKETS; i++) {
+        for (uint id : buckets->buckets[a][i].ids) {
+          right_amount += _tree->get_treelet(id)->data.triangle_ids.size();
+        }
+      }
+
+      // calculate costs
+      float cost =
+          MAXFLOAT - 1;  // to ensure that split gets set at least one time
+      cost = COST_TRAVERSAL + prob_left * left_amount * COST_INTERSECT +
+             prob_right * right_amount * COST_INTERSECT;
+
+      buckets->buckets[a][split_id].cost = cost;
+
+      // update min cost
+      if (cost < min_cost) {
+        min_cost = cost;
+        split.id = split_id;
+        split.axis = a;
+        split.left = left;
+        split.right = right;
+        run_trough = false;
+      }
     }
-
-    uint right_amount = 0;
-    for (size_t i = split_id + 1; i < count_right; i++) {
-      right_amount += treelets.at(i)->data.triangle_ids.size();
+    if (run_trough) {
+      split.axis = 3;  // Fallback to middle split
     }
-
-    // calculate costs
-    float cost =
-        MAXFLOAT - 1;  // to ensure that split gets set at least one time
-    cost = COST_TRAVERSAL + prob_left * left_amount * COST_INTERSECT +
-           prob_right * right_amount * COST_INTERSECT;
-
-    // update min cost
-    if (cost < min_cost) {
-      min_cost = cost;
-      split.id = split_id;
-      split.axis =
-          glm::mod(static_cast<float>(MORTON_SIZE - TREELET_BITS), 3.f);
-      split.left = left;
-      split.right = right;
-      run_trough = false;
-    }
-  }
-  if (run_trough) {
-    split.axis = 3;  // Fallback to middle split
   }
   return split;
 }
@@ -464,11 +477,67 @@ void SAH::split(bvh_node_pointer *node) {
   split(_tree->get_right(node));
 }
 
+void SAH::treelets_into_buckets(uint id_start, uint count, SAH_buckets *buckets) {
+  bvh_box box = combine_box_treelets(id_start, count);
+  vec3 min = box.min;
+  vec3 max = box.max;
+
+  // calculate bucket size (x,y,z)
+  vec3 bucket_step = calc_bucket_step(min, max);
+
+  // go trough all triangles in node
+  std::vector<uint> treelet_ids = _tree->get_treelet_ids();
+  for (uint i = id_start; i < id_start + count; i++) {
+    uint id = treelet_ids.at(i);
+
+    
+    // check if triangle is in bucket b for x,y,z- bucket
+    vec3 treelet_pos = _tree->get_middle(_tree->get_treelet(id)->data.bounds);
+
+    for (size_t a = 0; a < 3; a++) {
+      for (uint b = 0; b < SAH_NUM_BUCKETS; b++) {
+        // get boundary for x,y,z-bucket[b]
+        vec3 split_before = min + static_cast<float>(b) * bucket_step;
+        vec3 split = min + static_cast<float>(b + 1) * bucket_step;
+
+        // triangle is in bucket if smaller than split if in bucket[i] it's also
+        // in all buckets[<i]
+        if (treelet_pos[a] >= split_before[a] && treelet_pos[a] <= split[a]) {
+          // insert trianlge to specific bucket
+          buckets->buckets[a][b].ids.push_back(id);
+          break;  // found right bucket continue with next axis
+        }
+      }
+    }
+  }
+
+  // calcualte bucket bounding boxes
+  for (size_t a = 0; a < 3; a++) {
+    for (uint b = 0; b < SAH_NUM_BUCKETS; b++) {
+      buckets->buckets[a][b].box = bvh_box(vec3(MAXFLOAT), vec3(-MAXFLOAT));
+
+      // calculate bounding box
+      for (uint i : buckets->buckets[a][b].ids) {
+        bvh_box box = _tree->get_treelet(i)->data.bounds;
+        _tree->update_bounds(
+            &buckets->buckets[a][b].box.min, box.min,
+            &buckets->buckets[a][b].box.max, box.max);
+      }
+    }
+  }
+}
+
 void SAH::built_on_treelets() {
   // define new root node
   _tree->set_root(BVH_node_data());
 
-  split_treelets(0, _tree->get_treelets().size(), _tree->get_root());
+  uint num_treelets = _tree->get_treelets().size();
+  for (uint i = 0; i < num_treelets; i++) {
+    _tree->add_treelet_id(i);
+  }
+
+
+  split_treelets(0, num_treelets, _tree->get_root());
 
   _tree->clear_treelets();
 }
@@ -498,8 +567,12 @@ void SAH::split_treelets(uint id_start, uint count, bvh_node_pointer *parent) {
     return;
   }
 
+  SAH_buckets buckets;
+
+  treelets_into_buckets(id_start, count, &buckets);
+
   // TODO(tobi) use SAH to find split id
-  split_point split = calc_min_split_treelets(id_start, count);
+  split_point split = calc_min_split_treelets(id_start, count, &buckets);
 
   BVH_node_data data_left = BVH_node_data();
   BVH_node_data data_right = BVH_node_data();
