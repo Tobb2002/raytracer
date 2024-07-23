@@ -21,7 +21,7 @@ using glm::vec3;
 
 // number of first morton code bits to be identical in the same treelet
 // 0 = only use lbvh since just one treelet get's added
-#define TREELET_BITS 8
+#define TREELET_BITS 4
 
 struct morton_data {
   uint triangle_id;

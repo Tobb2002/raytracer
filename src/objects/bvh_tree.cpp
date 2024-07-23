@@ -198,7 +198,7 @@ void BVH_tree::update_bounds(vec3* min, const vec3& min_value, vec3* max,
 }
 
 vec3 BVH_tree::get_middle(bvh_box box) {
-  return box.min + (box.max - box.min) * 0.5f;
+  return box.min + ((box.max - box.min) * 0.5f);
 }
 
 Triangle* BVH_tree::get_triangle(uint id) { return _triangles->data() + id; }

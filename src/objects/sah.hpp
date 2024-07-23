@@ -9,7 +9,7 @@
 #define COST_TRAVERSAL 1
 #define COST_INTERSECT 1
 
-// #define SPLIT_LONGEST_AXIS
+#define SPLIT_LONGEST_AXIS
 
 /**
  * @class SAH_bucket
@@ -68,6 +68,7 @@ class SAH {
                                    SAH_buckets *buckets);
 
   void treelets_into_buckets(bvh_node_pointer *node, SAH_buckets *buckets);
+  uint treelets_into_buckets_axis(bvh_node_pointer *node, SAH_buckets *buckets);
 
   void split_middle_node(bvh_node_pointer *node);
   void split_middle_node_treelets(bvh_node_pointer *node);
