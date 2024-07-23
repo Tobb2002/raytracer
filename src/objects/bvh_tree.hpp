@@ -62,9 +62,7 @@ class BVH_tree {
 
   void add_treelet(const std::vector<uint>& treelet_ids);
   std::vector<bvh_node_pointer*> get_treelets();
-  std::vector<uint> get_treelet_ids();
   bvh_node_pointer* get_treelet(uint id);
-  void add_treelet_id(uint id);
   void clear_treelets();
 
   BVH_node_data* get_data(bvh_node_pointer* node);
@@ -121,5 +119,4 @@ class BVH_tree {
   bvh_node_pointer* root = nullptr;
   std::vector<Triangle>* _triangles;
   std::vector<bvh_node_pointer*> _treelets;
-  std::vector<uint> _treelet_ids;
 };

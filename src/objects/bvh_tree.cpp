@@ -284,9 +284,5 @@ void BVH_tree::add_treelet(const std::vector<uint>& treelet_ids) {
 }
 
 std::vector<bvh_node_pointer*> BVH_tree::get_treelets() { return _treelets; }
-std::vector<uint> BVH_tree::get_treelet_ids() { return _treelet_ids; }
 bvh_node_pointer* BVH_tree::get_treelet(uint id) { return _treelets.at(id); }
-void BVH_tree::add_treelet_id(uint id) {
-  _treelet_ids.push_back(id);
-}
 void BVH_tree::clear_treelets() { _treelets.clear(); }

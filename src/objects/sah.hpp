@@ -52,21 +52,25 @@ class SAH {
    * @param id_start id of first item
    * @param count number of items to consider for split.
    */
-  void split_treelets(uint id_start, uint count, bvh_node_pointer *parent);
+  void split_treelets(bvh_node_pointer *node);
 
  private:
   /// @brief sorts the array beetween first and first + count INPLACE
   void sort(std::vector<uint>::iterator begin, const uint &count,
             const uint &axis);
 
+  void sort_treelets(std::vector<uint>::iterator begin, const uint &count,
+                     const uint &axis);
+
   /// @brief Splits node a long longest axis
   void triangles_into_buckets(bvh_node_pointer *node, SAH_buckets *buckets);
   uint triangles_into_buckets_axis(bvh_node_pointer *node,
                                    SAH_buckets *buckets);
 
-  void treelets_into_buckets(uint id_start, uint count, SAH_buckets * buckets);
+  void treelets_into_buckets(bvh_node_pointer *node, SAH_buckets *buckets);
 
   void split_middle_node(bvh_node_pointer *node);
+  void split_middle_node_treelets(bvh_node_pointer *node);
   void split(bvh_node_pointer *node, const SAH_buckets &buckets,
              const split_point &splitp);
 
@@ -74,11 +78,12 @@ class SAH {
   split_point calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets,
                              uint axis);
 
-  split_point calc_min_split_treelets(uint id_start, uint count, SAH_buckets *buckets);
+  split_point calc_min_split_treelets(bvh_node_pointer *node,
+                                      SAH_buckets *buckets);
 
   bvh_box combine_box(SAH_buckets *buckets, const uint &axis, const uint &min,
                       const uint &max);
-  bvh_box combine_box_treelets(uint id_start, uint count);
+  bvh_box combine_box_treelets(bvh_node_pointer *node);
   void combine_ids(std::vector<uint> *result, const SAH_buckets &buckets,
                    const uint &axis, const uint &min, const uint &max);
   float get_surface_area(const bvh_box &box);

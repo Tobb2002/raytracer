@@ -28,6 +28,22 @@ void SAH::sort(std::vector<uint>::iterator begin, const uint &count,
             boo::bind(&comp, _tree, boo::_1, boo::_2, axis));
 }
 
+bool comp_treelets(BVH_tree *tree, uint id1, uint id2, uint axis) {
+  bvh_box middle1 = tree->get_treelet(id1)->data.bounds;
+  bvh_box middle2 = tree->get_treelet(id2)->data.bounds;
+  if (tree->get_middle(middle1)[axis] < tree->get_middle(middle2)[axis]) {
+    return true;
+  }
+  return false;
+}
+
+void SAH::sort_treelets(std::vector<uint>::iterator begin, const uint &count,
+                        const uint &axis) {
+  namespace boo = boost::lambda;
+  std::sort(begin, begin + count,
+            boo::bind(&comp_treelets, _tree, boo::_1, boo::_2, axis));
+}
+
 vec3 calc_bucket_step(vec3 min, vec3 max) {
   vec3 res;
   for (size_t a = 0; a < 3; a++) {
@@ -147,13 +163,13 @@ bvh_box SAH::combine_box(SAH_buckets *buckets, const uint &axis,
   return res;
 }
 
-bvh_box SAH::combine_box_treelets(uint id_start, uint count) {
+bvh_box SAH::combine_box_treelets(bvh_node_pointer *node) {
   bvh_box res = bvh_box(vec3(MAXFLOAT), vec3(-MAXFLOAT));
-  if (count == 0) {
+  if (node->data.triangle_ids.size() <= 0) {
     return res;
   }
   std::vector<bvh_node_pointer *> treelets = _tree->get_treelets();
-  for (uint id = id_start; id < id_start + count; id++) {
+  for (uint id : node->data.triangle_ids) {
     bvh_box current_box = treelets.at(id)->data.bounds;
     _tree->update_bounds(&res.min, current_box.min, &res.max, current_box.max);
   }
@@ -290,13 +306,14 @@ split_point SAH::calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets,
   return split;
 }
 
-split_point SAH::calc_min_split_treelets(uint id_start, uint count, SAH_buckets *buckets) {
+split_point SAH::calc_min_split_treelets(bvh_node_pointer *node,
+                                         SAH_buckets *buckets) {
   // go trough all buckets and generate split
 
   float min_cost = MAXFLOAT;
   split_point split;
 
-  bvh_box box = combine_box_treelets(id_start, count);
+  bvh_box box = combine_box_treelets(node);
   float surface_box = get_surface_area(box);
 
   // sort treelets respective to axis
@@ -477,8 +494,8 @@ void SAH::split(bvh_node_pointer *node) {
   split(_tree->get_right(node));
 }
 
-void SAH::treelets_into_buckets(uint id_start, uint count, SAH_buckets *buckets) {
-  bvh_box box = combine_box_treelets(id_start, count);
+void SAH::treelets_into_buckets(bvh_node_pointer *node, SAH_buckets *buckets) {
+  bvh_box box = combine_box_treelets(node);
   vec3 min = box.min;
   vec3 max = box.max;
 
@@ -486,11 +503,7 @@ void SAH::treelets_into_buckets(uint id_start, uint count, SAH_buckets *buckets)
   vec3 bucket_step = calc_bucket_step(min, max);
 
   // go trough all triangles in node
-  std::vector<uint> treelet_ids = _tree->get_treelet_ids();
-  for (uint i = id_start; i < id_start + count; i++) {
-    uint id = treelet_ids.at(i);
-
-    
+  for (uint id : node->data.triangle_ids) {
     // check if triangle is in bucket b for x,y,z- bucket
     vec3 treelet_pos = _tree->get_middle(_tree->get_treelet(id)->data.bounds);
 
@@ -519,9 +532,8 @@ void SAH::treelets_into_buckets(uint id_start, uint count, SAH_buckets *buckets)
       // calculate bounding box
       for (uint i : buckets->buckets[a][b].ids) {
         bvh_box box = _tree->get_treelet(i)->data.bounds;
-        _tree->update_bounds(
-            &buckets->buckets[a][b].box.min, box.min,
-            &buckets->buckets[a][b].box.max, box.max);
+        _tree->update_bounds(&buckets->buckets[a][b].box.min, box.min,
+                             &buckets->buckets[a][b].box.max, box.max);
       }
     }
   }
@@ -529,73 +541,123 @@ void SAH::treelets_into_buckets(uint id_start, uint count, SAH_buckets *buckets)
 
 void SAH::built_on_treelets() {
   // define new root node
-  _tree->set_root(BVH_node_data());
+  BVH_node_data data{};
 
   uint num_treelets = _tree->get_treelets().size();
   for (uint i = 0; i < num_treelets; i++) {
-    _tree->add_treelet_id(i);
+    data.triangle_ids.push_back(i);
   }
 
+  _tree->set_root(data);
 
-  split_treelets(0, num_treelets, _tree->get_root());
+  split_treelets(_tree->get_root());
 
   _tree->clear_treelets();
 }
-void SAH::split_treelets(uint id_start, uint count, bvh_node_pointer *parent) {
-  // calculate bounding box
-  parent->data.bounds = combine_box_treelets(id_start, count);
+void SAH::split_middle_node_treelets(bvh_node_pointer *node) {
+  uint count = node->data.triangle_ids.size();
+  if (count < 2) {
+    throw std::runtime_error(
+        "count < 2 middle_split treelet should not appear");
+  }
+  // asing child nodes
+  BVH_node_data data_left;
+  BVH_node_data data_right;
 
-  if (count == 1) {
+  // TODO(tobi) insert child withou BVH_node_data parameter
+  bvh_node_pointer *node_left = _tree->insert_child(data_left, node);
+  bvh_node_pointer *node_right = _tree->insert_child(data_right, node);
+
+  uint axis = _tree->get_longest_axis(node);
+  node->data.axis = axis;
+
+  uint size = _tree->get_data(node)->triangle_ids.size();
+
+  sort_treelets(_tree->get_data(node)->triangle_ids.begin(), size, axis);
+
+  for (size_t i = 0; i < size; i++) {
+    uint id = _tree->get_data(node)->triangle_ids[i];
+    if (i < size / 2) {
+      _tree->get_data(node_left)->triangle_ids.push_back(id);
+    } else {
+      _tree->get_data(node_right)->triangle_ids.push_back(id);
+    }
+  }
+}
+
+void SAH::split_treelets(bvh_node_pointer *node) {
+  uint count = node->data.triangle_ids.size();
+  if (count < 1) {
+    return;
+  }
+  // calculate bounding box
+  node->data.bounds = combine_box_treelets(node);
+
+  bvh_node_pointer *parent = node->parent;
+  if (count == 1 && parent != nullptr) {
+    uint id = node->data.triangle_ids.at(0);
     // add treelet to tree
-    bvh_node_pointer *old_node = parent;
-    if (parent->parent->left == old_node) {
-      parent->parent->left = *(_tree->get_treelets().data() + id_start);
-      *(_tree->get_treelets().data() + id_start) = nullptr;
-      delete old_node;
-    } else if (parent->parent->right == old_node) {
-      parent->parent->right = *(_tree->get_treelets().data() + id_start);
-      *(_tree->get_treelets().data() + id_start) = nullptr;
-      delete old_node;
+    if (parent->left == node) {
+      parent->left = _tree->get_treelet(id);
+      *(_tree->get_treelets().data() + id) = nullptr;
+      delete node;
+    } else if (parent->right == node) {
+      parent->right = _tree->get_treelet(id);
+      *(_tree->get_treelets().data() + id) = nullptr;
+      delete node;
     } else {
       throw std::runtime_error("parent is not a child of this node!");
     }
-    // old_node->left = _tree->get_treelets().at(id_start);
-    //
-    return;
-  }
-  if (count < 1) {
     return;
   }
 
   SAH_buckets buckets;
 
-  treelets_into_buckets(id_start, count, &buckets);
+  treelets_into_buckets(node, &buckets);
 
   // TODO(tobi) use SAH to find split id
-  split_point split = calc_min_split_treelets(id_start, count, &buckets);
+  split_point split = calc_min_split_treelets(node, &buckets);
 
   BVH_node_data data_left = BVH_node_data();
   BVH_node_data data_right = BVH_node_data();
 
-  bvh_node_pointer *left = _tree->insert_child(data_left, parent);
-  bvh_node_pointer *right = _tree->insert_child(data_right, parent);
-
-  uint split_id;
+  // fallback middle split
   if (split.axis == 3) {
-    // fallback to middle split
-    split_id = id_start + (count / 2) - 1;
-    left->data.axis = 0;
-    right->data.axis = 0;
-  } else {
-    split_id = split.id;
-    left->data.axis = split.axis;
-    right->data.axis = split.axis;
+    split_middle_node_treelets(node);
+    split_treelets(node->left);
+    split_treelets(node->right);
+    return;
   }
 
-  uint count_left = split_id - id_start + 1;  // first split has id zero
-  uint count_right = count - count_left;
+  // TODO(tobi) combineids
+#ifdef SPLIT_LONGEST_AXIS
+  combine_ids(&data_left.triangle_ids, buckets, 0, 0, splitp.id);
+  combine_ids(&data_right.triangle_ids, buckets, 0, splitp.id + 1,
+              SAH_NUM_BUCKETS - 1);
+#else
+  combine_ids(&data_left.triangle_ids, buckets, split.axis, 0, split.id);
+  combine_ids(&data_right.triangle_ids, buckets, split.axis, split.id + 1,
+              SAH_NUM_BUCKETS - 1);
+#endif
 
-  split_treelets(id_start, count_left, left);
-  split_treelets(split_id + 1, count_right, right);
-  //
+  bvh_node_pointer *left = _tree->insert_child(data_left, node);
+  bvh_node_pointer *right = _tree->insert_child(data_right, node);
+
+  // uint split_id;
+  // if (split.axis == 3) {
+  //   // fallback to middle split
+  //   split_id = id_start + (count / 2) - 1;
+  //   left->data.axis = 0;
+  //   right->data.axis = 0;
+  // } else {
+  //   split_id = split.id;
+  //   left->data.axis = split.axis;
+  //   right->data.axis = split.axis;
+  // }
+
+  // uint count_left = split_id - id_start + 1;  // first split has id zero
+  // uint count_right = count - count_left;
+
+  split_treelets(left);
+  split_treelets(right);
 }
