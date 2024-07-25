@@ -59,25 +59,16 @@ void SAH::triangles_into_buckets(bvh_node_pointer *node, SAH_buckets *buckets) {
   // calculate bucket size (x,y,z)
   vec3 bucket_step = calc_bucket_step(min, max);
 
+  vec3 length = max - min;
   // go trough all triangles in node
   for (uint i : _tree->get_data(node)->triangle_ids) {
     // check if triangle is in bucket b for x,y,z- bucket
     vec3 triangle_pos = _tree->get_triangle(i)->get_pos();
 
-    for (size_t a = 0; a < 3; a++) {
-      for (uint b = 0; b < SAH_NUM_BUCKETS; b++) {
-        // get boundary for x,y,z-bucket[b]
-        vec3 split_before = min + static_cast<float>(b) * bucket_step;
-        vec3 split = min + static_cast<float>(b + 1) * bucket_step;
+    vec3 length_to_pos = triangle_pos - min;
 
-        // triangle is in bucket if smaller than split if in bucket[i] it's also
-        // in all buckets[<i]
-        if (triangle_pos[a] >= split_before[a] && triangle_pos[a] <= split[a]) {
-          // insert trianlge to specific bucket
-          buckets->buckets[a][b].ids.push_back(i);
-          break;  // found right bucket continue with next axis
-        }
-      }
+    for (size_t a = 0; a < 3; a++) {
+      uint b_id = (length[a] / length_to_pos[a]) * (SAH_NUM_BUCKETS - 1);
     }
   }
 
@@ -104,6 +95,7 @@ uint SAH::triangles_into_buckets_axis(bvh_node_pointer *node,
 
   // calculate bucket size (x,y,z)
   vec3 bucket_step = calc_bucket_step(min, max);
+  vec3 length = max - min;
 
   uint a = _tree->get_longest_axis(node);
 
@@ -112,19 +104,8 @@ uint SAH::triangles_into_buckets_axis(bvh_node_pointer *node,
     // check if triangle is in bucket b for x,y,z- bucket
     vec3 triangle_pos = _tree->get_triangle(i)->get_pos();
 
-    for (uint b = 0; b < SAH_NUM_BUCKETS; b++) {
-      // get boundary for x,y,z-bucket[b]
-      vec3 split_before = min + static_cast<float>(b) * bucket_step;
-      vec3 split = min + static_cast<float>(b + 1) * bucket_step;
-
-      // triangle is in bucket if smaller than split if in bucket[i] it's also
-      // in all buckets[<i]
-      if (triangle_pos[a] >= split_before[a] && triangle_pos[a] <= split[a]) {
-        // insert trianlge to specific bucket
-        buckets->buckets[0][b].ids.push_back(i);
-        break;  // found right bucket continue with next axis
-      }
-    }
+    vec3 length_to_pos = triangle_pos - min;
+    uint b_id = (length[a] / length_to_pos[a]) * (SAH_NUM_BUCKETS - 1);
   }
 
   // calcualte bucket bounding boxes
@@ -357,6 +338,8 @@ split_point SAH::calc_min_split_treelets(bvh_node_pointer *node,
       cost = COST_TRAVERSAL + prob_left * left_amount * COST_INTERSECT +
              prob_right * right_amount * COST_INTERSECT;
 
+      // std::cout << a << "  " << split_id  << "   " << cost << "\n";
+
       buckets->buckets[a][split_id].cost = cost;
 
       // update min cost
@@ -501,26 +484,17 @@ void SAH::treelets_into_buckets(bvh_node_pointer *node, SAH_buckets *buckets) {
 
   // calculate bucket size (x,y,z)
   vec3 bucket_step = calc_bucket_step(min, max);
+  vec3 length = max - min;
 
   // go trough all triangles in node
   for (uint id : node->data.triangle_ids) {
     // check if triangle is in bucket b for x,y,z- bucket
     vec3 treelet_pos = _tree->get_middle(_tree->get_treelet(id)->data.bounds);
 
-    for (size_t a = 0; a < 3; a++) {
-      for (uint b = 0; b < SAH_NUM_BUCKETS; b++) {
-        // get boundary for x,y,z-bucket[b]
-        vec3 split_before = min + static_cast<float>(b) * bucket_step;
-        vec3 split = min + static_cast<float>(b + 1) * bucket_step;
+    vec3 length_to_pos = treelet_pos - min;
 
-        // triangle is in bucket if smaller than split if in bucket[i] it's also
-        // in all buckets[<i]
-        if (treelet_pos[a] >= split_before[a] && treelet_pos[a] <= split[a]) {
-          // insert trianlge to specific bucket
-          buckets->buckets[a][b].ids.push_back(id);
-          break;  // found right bucket continue with next axis
-        }
-      }
+    for (size_t a = 0; a < 3; a++) {
+      uint b_id = (length[a] / length_to_pos[a]) * (SAH_NUM_BUCKETS - 1);
     }
   }
 
@@ -547,6 +521,7 @@ uint SAH::treelets_into_buckets_axis(bvh_node_pointer *node,
 
   // calculate bucket size (x,y,z)
   vec3 bucket_step = calc_bucket_step(min, max);
+  vec3 length = max - min;
 
   uint a = _tree->get_longest_axis(node);
 
@@ -555,19 +530,8 @@ uint SAH::treelets_into_buckets_axis(bvh_node_pointer *node,
     // check if triangle is in bucket b for x,y,z- bucket
     vec3 treelet_pos = _tree->get_middle(_tree->get_treelet(id)->data.bounds);
 
-    for (uint b = 0; b < SAH_NUM_BUCKETS; b++) {
-      // get boundary for x,y,z-bucket[b]
-      vec3 split_before = min + static_cast<float>(b) * bucket_step;
-      vec3 split = min + static_cast<float>(b + 1) * bucket_step;
-
-      // triangle is in bucket if smaller than split if in bucket[i] it's also
-      // in all buckets[<i]
-      if (treelet_pos[a] >= split_before[a] && treelet_pos[a] <= split[a]) {
-        // insert trianlge to specific bucket
-        buckets->buckets[0][b].ids.push_back(id);
-        break;  // found right bucket continue with next axis
-      }
-    }
+    vec3 length_to_pos = treelet_pos - min;
+    uint b_id = (length[a] / length_to_pos[a]) * (SAH_NUM_BUCKETS - 1);
   }
 
   // calcualte bucket bounding boxes
