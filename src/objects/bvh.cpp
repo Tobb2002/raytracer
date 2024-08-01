@@ -12,11 +12,11 @@
 #include "bvh.hpp"
 #include "lbvh.hpp"
 
-// #define VISUALIZE_INTERSECT
+#define VISUALIZE_INTERSECT false
 
-// #define FLATTEN_TREE
+#define FLATTEN_TREE true
 
-#define USE_HLBVH  // SPLIT_MID, SPLIT_SAH, USE_LBVH, USE_HLBVH...
+#define USE_LBVH  // USE_MID, USE_SAH, USE_LBVH, USE_HLBVH...
 
 void BVH::build_tree_axis(std::vector<Triangle> *triangles) {
   // initialize data structure
@@ -33,21 +33,25 @@ void BVH::build_tree_axis(std::vector<Triangle> *triangles) {
 
   _data.tree.calculate_bounds(root);
 
-#ifdef SPLIT_MID
+#ifdef USE_MID
+  std::cout << "Algorithm: Split middle\n";
   SAH sah = SAH(&_data.tree);
   sah.split_middle(root);
 #endif
 
-#ifdef SPLIT_SAH
+#ifdef USE_SAH
+  std::cout << "Algorithm: SAH\n";
   SAH sah = SAH(&_data.tree);
   sah.split(root);
 #endif
 #ifdef USE_LBVH
+  std::cout << "Algorithm: LBVH\n";
   LBVH l = LBVH(&_data.tree);
   // lbvh.sort();
   l.build();
 #endif
 #ifdef USE_HLBVH
+  std::cout << "Algorithm: HLBVH\n";
   LBVH lbvh = LBVH(&_data.tree);
   SAH sah = SAH(&_data.tree);
 
@@ -55,7 +59,7 @@ void BVH::build_tree_axis(std::vector<Triangle> *triangles) {
   sah.built_on_treelets();
 #endif
 
-#ifdef FLATTEN_TREE
+#if FLATTEN_TREE
   _data.tree.flatten_tree();
 #endif
 }
@@ -68,7 +72,7 @@ void BVH::set_triangles(std::vector<Triangle> *triangles) {
 Intersection BVH::intersect(const Ray &ray) {
   _intersect_count = 0;
   _best_intersection = Intersection();
-#ifdef FLATTEN_TREE
+#if FLATTEN_TREE
   intersect_node((uint)0, ray);
   return _best_intersection;
 #else
@@ -85,7 +89,6 @@ Intersection BVH::intersect(const Ray &ray) {
  * @return Intersection
  */
 void BVH::intersect_node(bvh_node_pointer *node, const Ray &ray) {
-  Intersection result;
   if (!intersect_node_bool(_data.tree.get_data(node), ray)) {
     return;
   }
@@ -105,18 +108,18 @@ void BVH::intersect_node(bvh_node_pointer *node, const Ray &ray) {
 }
 
 void BVH::intersect_node(uint id_flat, const Ray &ray) {
-  Intersection result;
-  if (!intersect_node_bool((_data.tree.get_data(id_flat)), ray)) {
+  BVH_node_data *data = _data.tree.get_data(id_flat);
+  if (!intersect_node_bool(data, ray)) {
     return;
   }
 
   // check if leaf
   if (_data.tree.get_node(id_flat)->is_leaf) {
-    intersect_leaf(_data.tree.get_data(id_flat), ray);
+    intersect_leaf(data, ray);
     return;
   }
 
-  if (ray.get_direction()[_data.tree.get_data(id_flat)->axis] > 0) {
+  if (ray.get_direction()[data->axis] > 0) {
     intersect_node(id_flat + 1, ray);
     intersect_node(_data.tree.get_right(id_flat), ray);
   } else {
@@ -208,7 +211,7 @@ void BVH::intersect_leaf(BVH_node_data *node_data, const Ray &ray) {
 
   Intersection res =
       (_data.triangles->data() + best_triangle_id)->intersect(ray);
-#ifdef VISUALIZE_INTERSECT
+#if VISUALIZE_INTERSECT
   vec2 input_area = vec2(0, 200);
   vec2 output_area = vec2(0, 1);
 
