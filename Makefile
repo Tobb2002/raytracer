@@ -4,7 +4,7 @@
 
 CC = clang++
 FLAGS = -std=c++2a -W  #-fno-elide-constructors
-LINKER_FLAGS = -lm -lX11 
+LINKER_FLAGS = -lm -lX11 -lprofiler
 
 ifeq ($(BUILD),debug)   
 # "Debug" build - no optimization, and debugging symbols
