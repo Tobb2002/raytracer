@@ -40,7 +40,6 @@ Scene get_scene() {
 }
 
 void animation_step(Scene *scene) {
-  // scene->get_camera()->rotate(vec3(0, 0, -5), vec3(0, 1, 0), 5);
-  scene->get_obj_mesh(0)->rotate(vec3(0, -0.7, -2), vec3(0, 1, 0), 10);
+  scene->get_camera()->rotate(vec3(0, 0, -5), vec3(0, 1, 0), 5);
   scene->update_view_transform();
 }
