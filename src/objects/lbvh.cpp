@@ -84,7 +84,7 @@ void LBVH::split(bvh_node_pointer *node, uint split_id) {
   bvh_node_pointer *node_right = _tree->insert_child(data_right, node);
 
   // get split axis
-  node->data.axis = glm::mod(static_cast<float>(split_id), 3.f);
+  // node->data.axis = glm::mod(static_cast<float>(split_id), 3.f);
 
   // push back triangles
   BVH_node_data *data = _tree->get_data(node);
@@ -123,6 +123,7 @@ void LBVH::split_first_bit(bvh_node_pointer *node, uint current_bit) {
       bool sig_bit = _morton_codes.at(id) & (1 << i);
       // iterate until most significant bit is different
       if (sig_bit != first_bit) {
+        node->data.axis = glm::mod(static_cast<float>(i), 3.f);
         split(node, a);
 
         split_first_bit(_tree->get_left(node), i - 1);
@@ -140,6 +141,7 @@ void LBVH::add_treelets(bvh_node_pointer *node) {
   uint64_t current_top_bits = 0;
   bool new_treelet = true;
 
+  // triangle ids for current_treelet
   std::vector<uint> current_treelet;
   for (uint id : data->triangle_ids) {
     uint64_t morton_code = _morton_codes.at(id);
