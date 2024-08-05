@@ -104,7 +104,7 @@ void LBVH::split(bvh_node_pointer *node, uint split_id) {
   _tree->calculate_min(node_right);
   _tree->calculate_max(node_right);
 
-  _tree->free_triangles(node);
+  //_tree->free_triangles(node);
 }
 
 void LBVH::split_first_bit(bvh_node_pointer *node, uint current_bit) {
