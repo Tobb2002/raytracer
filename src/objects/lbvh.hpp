@@ -11,17 +11,20 @@
 
 using glm::vec3;
 
-// number of zells to divide space in one dimension
+// GRID_SIZE: binary length of the highest gridzell index
+// GRID_SIZE|#grid cells
+// 1|2 , 2|4, 3|8, 4|16, 5|32, 6|64, 7|128, 8|256, 9|512, 10|1024, 11|2048,
+// 12|4096
 // Grid size time 3 should be less than 64 to fit the morton code into 64 bit
 // integer
 #define GRID_SIZE 10
 
-// number of bits for the morton code
+// (number of bits of GRID_SIZE) * 3 for the morton code
 #define MORTON_SIZE GRID_SIZE * 3
 
 // number of first morton code bits to be identical in the same treelet
 // 0 = only use lbvh since just one treelet get's added
-#define TREELET_BITS 4
+#define TREELET_BITS 20
 
 struct morton_data {
   uint triangle_id;

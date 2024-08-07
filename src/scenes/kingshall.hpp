@@ -22,10 +22,10 @@ Scene get_scene() {
                 {.color = vec3(0.2, 0.2, 0.2), .specular = 0.0});
 #endif
 
-  Pointlight light = Pointlight(origin_plane + vec3(-3, 2, 4), 450);
-  scene.add_light(light);
-  // ObjectFactory factory = ObjectFactory(&scene);
-  // factory.new_xy_square_light(origin_plane + vec3(-3, 2, 4), 300, 2, 0.05);
+  //Pointlight light = Pointlight(origin_plane + vec3(-3, 2, 4), 450);
+  //scene.add_light(light);
+  ObjectFactory factory = ObjectFactory(&scene);
+  factory.new_xy_square_light(origin_plane + vec3(-3, 2, 4), 300, 8, 0.1);
 
   scene.get_camera()->set_resolution(800, 600);
   scene.get_camera()->set_sensor_size(1.6, 1.2);

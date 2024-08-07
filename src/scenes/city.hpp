@@ -17,8 +17,9 @@ Scene get_scene() {
 
   Pointlight light1 = Pointlight(origin + vec3(26, 20, -10), 450);
   scene.add_light(light1);
-  // ObjectFactory factory = ObjectFactory(&scene);
-  // factory.new_xy_square_light(origin_plane + vec3(-3, 2, 4), 300, 2, 0.05);
+
+  ObjectFactory factory = ObjectFactory(&scene);
+  factory.new_xy_square_light(origin + vec3(-3, 2, -15), 300, 2, 0.05);
 
   scene.get_camera()->set_resolution(800, 600);
   scene.get_camera()->set_sensor_size(1.6, 1.2);

@@ -16,7 +16,7 @@ Scene get_scene() {
                 {.color = vec3(0.2, 0.2, 0.2), .specular = 0.1});
 
   ObjectFactory factory = ObjectFactory(&scene);
-  factory.new_xy_square_light(origin_plane + vec3(-3, 2, 4), 370, 2, 0.05);
+  factory.new_xy_square_light(origin_plane + vec3(-3, 2, 4), 370, 10, 0.05);
 
   scene.get_camera()->set_resolution(800, 600);
   scene.get_camera()->set_sensor_size(1.6, 1.2);

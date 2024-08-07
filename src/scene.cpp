@@ -217,11 +217,6 @@ Image Scene::trace_image() {
 #endif
 
     for (int y = 0; y < resolution[1]; y++) {
-#ifdef DEBUG
-      std::cout << "------------- new ray --------------------\n";
-#endif
-      // print progress
-
       // get color from ray
       vec3 color = vec3(0, 0, 0);
       for (size_t i = 0; i < _aliasing_positions.size(); i++) {
