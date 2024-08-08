@@ -3,76 +3,15 @@
  */
 #include "lbvh.hpp"
 
-#include <algorithm>
 #include <boost/lambda/bind.hpp>
 #include <cstdint>
 #include <glm/gtx/string_cast.hpp>
 
 #include "bvh_tree.hpp"
 
-LBVH::LBVH(BVH_tree *tree) { _tree = tree; }
-
-uint32_t LBVH::float_to_int(float f) {
-  if (f < 0 || f > 1) {
-    throw std::runtime_error("Float value is not normalized.");
-  }
-  return static_cast<uint32_t>(f * (glm::pow(2, GRID_SIZE) - 1));
-}
-
-uint64_t LBVH::split3(uint32_t i) {
-  uint64_t res = i & 0x1fffff;  // only consider last 21 bits
-
-  // for explenation
-  // see:https://www.forceflow.be/2013/10/07/morton-encodingdecoding-through-bit-interleaving-implementations/
-
-  res = (res | res << 32) & 0x1f00000000ffff;
-  res = (res | res << 16) & 0x1f0000ff0000ff;
-  res = (res | res << 8) & 0x100f00f00f00f00f;
-  res = (res | res << 4) & 0x10c30c30c30c30c3;
-  res = (res | res << 2) & 0x1249249249249249;
-
-  return res;
-}
-
-uint64_t LBVH::get_morton_value(vec3 v) {
-  uint64_t res = 0;
-
-  res |= split3(float_to_int(v.x)) | split3(float_to_int(v.y)) << 1 |
-         split3(float_to_int(v.z)) << 2;
-
-  return res;
-}
-
-void LBVH::generate_morton_codes() {
-  for (size_t i = 0; i < _tree->get_triangle_vec()->size(); i++) {
-    Triangle *t = _tree->get_triangle(i);
-    // get normalized triangle position dependent on bounding box
-    vec3 pos = t->get_pos();
-    vec3 bounds_min = _tree->get_data(_tree->get_root())->bounds.min;
-    vec3 bounds_max = _tree->get_data(_tree->get_root())->bounds.max;
-
-    vec3 pos_normalized = (pos - bounds_min) / (bounds_max - bounds_min);
-
-    // save respective morten code trianlge with id i -> morton code at index i
-    _morton_codes.push_back(get_morton_value(pos_normalized));
-  }
-}
-
-bool comp(std::vector<uint64_t> *morton_codes, uint id1, uint id2) {
-  if (morton_codes->at(id1) < morton_codes->at(id2)) {
-    return true;
-  }
-  return false;
-}
-
-void LBVH::sort() {
-  namespace boo = boost::lambda;
-
-  BVH_node_data *data = _tree->get_data(_tree->get_root());
-
-  std::vector<uint>::iterator it = data->triangle_ids.begin();
-  std::sort(it, it + data->triangle_ids.size(),
-            boo::bind(&comp, &_morton_codes, boo::_1, boo::_2));
+LBVH::LBVH(BVH_tree *tree) {
+  _tree = tree;
+  _morton = Morton(tree->get_triangle_vec(), GRID_SIZE);
 }
 
 void LBVH::split(bvh_node_pointer *node, uint split_id) {
@@ -104,7 +43,7 @@ void LBVH::split(bvh_node_pointer *node, uint split_id) {
   _tree->calculate_min(node_right);
   _tree->calculate_max(node_right);
 
-  //_tree->free_triangles(node);
+  _tree->free_triangles(node);
 }
 
 void LBVH::split_first_bit(bvh_node_pointer *node, uint current_bit) {
@@ -117,10 +56,10 @@ void LBVH::split_first_bit(bvh_node_pointer *node, uint current_bit) {
     return;
   }
   for (size_t i = current_bit; i > 0; i--) {
-    bool first_bit = _morton_codes.at(first_id) & (1 << i);
+    bool first_bit = _morton.get_code(first_id) & (1 << i);
     for (size_t a = 0; a < size; a++) {
       uint id = _tree->get_data(node)->triangle_ids.at(a);
-      bool sig_bit = _morton_codes.at(id) & (1 << i);
+      bool sig_bit = _morton.get_code(id) & (1 << i);
       // iterate until most significant bit is different
       if (sig_bit != first_bit) {
         node->data.axis = glm::mod(static_cast<float>(i), 3.f);
@@ -144,8 +83,9 @@ void LBVH::add_treelets(bvh_node_pointer *node) {
   // triangle ids for current_treelet
   std::vector<uint> current_treelet;
   for (uint id : data->triangle_ids) {
-    uint64_t morton_code = _morton_codes.at(id);
-    uint64_t top_bits = (morton_code >> (MORTON_SIZE - TREELET_BITS));
+    uint64_t morton_code = _morton.get_code(id);
+    uint64_t top_bits =
+        (morton_code >> (_morton.get_morton_size() - TREELET_BITS));
 
     if (new_treelet) {
       current_top_bits = top_bits;
@@ -171,21 +111,22 @@ void LBVH::add_treelets(bvh_node_pointer *node) {
 }
 
 void LBVH::build_treelets() {
-  generate_morton_codes();
-  sort();
+  BVH_node_data *data_root = _tree->get_data(_tree->get_root());
+  _morton.build(&data_root->triangle_ids, data_root->bounds);
+
   add_treelets(_tree->get_root());
   std::cout << "number of treelets: " << _tree->get_treelets().size();
 
   for (bvh_node_pointer *treelet : _tree->get_treelets()) {
-    split_first_bit(treelet, MORTON_SIZE - TREELET_BITS);
+    split_first_bit(treelet, _morton.get_morton_size() - TREELET_BITS);
   }
 
   _tree->destroy_tree();
 }
 
 void LBVH::build() {
-  generate_morton_codes();
-  sort();
+  BVH_node_data *data_root = _tree->get_data(_tree->get_root());
+  _morton.build(&data_root->triangle_ids, data_root->bounds);
   split_first_bit(_tree->get_root(),
-                  MORTON_SIZE);  // highest bit of morton code
+                  _morton.get_morton_size());  // highest bit of morton code
 }

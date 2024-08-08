@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "bvh_tree.hpp"
+#include "morton.hpp"
 
 using glm::vec3;
 
@@ -18,9 +19,6 @@ using glm::vec3;
 // Grid size time 3 should be less than 64 to fit the morton code into 64 bit
 // integer
 #define GRID_SIZE 10
-
-// (number of bits of GRID_SIZE) * 3 for the morton code
-#define MORTON_SIZE GRID_SIZE * 3
 
 // number of first morton code bits to be identical in the same treelet
 // 0 = only use lbvh since just one treelet get's added
@@ -46,29 +44,6 @@ class LBVH {
   void build_treelets();
 
  private:
-  /**
-   * @brief Convert float to an integer number considering decimal places.
-   *
-   * @param f Needs to be normalized (f in [0,1])
-   */
-  uint32_t float_to_int(float f);
-
-  /**
-   * @brief seperate bits such that there are 2 zeros between every data bit.
-   *
-   * @param i Input value: can have at maximum 21 data bits such that the result
-   * does not overflow. If input has more bits they are not taken into account.
-   * @return
-   */
-  uint64_t split3(uint32_t i);
-
-  /**
-   * @brief return morton value for a given vector.
-   *
-   * @param v input vector. with values between 0,1
-   */
-  uint64_t get_morton_value(vec3 v);
-
   /**
    * @brief Sort the triangles according to their position (morton codes)
    */
@@ -102,5 +77,5 @@ class LBVH {
 
   BVH_tree *_tree;
   // Saves morton code for triangle with id i at index i
-  std::vector<uint64_t> _morton_codes;
+  Morton _morton = Morton(nullptr, GRID_SIZE);
 };
