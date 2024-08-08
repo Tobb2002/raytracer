@@ -1,14 +1,13 @@
 /*
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
-#include <string.h>
 
 #include "../object_factory.hpp"
 #include "../objects/plane.hpp"
 #include "../objects/sphere.hpp"
 #include "../scene.hpp"
 
-Scene get_scene() {
+inline Scene get_scene() {
   Scene scene = Scene(vec3(0, 0, 0));
 
   vec3 origin = vec3(0, 0, -12);

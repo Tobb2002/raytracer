@@ -7,7 +7,7 @@
 #include "../objects/sphere.hpp"
 #include "../scene.hpp"
 
-Scene get_scene() {
+inline Scene get_scene() {
   Scene scene = Scene(vec3(255, 255, 255));
 
   vec3 origin_plane = vec3(0, -0.7, -2);

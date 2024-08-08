@@ -5,7 +5,7 @@
 #include "../objects/plane.hpp"
 #include "../objects/sphere.hpp"
 
-Scene get_scene() {
+inline Scene get_scene() {
   Scene scene = Scene(vec3(0, 50, 100));
 
   scene.get_camera()->set_resolution(800, 400);

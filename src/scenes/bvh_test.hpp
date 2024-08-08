@@ -7,7 +7,7 @@
 #include "../objects/sphere.hpp"
 #include "../scene.hpp"
 
-Scene get_scene() {
+inline Scene get_scene() {
   Scene scene = Scene(vec3(255, 255, 255));
 
   vec3 origin_plane = vec3(0, 0, 0);
@@ -35,6 +35,6 @@ Scene get_scene() {
   return scene;
 }
 
-void animation_step(Scene *scene) {
+inline void animation_step(Scene *scene) {
   scene->rotate_obj_mesh(0, vec3(0, 0, 1), 30);
 }

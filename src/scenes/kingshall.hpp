@@ -8,7 +8,7 @@
 #include "../scene.hpp"
 
 #define TEXTURE true
-Scene get_scene() {
+inline Scene get_scene() {
   Scene scene = Scene(vec3(102, 255, 102));
 
   vec3 origin_plane = vec3(0, -0.7, -2);
@@ -22,8 +22,8 @@ Scene get_scene() {
                 {.color = vec3(0.2, 0.2, 0.2), .specular = 0.0});
 #endif
 
-  //Pointlight light = Pointlight(origin_plane + vec3(-3, 2, 4), 450);
-  //scene.add_light(light);
+  // Pointlight light = Pointlight(origin_plane + vec3(-3, 2, 4), 450);
+  // scene.add_light(light);
   ObjectFactory factory = ObjectFactory(&scene);
   factory.new_xy_square_light(origin_plane + vec3(-3, 2, 4), 300, 8, 0.1);
 
@@ -39,7 +39,7 @@ Scene get_scene() {
   return scene;
 }
 
-void animation_step(Scene *scene) {
+inline void animation_step(Scene *scene) {
   scene->get_camera()->rotate(vec3(0, 0, -5), vec3(0, 1, 0), 5);
   scene->update_view_transform();
 }

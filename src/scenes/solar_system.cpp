@@ -1,12 +1,11 @@
 /*
  * Copyright (c) 2023 Tobias Vonier. All rights reserved.
  */
-#include "../objects/mesh.hpp"
 #include "../objects/plane.hpp"
 #include "../objects/sphere.hpp"
 #include "../scene.hpp"
 
-Scene get_scene() {
+inline Scene get_scene() {
   Scene scene = Scene(vec3(0, 50, 100));
 
   vec3 origin = vec3(0, -2, -18);
