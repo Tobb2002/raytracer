@@ -264,7 +264,7 @@ void Mesh::read_from_obj(std::string inputfile) {
       vec3 triangle_normals[3];
       for (int v = 0; v < fv; v++) {
         // access to vertex
-        tinyobj::index_t idx = shapes[0].mesh.indices[index_offset + v];
+        tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
         tinyobj::real_t vx = attrib.vertices[3 * idx.vertex_index + 0];
         tinyobj::real_t vy = attrib.vertices[3 * idx.vertex_index + 1];
         tinyobj::real_t vz = attrib.vertices[3 * idx.vertex_index + 2];
