@@ -3,8 +3,8 @@
 #BUILD=debug
 
 CC = clang++
-FLAGS = -std=c++2a -W  #-fno-elide-constructors
-LINKER_FLAGS = -lm -lX11 -lprofiler
+FLAGS = -std=c++2a -W #-fno-elide-constructors
+LINKER_FLAGS = -lm -lX11 -lprofiler -ltbb
 
 ifeq ($(BUILD),debug)   
 # "Debug" build - no optimization, and debugging symbols
@@ -63,7 +63,7 @@ docs:
 compile_commands:
 	compiledb --command-style -o src/compile_commands.json make
 
-files = main ray triangle camera image mesh pointlight box plane scene object objloader object_factory transform bvh light sphere texture bvh_tree sah lbvh morton
+files = main ray triangle camera image mesh pointlight box plane scene object objloader object_factory transform bvh light sphere texture bvh_tree sah lbvh morton uniform_grid
 
 targets = $(addsuffix .o,$(addprefix $(OBJ_DIR)/,$(files)))
 

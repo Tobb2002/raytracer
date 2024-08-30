@@ -6,13 +6,22 @@
 #include <algorithm>
 #include <boost/lambda/bind.hpp>
 #include <cstdint>
-
-#include "triangle.hpp"
+#include <execution>
 
 Morton::Morton(std::vector<Triangle> *triangles, uint grid_bits) {
   _triangles = triangles;
   _grid_bits = grid_bits;
   _morton_size = grid_bits * 3;
+}
+void Morton::initialize_grid_bits(std::vector<Triangle> *triangles, uint grid_bits) {
+  _triangles = triangles;
+  _grid_bits = grid_bits;
+  _morton_size = grid_bits * 3;
+}
+void Morton::initialize_grid_size(std::vector<Triangle> *triangles, uint grid_size) {
+  _triangles = triangles;
+  _grid_bits = glm::ceil(glm::log2(static_cast<float>(grid_size)));
+  _morton_size = _grid_bits * 3;
 }
 
 bool comp(std::vector<uint64_t> *morton_codes, uint id1, uint id2) {
@@ -30,7 +39,7 @@ void Morton::sort(std::vector<uint> *triangle_ids) {
   // std::vector<uint>::iterator it = data->triangle_ids.begin();
 
   std::vector<uint>::iterator it = triangle_ids->begin();
-  std::sort(it, it + triangle_ids->size(),
+  std::sort(std::execution::par_unseq, it, it + triangle_ids->size(),
             boo::bind(&comp, &_morton_codes, boo::_1, boo::_2));
 }
 
@@ -62,6 +71,16 @@ uint64_t Morton::get_morton_value(vec3 v) {
 
   res |= split3(float_to_int(v.x)) | split3(float_to_int(v.y)) << 1 |
          split3(float_to_int(v.z)) << 2;
+
+  return res;
+}
+
+uint64_t Morton::get_value(vec3 index) {
+  // check if index inside maximum grid size
+  uint64_t res = 0;
+
+  res |= split3(static_cast<uint32_t>(index.x)) | split3(static_cast<uint32_t>(index.y)) << 1 |
+         split3(static_cast<uint32_t>(index.z)) << 2;
 
   return res;
 }
