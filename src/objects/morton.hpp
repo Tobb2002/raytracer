@@ -8,11 +8,13 @@
 #include <vector>
 
 #include "bvh_tree.hpp"
+#include "triangle.hpp"
 
 using glm::vec3;
 
 class Morton {
  public:
+  Morton() {}
   explicit Morton(std::vector<Triangle> *triangles, uint grid_bits);
 
   void build(std::vector<uint> *triangle_ids, const bvh_box &bounds);
@@ -22,6 +24,12 @@ class Morton {
    */
   uint64_t get_code(uint id);
   uint get_morton_size();
+  void initialize_grid_bits(std::vector<Triangle> *triangles, uint grid_bits);
+  void initialize_grid_size(std::vector<Triangle> *triangles, uint grid_size);
+
+  /// @brief calculate moroton code for a given cell index
+  /// @param index should only contain integer values
+  uint64_t get_value(vec3 index);
 
  private:
   /**
