@@ -9,7 +9,7 @@
 #define COST_TRAVERSAL 1
 #define COST_INTERSECT 1
 
-//#define SPLIT_LONGEST_AXIS
+// #define SPLIT_LONGEST_AXIS
 
 /**
  * @class SAH_bucket

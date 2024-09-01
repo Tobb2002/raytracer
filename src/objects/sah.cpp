@@ -47,7 +47,6 @@ void SAH::sort_treelets(std::vector<uint>::iterator begin, const uint &count,
             boo::bind(&comp_treelets, _tree, boo::_1, boo::_2, axis));
 }
 
-
 // -----------------------------------------------------------------------------
 
 vec3 calc_bucket_step(vec3 min, vec3 max) {
@@ -84,8 +83,8 @@ void SAH::triangles_into_buckets(bvh_node_pointer *node, SAH_buckets *buckets) {
     vec3 length_to_pos = triangle_pos - min;
 
     for (size_t a = 0; a < 3; a++) {
-      uint b_id = SAH_NUM_BUCKETS -1;
-      if (length[a] > 0.00001) { // values smaller than 1e-5 are eual to zero
+      uint b_id = SAH_NUM_BUCKETS - 1;
+      if (length[a] > 0.00001) {  // values smaller than 1e-5 are eual to zero
         b_id = length_to_pos[a] / length[a] * (SAH_NUM_BUCKETS - 1);
       }
       buckets->buckets[a][b_id].ids.push_back(i);
@@ -148,9 +147,9 @@ uint SAH::triangles_into_buckets_axis(bvh_node_pointer *node,
 }
 
 void SAH::treelets_into_buckets(bvh_node_pointer *node, SAH_buckets *buckets) {
-  //bvh_box box = combine_box_treelets(node);
+  // bvh_box box = combine_box_treelets(node);
   bvh_box box = node->data.bounds;
-  
+
   vec3 min = box.min;
   vec3 max = box.max;
 
@@ -170,7 +169,7 @@ void SAH::treelets_into_buckets(bvh_node_pointer *node, SAH_buckets *buckets) {
         b_id = (length_to_pos[a] / length[a]) * (SAH_NUM_BUCKETS - 1);
       }
       buckets->buckets[a][b_id].ids.push_back(id);
-      //std::cout << "heyy ich habs bis hier geschafft\n";
+      // std::cout << "heyy ich habs bis hier geschafft\n";
     }
   }
 
@@ -309,7 +308,9 @@ split_point SAH::calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets) {
       cost = COST_TRAVERSAL + prob_left * left_amount * COST_INTERSECT +
              prob_right * right_amount * COST_INTERSECT;
 
-      //std::cout << "split_id, axis, cost, amount_l, r  " << split_id << "\t" << a << "\t" << cost << "\t" << left_amount << "\t" << right_amount << "\n";
+      // std::cout << "split_id, axis, cost, amount_l, r  " << split_id << "\t"
+      // << a << "\t" << cost << "\t" << left_amount << "\t" << right_amount <<
+      // "\n";
 
       buckets->buckets[a][split_id].cost = cost;
 
@@ -368,7 +369,8 @@ split_point SAH::calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets,
     cost = COST_TRAVERSAL + prob_left * left_amount * COST_INTERSECT +
            prob_right * right_amount * COST_INTERSECT;
 
-      //std::cout << "split_id,  cost, amount_l, r  " << split_id << "\t"  << cost << "\t" << left_amount << "\t" << right_amount << "\n";
+    // std::cout << "split_id,  cost, amount_l, r  " << split_id << "\t"  <<
+    // cost << "\t" << left_amount << "\t" << right_amount << "\n";
 
     buckets->buckets[0][split_id].cost = cost;
 
@@ -395,7 +397,7 @@ split_point SAH::calc_min_split_treelets(bvh_node_pointer *node,
   float min_cost = MAXFLOAT;
   split_point split;
 
-  //bvh_box box = combine_box_treelets(node);
+  // bvh_box box = combine_box_treelets(node);
   bvh_box box = node->data.bounds;
   float surface_box = get_surface_area(box);
 
@@ -405,7 +407,6 @@ split_point SAH::calc_min_split_treelets(bvh_node_pointer *node,
   for (size_t a = 0; a < 3; a++) {  // for every axis
     for (size_t split_id = 0; split_id < SAH_NUM_BUCKETS - 1;
          split_id++) {  // for every bucket
-
       bvh_box left = combine_box(buckets, a, 0, split_id);
       bvh_box right =
           combine_box(buckets, a, split_id + 1, SAH_NUM_BUCKETS - 1);
@@ -455,7 +456,6 @@ split_point SAH::calc_min_split_treelets(bvh_node_pointer *node,
   }
   return split;
 }
-
 
 // -----------------------------------------------------------------------------
 // Splitt node
@@ -570,7 +570,8 @@ void SAH::split(bvh_node_pointer *node) {
   uint axis = triangles_into_buckets_axis(node, &buckets);
   split_point splitp = calc_min_split(node, &buckets, axis);
 #endif
-  //std::cout << "best split: " << splitp.id << "\t axis:" << splitp.axis << "\n";
+  // std::cout << "best split: " << splitp.id << "\t axis:" << splitp.axis <<
+  // "\n";
 
   split(node, buckets, splitp);
 
@@ -578,7 +579,6 @@ void SAH::split(bvh_node_pointer *node) {
   split(_tree->get_left(node));
   split(_tree->get_right(node));
 }
-
 
 void SAH::built_on_treelets() {
   // define new root node
