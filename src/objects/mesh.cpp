@@ -215,7 +215,7 @@ void Mesh::read_from_obj(std::string inputfile) {
   std::string warn;
 
   bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err,
-                              inputfile.c_str());
+                              inputfile.c_str(), "data/input");
 
   if (!err.empty()) {  // `err` may contain warning message.
     std::cerr << err << std::endl;
@@ -307,14 +307,28 @@ void Mesh::read_from_obj(std::string inputfile) {
       if (texture_available) {
         t.set_vertex_texture(triangle_points_uv);
       }
+
+      // per-face material
+      // t.get_material(shapes[s].mesh.material_ids.at(f));
+      // todo check if materials size > 0
+      tinyobj::material_t material =
+          materials.at(shapes[s].mesh.material_ids[f]);
+      Material mat = {.color = vec3(material.diffuse[0], material.diffuse[1],
+                                    material.diffuse[2]),
+                      .ambient = static_cast<float>(material.ambient[0]),
+                      .specular = material.specular[0],
+                      .pow_m = static_cast<float>(material.shininess)};
+      // Material mat = {.color = vec3(material.diffuse[0], material.diffuse[1],
+      //                               material.diffuse[2]),
+      //                               .ambient=0.4};
+      t.set_material(mat);
+
       _triangles.push_back(t);
 
       // update bounding box values
       update_bounding_box(&_triangles.back());
 
       index_offset += fv;
-      // per-face material
-      // shapes[s].mesh.material_ids[f];
     }
   }
   std::cout << "------------------------------------------------\n";
