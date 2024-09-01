@@ -25,18 +25,14 @@ struct grid_data {
   /// @brief number of grid cells per axis.
   vec3 resolution = vec3(GRID_SIZE);
 
+  vec3 cell_size;
+
   /// @brief stores triangle ids in cells using hash_map index is calculated
   /// with morton codes
   std::map<uint64_t, std::vector<uint>> grid;
 
   /// @brief class to calculate morton indices.
   Morton morton;
-};
-
-struct grid_properties {
-  bvh_box bounds;
-  vec3 resolution;
-  vec3 cell_size;
 };
 
 // alternative: grid cells in array indexed by morton codes.
@@ -78,5 +74,20 @@ class UniformGrid {
 
   /// @brief compute the grid index(x,y,z) of a given point in space.
   vec3 compute_index(const vec3& point);
+
+  // --------------------------------------------------------------------------
+  // functions for intersecting the grid
+
+  /// @brief calculates the cell corrosponding to a point in space.
+  vec3 get_cell(vec3 point);
+
+  /// @brief intersect cell best intersection is saved in _best_intersection
+  bool intersect_cell(vec3 index);
+
+  Intersection _best_intersection;
+
+  /// @brief checks if given cell index is inside the grid.
+  bool inside_grid(vec3 index);
+
   grid_data _data;
 };
