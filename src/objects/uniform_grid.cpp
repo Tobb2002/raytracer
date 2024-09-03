@@ -3,6 +3,8 @@
  */
 #include "uniform_grid.hpp"
 
+#include "box.hpp"
+
 UniformGrid::UniformGrid(std::vector<Triangle> *triangles) {
   _data.triangles = triangles;
 }
@@ -13,20 +15,34 @@ UniformGrid &UniformGrid::operator=(const UniformGrid &old) {
   return *this;
 }
 
-void UniformGrid::build() {
+void UniformGrid::build(std::vector<Triangle> *triangles) {
+  _data.triangles = triangles;
   _data.morton.initialize_grid_size(_data.triangles, GRID_SIZE);
+
+  // set properties
+  _data.resolution = vec3(GRID_SIZE);
+
+  // calculate bounds
+  // TODO(tobi) calculate bounds in the right way
+  _data.bounds = calculate_bounds(triangles);
+  // check if cell size 0 can appear
+  for (size_t a = 0; a < 3; a++) {
+    if (_data.bounds.min[a] == _data.bounds.max[a]) {
+      _data.bounds.max[a] += 0.01;
+    }
+  }
+
+  _data.cell_size = (_data.bounds.max - _data.bounds.min) / _data.resolution;
 
   for (uint triangle_id = 0; triangle_id < _data.triangles->size();
        triangle_id++) {
     add_to_grid(triangle_id);
   }
+  std::cout << "filled cells: " << _data.grid.size() << "\n";
 }
 
 vec3 UniformGrid::compute_index(const vec3 &point) {
-  vec3 size = _data.bounds.max - _data.bounds.min;
-  return vec3((point.x - _data.bounds.min.x) / size.x,
-              (point.y - _data.bounds.min.y) / size.y,
-              (point.z - _data.bounds.min.z) / size.z);
+  return glm::floor((point - _data.bounds.min) / _data.cell_size);
 }
 
 std::vector<uint> *UniformGrid::get_ids(vec3 index) {
@@ -41,18 +57,14 @@ void UniformGrid::add_id(vec3 index, uint id) {
   // calculate morton index
   uint64_t morton_code = _data.morton.get_value(index);
   // insert id
-  if (_data.grid.contains(morton_code)) {
-    _data.grid[morton_code].push_back(id);
-  } else {  // new cell with given id
-    _data.grid[morton_code] = {id};
-  }
+  _data.grid[morton_code].push_back(id);
 }
 
 void UniformGrid::add_to_grid(uint triangle_id) {
   // get min, max index
   Triangle *triangle = _data.triangles->data() + triangle_id;
-  vec3 index_min = compute_index(triangle->get_min_bounding());
-  vec3 index_max = compute_index(triangle->get_max_bounding());
+  vec3 index_min = get_cell(triangle->get_min_bounding());
+  vec3 index_max = get_cell(triangle->get_max_bounding());
 
   // add to all cells in between
   for (uint x = index_min.x; x <= index_max.x; x++) {
@@ -64,17 +76,27 @@ void UniformGrid::add_to_grid(uint triangle_id) {
   }
 }
 
+void UniformGrid::set_triangles(std::vector<Triangle> *triangles) {
+  _data.triangles = triangles;
+}
+
 Intersection UniformGrid::intersect(const Ray &ray) {
+  _best_intersection = Intersection();
   // check if box is intersected
   // find first intersecting cell -> convert ray origin to be in first cell
-  float t_0 = intersect_bounds();
+  float t_0 = intersect_bounds(_data.bounds, ray);
+
+  if (t_0 < 0) {
+    // ray does not intersect
+    return _best_intersection;
+  }
 
   vec3 ray_origin = ray.get_point(t_0);
   vec3 ray_origin_grid = ray_origin - _data.bounds.min;
   vec3 ray_direction = ray.get_direction();
 
   // intersect cells recursively using DDA-Algorithm
-  vec3 current_cell = get_cell(ray_origin_grid);
+  vec3 current_cell = get_cell(ray_origin);
 
   // parameter t of the ray such that it intersects the next x,y,z-bounds of the
   // cell
@@ -122,8 +144,11 @@ Intersection UniformGrid::intersect(const Ray &ray) {
   // ray parrameter of the current intersection
   float t = 0;
 
+  // std::cout << "start\n";
   while (inside_grid(current_cell)) {
-    if (intersect_cell(current_cell)) {
+    // std::cout << "checkt cell: " << current_cell.x << ","<< current_cell.y <<
+    // ","<< current_cell.z << "\n";
+    if (intersect_cell(current_cell, ray)) {
       return _best_intersection;
     }
 
@@ -142,6 +167,9 @@ Intersection UniformGrid::intersect(const Ray &ray) {
       current_cell.z += step.z;
     }
   }
+
+  _best_intersection = Intersection();
+  return _best_intersection;
 }
 
 vec3 UniformGrid::get_cell(vec3 point) {
@@ -153,10 +181,51 @@ vec3 UniformGrid::get_cell(vec3 point) {
 
 bool UniformGrid::inside_grid(vec3 index) {
   for (size_t a = 0; a < 3; a++) {
-    if (index[a] < 0 || index[a] > _data.resolution[a]) {
+    if (index[a] < 0 || index[a] > _data.resolution[a] + 1) {
       return false;
     }
   }
-
   return true;
+}
+
+bool UniformGrid::intersect_cell(vec3 index, const Ray &ray) {
+  // std::cout << "intersect cell\n";
+  uint64_t morton_code = _data.morton.get_value(index);
+
+  if (!_data.grid.contains(morton_code)) {
+    _best_intersection = Intersection();
+    return false;
+  }
+  std::vector<uint> *triangle_ids = get_ids(index);
+
+  uint best_triangle_id = 0;
+  float t_min = MAXFLOAT;
+
+  for (uint i : *triangle_ids) {
+    Intersection t_i = _data.triangles->at(i).intersect(ray);
+
+    if (t_i.found && t_i.t < t_min) {
+      t_min = t_i.t;
+      best_triangle_id = i;
+    }
+  }
+
+  Intersection res =
+      (_data.triangles->data() + best_triangle_id)->intersect(ray);
+
+  update_intersection(&_best_intersection, res);
+
+  return _best_intersection.found;
+}
+
+bool UniformGrid::update_intersection(Intersection *intersect,
+                                      const Intersection &new_intersect) {
+  if (new_intersect.found) {
+    // update intersection if the new one is closer
+    if (new_intersect.t < intersect->t) {
+      *intersect = new_intersect;
+      return true;
+    }
+  }
+  return false;
 }

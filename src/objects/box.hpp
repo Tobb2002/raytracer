@@ -5,16 +5,28 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <vector>
 
 #include "object.hpp"
 #include "ray.hpp"
-
+#include "triangle.hpp"
 using glm::vec3;
+
+struct bvh_box {
+  vec3 min = vec3(0);
+  vec3 max = vec3(0);
+};
 
 struct interval {
   float min;
   float max;
 };
+
+/// @brief intersect bounding box and return ray parameter t of intersection
+/// point. return -1 if no intersection
+float intersect_bounds(const bvh_box& box, const Ray& ray);
+
+bvh_box calculate_bounds(std::vector<Triangle>* triangles);
 
 /**
  * @brief Datastructure to represent bounding_boxes.

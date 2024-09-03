@@ -31,15 +31,19 @@ Mesh::Mesh(std::string input_file, vec3 origin) {
  * @param origin point to place the mesh.
  * @param material set material of mesh.
  */
-Mesh::Mesh(std::string input_file, vec3 origin, Material material) {
+Mesh::Mesh(std::string input_file, vec3 origin, Material material,
+           bool use_uniform_grid) {
   _origin = origin;
   _material = material;
   read_from_obj(input_file);  // read file with origin as offset
+  if (use_uniform_grid) {
+    _used_datastructure = GRID;
+  }
 
   // stop time needed to build bvh
   std::chrono::steady_clock::time_point begin =
       std::chrono::steady_clock::now();
-  _bvh.build_tree_axis(&_triangles);
+  build_datastructure();
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
   std::cout << "------------------------------------------------\n";
@@ -53,10 +57,13 @@ Mesh::Mesh(std::string input_file, vec3 origin, Material material) {
 }
 
 Mesh::Mesh(std::string input_file, vec3 origin, Material material,
-           std::string texture_path) {
+           std::string texture_path, bool use_uniform_grid) {
   _origin = origin;
   _material = material;
   read_from_obj(input_file);  // read file with origin as offset
+  if (use_uniform_grid) {
+    _used_datastructure = GRID;
+  }
 
   // load and enable texture
   _enable_texture = true;
@@ -65,7 +72,7 @@ Mesh::Mesh(std::string input_file, vec3 origin, Material material,
   // stop time needed to build bvh
   std::chrono::steady_clock::time_point begin =
       std::chrono::steady_clock::now();
-  _bvh.build_tree_axis(&_triangles);
+  build_datastructure();
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
   std::cout << "------------------------------------------------\n";
@@ -76,6 +83,19 @@ Mesh::Mesh(std::string input_file, vec3 origin, Material material,
                    1000000.0
             << "\n";
   std::cout << "------------------------------------------------\n";
+}
+
+void Mesh::build_datastructure() {
+  std::cout << "ich war hier\n";
+  switch (_used_datastructure) {
+    case BOUNDINGVOLUMES:
+      _bvh.build_tree_axis(&_triangles);
+      std::cout << "bliblaich war hier\n";
+      break;
+    case GRID:
+      _grid.build(&_triangles);
+      break;
+  }
 }
 
 Mesh::Mesh(const Mesh &old_mesh) {
@@ -89,9 +109,12 @@ Mesh::Mesh(const Mesh &old_mesh) {
   _bvh = old_mesh._bvh;
   _texture = old_mesh._texture;
   _enable_texture = old_mesh._enable_texture;
+  _grid = old_mesh._grid;
+  _used_datastructure = old_mesh._used_datastructure;
 
   // set new triangle reference
   _bvh.set_triangles(&_triangles);
+  _grid.set_triangles(&_triangles);
 }
 
 Mesh &Mesh::operator=(const Mesh &old_mesh) {
@@ -105,9 +128,12 @@ Mesh &Mesh::operator=(const Mesh &old_mesh) {
   _bvh = old_mesh._bvh;
   _texture = old_mesh._texture;
   _enable_texture = old_mesh._enable_texture;
+  _grid = old_mesh._grid;
+  _used_datastructure = old_mesh._used_datastructure;
 
   // set new triangle reference
   _bvh.set_triangles(&_triangles);
+  _grid.set_triangles(&_triangles);
 
   return *this;
 }
@@ -192,7 +218,16 @@ void Mesh::update_bounding_box(Triangle *t) {
 /***** Functions *****/
 
 Intersection Mesh::intersect(const Ray &ray) {
-  Intersection res = _bvh.intersect(ray);
+  Intersection res;
+  switch (_used_datastructure) {
+    case BOUNDINGVOLUMES:
+      res = _bvh.intersect(ray);
+      break;
+    case GRID:
+      res = _grid.intersect(ray);
+      break;
+  }
+
   if (_enable_texture) {
     res.material.color = _texture.get_color_uv(res.texture_uv);
   }
@@ -311,17 +346,20 @@ void Mesh::read_from_obj(std::string inputfile) {
       // per-face material
       // t.get_material(shapes[s].mesh.material_ids.at(f));
       // todo check if materials size > 0
-      tinyobj::material_t material =
-          materials.at(shapes[s].mesh.material_ids[f]);
-      Material mat = {.color = vec3(material.diffuse[0], material.diffuse[1],
-                                    material.diffuse[2]),
-                      .ambient = static_cast<float>(material.ambient[0]),
-                      .specular = material.specular[0],
-                      .pow_m = static_cast<float>(material.shininess)};
-      // Material mat = {.color = vec3(material.diffuse[0], material.diffuse[1],
-      //                               material.diffuse[2]),
-      //                               .ambient=0.4};
-      t.set_material(mat);
+      if (materials.size() > 0) {
+        tinyobj::material_t material =
+            materials.at(shapes[s].mesh.material_ids[f]);
+        Material mat = {.color = vec3(material.diffuse[0], material.diffuse[1],
+                                      material.diffuse[2]),
+                        .ambient = static_cast<float>(material.ambient[0]),
+                        .specular = material.specular[0],
+                        .pow_m = static_cast<float>(material.shininess)};
+        // Material mat = {.color = vec3(material.diffuse[0],
+        // material.diffuse[1],
+        //                               material.diffuse[2]),
+        //                               .ambient=0.4};
+        t.set_material(mat);
+      }
 
       _triangles.push_back(t);
 

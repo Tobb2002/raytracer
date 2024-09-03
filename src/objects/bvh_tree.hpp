@@ -5,16 +5,12 @@
 #include <glm/glm.hpp>
 #include <vector>
 
+#include "box.hpp"
 #include "triangle.hpp"
 
 #define MAX_TRIANGLES 1
 
 using glm::vec3;
-
-struct bvh_box {
-  vec3 min = vec3(0);
-  vec3 max = vec3(0);
-};
 
 /// @brief Struct for bounding volume node.
 struct BVH_node_data {

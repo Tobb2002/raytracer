@@ -7,13 +7,15 @@
 
 #include <glm/glm.hpp>
 #include <map>
+#include <unordered_map>
 #include <vector>
 
 #include "bvh_tree.hpp"
 #include "morton.hpp"
 #include "triangle.hpp"
 
-#define GRID_SIZE 100
+// number of cells per axis = grid size + 1
+#define GRID_SIZE 130
 
 /// @brief struct to store data needed by the uniform grid.
 struct grid_data {
@@ -29,7 +31,7 @@ struct grid_data {
 
   /// @brief stores triangle ids in cells using hash_map index is calculated
   /// with morton codes
-  std::map<uint64_t, std::vector<uint>> grid;
+  std::unordered_map<uint64_t, std::vector<uint>> grid;
 
   /// @brief class to calculate morton indices.
   Morton morton;
@@ -39,7 +41,7 @@ struct grid_data {
 // -> calculate grid cell using morton codes
 // -> put triangles into grid cells morton code min + max all cells in between
 // -> traversing check cells using morton codes
-// nein könnten mehr zellen gespeichert werden:
+// neinkönnten mehr zellen gespeichert werden:
 // every grid cell saves maximimum and minimum index of sorted triangle_ids
 
 struct grid_index {
@@ -50,11 +52,12 @@ struct grid_index {
 
 class UniformGrid {
  public:
+  UniformGrid() {}
   explicit UniformGrid(std::vector<Triangle>* triangles);
   UniformGrid(const UniformGrid& old);
   UniformGrid& operator=(const UniformGrid& old);
 
-  void build();
+  void build(std::vector<Triangle>* triangles);
 
   /**
    * @brief Return best triangle intersection if found.
@@ -63,6 +66,8 @@ class UniformGrid {
    * @return Intersection
    */
   Intersection intersect(const Ray& ray);
+
+  void set_triangles(std::vector<Triangle>* triangles);
 
  private:
   // edit grid
@@ -82,7 +87,10 @@ class UniformGrid {
   vec3 get_cell(vec3 point);
 
   /// @brief intersect cell best intersection is saved in _best_intersection
-  bool intersect_cell(vec3 index);
+  bool intersect_cell(vec3 index, const Ray& ray);
+
+  bool update_intersection(Intersection* intersect,
+                           const Intersection& new_intersect);
 
   Intersection _best_intersection;
 
