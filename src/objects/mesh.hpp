@@ -14,15 +14,13 @@
 #include "triangle.hpp"
 #include "uniform_grid.hpp"
 
-enum Datastructure { GRID, BOUNDINGVOLUMES };
-
 class Mesh : public Object {
  public:
   Mesh(std::string input_file, vec3 origin);
   Mesh(std::string input_file, vec3 origin, Material material,
-       bool use_uniform_grid = false);
+       Algorithm algorithm = ASAH);
   Mesh(std::string input_file, vec3 origin, Material material,
-       std::string texture_path, bool use_uniform_grid = false);
+       std::string texture_path, Algorithm algorithm = ASAH);
 
   Mesh(const Mesh& old_mesh);
   Mesh& operator=(const Mesh& old_mesh);
@@ -61,7 +59,7 @@ class Mesh : public Object {
   void build_datastructure();
 
   // define data structure to use
-  Datastructure _used_datastructure = BOUNDINGVOLUMES;
+  Algorithm _used_algorithm = ASAH;
 
   void update_bounding_box(Triangle* t);
   void read_from_obj(std::string input_file);

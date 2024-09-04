@@ -13,6 +13,8 @@
 
 using glm::vec3;
 
+enum Algorithm { AGRID, ASAH, ALBVH, AHLBVH, AMID };
+
 struct Triangle_set {
   uint start_id;
   uint count;
@@ -60,7 +62,7 @@ class BVH {
  public:
   BVH() {}
 
-  void build_tree_axis(std::vector<Triangle> *triangles);
+  void build_tree_axis(std::vector<Triangle> *triangles, Algorithm algorithm);
   void set_triangles(std::vector<Triangle> *triangles);
 
   /**

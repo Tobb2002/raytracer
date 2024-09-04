@@ -16,9 +16,8 @@
 
 #define FLATTEN_TREE true
 
-#define USE_LBVH  // USE_MID, USE_SAH, USE_LBVH, USE_HLBVH...
-
-void BVH::build_tree_axis(std::vector<Triangle> *triangles) {
+void BVH::build_tree_axis(std::vector<Triangle> *triangles,
+                          Algorithm algorithm) {
   // initialize data structure
   _data.triangles = triangles;
 
@@ -33,31 +32,32 @@ void BVH::build_tree_axis(std::vector<Triangle> *triangles) {
 
   _data.tree.calculate_bounds(root);
 
-#ifdef USE_MID
-  std::cout << "Algorithm: Split middle\n";
   SAH sah = SAH(&_data.tree);
-  sah.split_middle(root);
-#endif
-
-#ifdef USE_SAH
-  std::cout << "Algorithm: SAH\n";
-  SAH sah = SAH(&_data.tree);
-  sah.split(root);
-#endif
-#ifdef USE_LBVH
-  std::cout << "Algorithm: LBVH\n";
-  LBVH l = LBVH(&_data.tree);
-  // lbvh.sort();
-  l.build();
-#endif
-#ifdef USE_HLBVH
-  std::cout << "Algorithm: HLBVH\n";
   LBVH lbvh = LBVH(&_data.tree);
-  SAH sah = SAH(&_data.tree);
 
-  lbvh.build_treelets();
-  sah.built_on_treelets();
-#endif
+  switch (algorithm) {
+    case AMID:
+      std::cout << "Algorithm: Split middle\n";
+      sah.split_middle(root);
+      break;
+    case ASAH:
+      std::cout << "Algorithm: SAH\n";
+      sah.split(root);
+      break;
+    case ALBVH:
+      std::cout << "Algorithm: LBVH\n";
+      lbvh = LBVH(&_data.tree);
+      // lbvh.sort();
+      lbvh.build();
+      break;
+    case AHLBVH:
+      std::cout << "Algorithm: HLBVH\n";
+      lbvh = LBVH(&_data.tree);
+
+      lbvh.build_treelets();
+      sah.built_on_treelets();
+      break;
+  }
 
 #if FLATTEN_TREE
   _data.tree.flatten_tree();

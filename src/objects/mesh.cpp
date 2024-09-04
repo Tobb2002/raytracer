@@ -32,13 +32,11 @@ Mesh::Mesh(std::string input_file, vec3 origin) {
  * @param material set material of mesh.
  */
 Mesh::Mesh(std::string input_file, vec3 origin, Material material,
-           bool use_uniform_grid) {
+           Algorithm algorithm) {
   _origin = origin;
   _material = material;
   read_from_obj(input_file);  // read file with origin as offset
-  if (use_uniform_grid) {
-    _used_datastructure = GRID;
-  }
+  _used_algorithm = algorithm;
 
   // stop time needed to build bvh
   std::chrono::steady_clock::time_point begin =
@@ -57,13 +55,11 @@ Mesh::Mesh(std::string input_file, vec3 origin, Material material,
 }
 
 Mesh::Mesh(std::string input_file, vec3 origin, Material material,
-           std::string texture_path, bool use_uniform_grid) {
+           std::string texture_path, Algorithm algorithm) {
   _origin = origin;
   _material = material;
   read_from_obj(input_file);  // read file with origin as offset
-  if (use_uniform_grid) {
-    _used_datastructure = GRID;
-  }
+  _used_algorithm = algorithm;
 
   // load and enable texture
   _enable_texture = true;
@@ -86,14 +82,13 @@ Mesh::Mesh(std::string input_file, vec3 origin, Material material,
 }
 
 void Mesh::build_datastructure() {
-  std::cout << "ich war hier\n";
-  switch (_used_datastructure) {
-    case BOUNDINGVOLUMES:
-      _bvh.build_tree_axis(&_triangles);
-      std::cout << "bliblaich war hier\n";
-      break;
-    case GRID:
+  switch (_used_algorithm) {
+    case AGRID:
+      std::cout << "Algorithm: Uniform Grid\n";
       _grid.build(&_triangles);
+      break;
+    default:
+      _bvh.build_tree_axis(&_triangles, _used_algorithm);
       break;
   }
 }
@@ -110,7 +105,7 @@ Mesh::Mesh(const Mesh &old_mesh) {
   _texture = old_mesh._texture;
   _enable_texture = old_mesh._enable_texture;
   _grid = old_mesh._grid;
-  _used_datastructure = old_mesh._used_datastructure;
+  _used_algorithm = old_mesh._used_algorithm;
 
   // set new triangle reference
   _bvh.set_triangles(&_triangles);
@@ -129,7 +124,7 @@ Mesh &Mesh::operator=(const Mesh &old_mesh) {
   _texture = old_mesh._texture;
   _enable_texture = old_mesh._enable_texture;
   _grid = old_mesh._grid;
-  _used_datastructure = old_mesh._used_datastructure;
+  _used_algorithm = old_mesh._used_algorithm;
 
   // set new triangle reference
   _bvh.set_triangles(&_triangles);
@@ -203,7 +198,7 @@ void Mesh::apply_transform(mat4 transformation) {
     t->apply_transform(transformation);
   }
   _bvh = BVH();
-  _bvh.build_tree_axis(&_triangles);
+  _bvh.build_tree_axis(&_triangles, _used_algorithm);
 }
 
 /**
@@ -219,12 +214,12 @@ void Mesh::update_bounding_box(Triangle *t) {
 
 Intersection Mesh::intersect(const Ray &ray) {
   Intersection res;
-  switch (_used_datastructure) {
-    case BOUNDINGVOLUMES:
-      res = _bvh.intersect(ray);
-      break;
-    case GRID:
+  switch (_used_algorithm) {
+    case AGRID:
       res = _grid.intersect(ray);
+      break;
+    default:
+      res = _bvh.intersect(ray);
       break;
   }
 
