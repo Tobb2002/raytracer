@@ -5,6 +5,7 @@
 
 #include <boost/lambda/bind.hpp>
 #include <cstdint>
+#include <execution>
 #include <glm/gtx/string_cast.hpp>
 
 #include "bvh_tree.hpp"
@@ -117,9 +118,15 @@ void LBVH::build_treelets() {
   add_treelets(_tree->get_root());
   std::cout << "number of treelets: " << _tree->get_treelets().size();
 
-  for (bvh_node_pointer *treelet : _tree->get_treelets()) {
-    split_first_bit(treelet, _morton.get_morton_size() - TREELET_BITS);
-  }
+  // for (bvh_node_pointer *treelet : _tree->get_treelets()) {
+  //   split_first_bit(treelet, _morton.get_morton_size() - TREELET_BITS);
+  // }
+  std::vector<bvh_node_pointer *> treelets = _tree->get_treelets();
+  std::for_each(std::execution::par_unseq, treelets.begin(), treelets.end(),
+                [this](bvh_node_pointer *treelet) {
+                  split_first_bit(treelet,
+                                  _morton.get_morton_size() - TREELET_BITS);
+                });
 
   _tree->destroy_tree();
 }
