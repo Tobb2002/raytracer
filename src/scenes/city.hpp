@@ -13,7 +13,7 @@ inline Scene get_scene() {
   vec3 origin = vec3(-6, -3, -10);
 
   Mesh m = Mesh("data/input/Whitechapel.obj", origin,
-                {.color = vec3(0.2, 0.2, 0.2), .specular = 0.2});
+                {.color = vec3(0.2, 0.2, 0.2), .specular = 0.2}, AHLBVH);
 
   Pointlight light1 = Pointlight(origin + vec3(26, 20, -10), 450);
   scene.add_light(light1);

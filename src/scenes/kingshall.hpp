@@ -16,7 +16,7 @@ inline Scene get_scene() {
 #if TEXTURE
   Mesh m = Mesh("data/input/kingshall.obj", origin_plane + vec3(0, 0, -18),
                 {.color = vec3(0.2, 0.2, 0.2), .specular = 0.0},
-                "data/input/textures/kingshall.png");
+                "data/input/textures/kingshall.png", AGRID);
 #else
   Mesh m = Mesh("data/input/kingshall.obj", origin_plane + vec3(0, 0, -18),
                 {.color = vec3(0.2, 0.2, 0.2), .specular = 0.0});

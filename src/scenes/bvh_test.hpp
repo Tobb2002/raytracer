@@ -13,7 +13,7 @@ inline Scene get_scene() {
   vec3 origin_plane = vec3(0, 0, 0);
 
   Mesh m = Mesh("data/input/bvh_test.obj", origin_plane + vec3(0, 0, 0),
-                {.color = vec3(0.2, 0.2, 0.2), .specular = 0.2}, true);
+                {.color = vec3(0.2, 0.2, 0.2), .specular = 0.2}, AHLBVH);
 
   Plane plane =
       Plane(origin_plane, vec3(0, 1, 0),

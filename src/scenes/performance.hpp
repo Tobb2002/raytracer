@@ -13,7 +13,7 @@ inline Scene get_scene() {
   vec3 origin_plane = vec3(0, -0.7, -2);
 
   Mesh m = Mesh("data/input/dragon.obj", origin_plane + vec3(0, 0, 0),
-                {.color = vec3(0.2, 0.2, 0.2), .specular = 0.1});
+                {.color = vec3(0.2, 0.2, 0.2), .specular = 0.1}, ASAH);
 
   ObjectFactory factory = ObjectFactory(&scene);
   factory.new_xy_square_light(origin_plane + vec3(-3, 2, 4), 370, 10, 0.05);

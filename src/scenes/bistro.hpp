@@ -10,6 +10,8 @@
 /*
  * Gute Werte für die Datenstrukturen:
  * HLBVH: TREELETBITS: 25
+ *
+ * VISUALIZE_RANGE: 100, 1200
  */
 
 inline Scene get_scene() {
