@@ -15,6 +15,11 @@
 #include "objects/pointlight.hpp"
 #include "objects/sphere.hpp"
 
+// #define DEBUG
+#define PRINT_PROGRESS
+
+//#define NO_SHADING
+
 class Scene {
  public:
   Scene();

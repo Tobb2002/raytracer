@@ -15,7 +15,7 @@
 #include "triangle.hpp"
 
 // number of cells per axis = grid size + 1
-#define GRID_SIZE 400
+#define GRID_SIZE 100
 
 /// @brief struct to store data needed by the uniform grid.
 struct grid_data {

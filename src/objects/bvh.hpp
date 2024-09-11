@@ -11,6 +11,10 @@
 #include "sah.hpp"
 #include "triangle.hpp"
 
+#define VISUALIZE_INTERSECT false
+#define VISUALIZE_RANGE vec2(100, 1200)
+#define FLATTEN_TREE true
+
 using glm::vec3;
 
 enum Algorithm { AGRID, ASAH, ALBVH, AHLBVH, AMID };

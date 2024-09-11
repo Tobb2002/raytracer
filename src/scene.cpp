@@ -12,10 +12,6 @@
 
 #include "objects/plane.hpp"
 
-// #define DEBUG
-#define PRINT_PROGRESS
-
-// #define NO_SHADING
 
 Scene::Scene() {
   _standart_light = vec3(0);

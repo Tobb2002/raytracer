@@ -12,9 +12,6 @@
 #include "bvh.hpp"
 #include "lbvh.hpp"
 
-#define VISUALIZE_INTERSECT false
-
-#define FLATTEN_TREE true
 
 void BVH::build_tree_axis(std::vector<Triangle> *triangles,
                           Algorithm algorithm) {
@@ -211,8 +208,9 @@ void BVH::intersect_leaf(BVH_node_data *node_data, const Ray &ray) {
 
   Intersection res =
       (_data.triangles->data() + best_triangle_id)->intersect(ray);
+
 #if VISUALIZE_INTERSECT
-  vec2 input_area = vec2(0, 200);
+  vec2 input_area = VISUALIZE_RANGE;
   vec2 output_area = vec2(0, 1);
 
   float value = (_intersect_count - input_area.x) *
