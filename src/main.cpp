@@ -7,7 +7,7 @@
 
 #include "image.hpp"
 #include "scene.hpp"
-#include "scenes/kingshall.hpp"
+#include "scenes/bistro.hpp"
 
 using glm::vec3, glm::vec2;
 
