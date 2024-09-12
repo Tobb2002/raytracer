@@ -15,9 +15,16 @@
 #define VISUALIZE_RANGE vec2(100, 1200)
 #define FLATTEN_TREE true
 
+#define GET_STATS true
+
 using glm::vec3;
 
 enum Algorithm { AGRID, ASAH, ALBVH, AHLBVH, AMID };
+
+struct bvh_stats {
+  uint node_intersects = 0;
+  uint triangle_intersects = 0;
+};
 
 struct Triangle_set {
   uint start_id;
@@ -62,6 +69,7 @@ class BVH {
   float get_cost();
 
   uint _intersect_count = 0;
+  bvh_stats _stats;
 
  public:
   BVH() {}
@@ -82,6 +90,9 @@ class BVH {
   void print_node_triangles(bvh_node_pointer *node);
 
   void update_boxes() { _data.tree.update_box(0); }
+
+  /// @brief returns stats of the last intersect call.
+  bvh_stats get_stats();
 
   /***** Transformation *****/
 

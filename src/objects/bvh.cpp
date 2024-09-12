@@ -12,7 +12,6 @@
 #include "bvh.hpp"
 #include "lbvh.hpp"
 
-
 void BVH::build_tree_axis(std::vector<Triangle> *triangles,
                           Algorithm algorithm) {
   // initialize data structure
@@ -68,6 +67,7 @@ void BVH::set_triangles(std::vector<Triangle> *triangles) {
 
 Intersection BVH::intersect(const Ray &ray) {
   _intersect_count = 0;
+  _stats = bvh_stats();
   _best_intersection = Intersection();
 #if FLATTEN_TREE
   intersect_node((uint)0, ray);
@@ -135,6 +135,9 @@ void BVH::intersect_node(uint id_flat, const Ray &ray) {
  */
 bool BVH::intersect_node_bool(BVH_node_data *node_data, const Ray &ray) {
   _intersect_count += 1;
+#if GET_STATS
+  _stats.node_intersects += 1;
+#endif
   vec3 d = ray.get_direction();
   vec3 o = ray.get_origin();
 
@@ -199,6 +202,9 @@ void BVH::intersect_leaf(BVH_node_data *node_data, const Ray &ray) {
 
   for (uint i : node_data->triangle_ids) {
     Intersection t_i = _data.triangles->at(i).intersect(ray);
+#if GET_STATS
+    _stats.triangle_intersects += 1;
+#endif
 
     if (t_i.found && t_i.t < t_min) {
       t_min = t_i.t;
@@ -260,4 +266,8 @@ void BVH::print_node_triangles(bvh_node_pointer *node) {
     t->print();
   }
   std::cout << "----------------------\n";
+}
+
+bvh_stats BVH::get_stats() {
+  return _stats;
 }

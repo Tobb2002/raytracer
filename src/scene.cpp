@@ -241,6 +241,14 @@ Image Scene::trace_image() {
                    1000000.0
             << "\n";
   std::cout << "------------------------------------------------\n";
+#if GET_STATS
+  for (Mesh m : _obj_meshes) {
+    m.print_stats();
+  }
+#endif
+  
+  // print stats
+
   return image;
 }
 

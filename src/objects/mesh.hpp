@@ -14,6 +14,16 @@
 #include "triangle.hpp"
 #include "uniform_grid.hpp"
 
+struct mesh_stats {
+  long intersects = 0;
+  uint max_node_intersects = 0;
+  uint min_node_intersects = UINT_MAX;
+  long node_intersects = 0;
+  uint max_triangle_intersects = 0;
+  uint min_triangle_intersects = UINT_MAX;
+  long triangle_intersects = 0;
+};
+
 class Mesh : public Object {
  public:
   Mesh(std::string input_file, vec3 origin);
@@ -41,6 +51,8 @@ class Mesh : public Object {
   /***** Functions *****/
   Intersection intersect(const Ray& ray) override;
 
+  void print_stats();
+
  private:
   std::vector<Triangle> _triangles;
   bool _triangle_exists;
@@ -55,6 +67,11 @@ class Mesh : public Object {
   Material _material;
   Texture _texture;
   bool _enable_texture = false;
+
+  mesh_stats _stats;
+
+  /// @brief updates the intersection stats
+  void update_stats(bvh_stats bvh_stats);
 
   void build_datastructure();
 

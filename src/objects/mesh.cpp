@@ -106,6 +106,7 @@ Mesh::Mesh(const Mesh &old_mesh) {
   _enable_texture = old_mesh._enable_texture;
   _grid = old_mesh._grid;
   _used_algorithm = old_mesh._used_algorithm;
+  _stats = old_mesh._stats;
 
   // set new triangle reference
   _bvh.set_triangles(&_triangles);
@@ -125,6 +126,7 @@ Mesh &Mesh::operator=(const Mesh &old_mesh) {
   _enable_texture = old_mesh._enable_texture;
   _grid = old_mesh._grid;
   _used_algorithm = old_mesh._used_algorithm;
+  _stats = old_mesh._stats;
 
   // set new triangle reference
   _bvh.set_triangles(&_triangles);
@@ -220,6 +222,9 @@ Intersection Mesh::intersect(const Ray &ray) {
       break;
     default:
       res = _bvh.intersect(ray);
+#if GET_STATS
+      update_stats(_bvh.get_stats());
+#endif
       break;
   }
 
@@ -367,4 +372,46 @@ void Mesh::read_from_obj(std::string inputfile) {
   std::cout << "------------------------------------------------\n";
   _origin = _bounding_box.get_middle();
   _transform.add_translation(_origin);
+}
+
+void Mesh::update_stats(bvh_stats bvh_stats) {
+  _stats.intersects += 1;
+  _stats.node_intersects += bvh_stats.node_intersects;
+  _stats.triangle_intersects += bvh_stats.triangle_intersects;
+
+  // update min max values
+  if (bvh_stats.node_intersects < _stats.min_node_intersects) {
+    _stats.min_node_intersects = bvh_stats.node_intersects;
+  }
+  if (bvh_stats.node_intersects > _stats.max_node_intersects) {
+    _stats.max_node_intersects = bvh_stats.node_intersects;
+  }
+  if (bvh_stats.triangle_intersects < _stats.min_triangle_intersects) {
+    _stats.min_triangle_intersects = bvh_stats.triangle_intersects;
+  }
+  if (bvh_stats.triangle_intersects > _stats.max_triangle_intersects) {
+    _stats.max_triangle_intersects = bvh_stats.triangle_intersects;
+  }
+}
+
+void Mesh::print_stats() {
+  std::cout << "------------------------------------------------\n";
+  std::cout << "Mesh stats: \n";
+  std::cout << "BVH Nodes intersected: \n";
+  std::cout << "\t all: \t" << _stats.node_intersects << "\n";
+  std::cout << "\t min: \t" << _stats.min_node_intersects << "\n";
+  std::cout << "\t max: \t" << _stats.max_node_intersects << "\n";
+  if (_stats.intersects != 0) {
+    std::cout << "\t avg: \t" << _stats.node_intersects / _stats.intersects
+              << "\n";
+  }
+  std::cout << "BVH triangles intersected: \n";
+  std::cout << "\t all: \t" << _stats.triangle_intersects << "\n";
+  std::cout << "\t min: \t" << _stats.min_triangle_intersects << "\n";
+  std::cout << "\t max: \t" << _stats.max_triangle_intersects << "\n";
+  if (_stats.intersects != 0) {
+    std::cout << "\t avg: \t" << _stats.triangle_intersects / _stats.intersects
+              << "\n";
+  }
+  std::cout << "------------------------------------------------\n";
 }
