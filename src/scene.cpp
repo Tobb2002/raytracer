@@ -12,7 +12,6 @@
 
 #include "objects/plane.hpp"
 
-
 Scene::Scene() {
   _standart_light = vec3(0);
   set_aliasing(1);
@@ -246,7 +245,7 @@ Image Scene::trace_image() {
     m.print_stats();
   }
 #endif
-  
+
   // print stats
 
   return image;

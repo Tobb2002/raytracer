@@ -20,18 +20,18 @@ inline Scene get_scene() {
   vec3 origin = vec3(0, 0, 0);
   vec3 camera_pos = vec3(-10, -2.9, -3.2);
 
-  Mesh m = Mesh("data/input/bistro/bistro_edited.obj", origin - camera_pos,
-                {.color = vec3(0.2, 0.2, 0.2), .ambient=0.3, .specular = 0.15 }, AHLBVH);
+  Mesh m = Mesh(
+      "data/input/bistro/bistro_edited.obj", origin - camera_pos,
+      {.color = vec3(0.2, 0.2, 0.2), .ambient = 0.3, .specular = 0.15}, ASAH);
 
   // ObjectFactory factory = ObjectFactory(&scene);
   // factory.new_xy_square_light(origin + vec3(0.8, 2, -3), 500, 4, 0.05);
-  
+
   Pointlight light = Pointlight(origin + vec3(0, 0, 0), 450);
   scene.add_light(light);
 
   scene.get_camera()->set_resolution(800, 600);
   scene.get_camera()->set_sensor_size(1.6, 1.2);
-
 
   scene.set_aliasing(1);
   scene.set_tonemapping_value(-1);
@@ -40,9 +40,10 @@ inline Scene get_scene() {
   // scene.add_light(light1);
 
   // adjust camera
-  scene.get_camera()->rotate(vec3(1,0,0), -22); // blender rotation x offset -90
-  //scene.get_camera()->rotate(vec3(0,0,1), 0); // blender: -y rotation
-  scene.get_camera()->rotate(vec3(0,1,0), -40); // blender rotation z
+  scene.get_camera()->rotate(vec3(1, 0, 0),
+                             -22);  // blender rotation x offset -90
+  // scene.get_camera()->rotate(vec3(0,0,1), 0); // blender: -y rotation
+  scene.get_camera()->rotate(vec3(0, 1, 0), -40);  // blender rotation z
   //
   scene.update_view_transform();
   return scene;
@@ -53,6 +54,3 @@ inline void animation_step(Scene *scene) {
   scene->get_obj_mesh(0)->rotate(vec3(0, -0.7, -2), vec3(0, 1, 0), 10);
   scene->update_view_transform();
 }
-
-
-

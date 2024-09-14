@@ -17,7 +17,7 @@ inline Scene get_scene() {
 
   // ObjectFactory factory = ObjectFactory(&scene);
   // factory.new_xy_square_light(origin_plane + vec3(-3, 2, 4), 370, 10, 0.05);
-  
+
   Pointlight light = Pointlight(origin_plane + vec3(-3, 2, 4), 450);
   scene.add_light(light);
 
@@ -38,4 +38,3 @@ inline void animation_step(Scene *scene) {
   scene->get_obj_mesh(0)->rotate(vec3(0, -0.7, -2), vec3(0, 1, 0), 10);
   scene->update_view_transform();
 }
-

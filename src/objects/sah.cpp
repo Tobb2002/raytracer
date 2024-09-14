@@ -113,7 +113,6 @@ uint SAH::triangles_into_buckets_axis(bvh_node_pointer *node,
   vec3 max = _tree->get_data(node)->bounds.max;
 
   // calculate bucket size (x,y,z)
-  vec3 bucket_step = calc_bucket_step(min, max);
   vec3 length = max - min;
 
   uint a = _tree->get_longest_axis(node);

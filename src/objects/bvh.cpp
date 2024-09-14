@@ -268,6 +268,4 @@ void BVH::print_node_triangles(bvh_node_pointer *node) {
   std::cout << "----------------------\n";
 }
 
-bvh_stats BVH::get_stats() {
-  return _stats;
-}
+bvh_stats BVH::get_stats() { return _stats; }

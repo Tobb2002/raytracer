@@ -4,9 +4,9 @@
 
 #include "bvh_tree.hpp"
 
-#define SAH_NUM_BUCKETS 9
+#define SAH_NUM_BUCKETS 10
 
-#define COST_TRAVERSAL 1
+#define COST_TRAVERSAL 2
 #define COST_INTERSECT 1
 
 // #define SPLIT_LONGEST_AXIS
