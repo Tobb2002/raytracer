@@ -13,8 +13,8 @@
 using glm::vec3;
 
 struct bvh_box {
-  vec3 min = vec3(0);
-  vec3 max = vec3(0);
+  vec3 min = vec3(MAXFLOAT);
+  vec3 max = vec3(-MAXFLOAT);
 };
 
 struct interval {

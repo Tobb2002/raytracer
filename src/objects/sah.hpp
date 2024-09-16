@@ -32,7 +32,7 @@ struct SAH_buckets {
 };
 
 struct split_point {
-  size_t axis = 0;  // axis > 2 --> no valid split
+  size_t axis = 3;  // axis > 2 --> no valid split
   size_t id = 0;
   bvh_box left;
   bvh_box right;
@@ -85,6 +85,8 @@ class SAH {
   bvh_box combine_box(SAH_buckets *buckets, const uint &axis, const uint &min,
                       const uint &max);
   bvh_box combine_box_treelets(bvh_node_pointer *node);
+
+  bvh_box union_box(bvh_box a, bvh_box b);
   void combine_ids(std::vector<uint> *result, const SAH_buckets &buckets,
                    const uint &axis, const uint &min, const uint &max);
   float get_surface_area(const bvh_box &box);
