@@ -15,13 +15,13 @@
 #include "uniform_grid.hpp"
 
 struct mesh_stats {
-  long intersects = 0;
+  uint intersects = 0;
   uint max_node_intersects = 0;
   uint min_node_intersects = UINT_MAX;
-  long node_intersects = 0;
+  uint node_intersects = 0;
   uint max_triangle_intersects = 0;
   uint min_triangle_intersects = UINT_MAX;
-  long triangle_intersects = 0;
+  uint triangle_intersects = 0;
 };
 
 class Mesh : public Object {

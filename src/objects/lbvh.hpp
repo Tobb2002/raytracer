@@ -22,7 +22,7 @@ using glm::vec3;
 
 // number of first morton code bits to be identical in the same treelet
 // 0 = only use lbvh since just one treelet get's added
-#define TREELET_BITS 18
+#define TREELET_BITS 22
 
 struct morton_data {
   uint triangle_id;
@@ -60,7 +60,8 @@ class LBVH {
   void split(bvh_node_pointer *node, uint id);
 
   /**
-   * @brief split node into treelets and free node afterwards.
+   * @brief split node into treelets and free node <<Partition primitives using
+   * approximate SAH>>= afterwards.
    *
    * @param node
    */

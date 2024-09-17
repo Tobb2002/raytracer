@@ -4,15 +4,15 @@
 
 #include "bvh_tree.hpp"
 
-#define SAH_NUM_BUCKETS 12
+#define SAH_NUM_BUCKETS 8
 
 // number of triangles at which array gets split in the middle
 #define MIN_SAH_SPLIT 5
 
 #define COST_TRAVERSAL 1
-#define COST_INTERSECT 1
+#define COST_INTERSECT 8
 
-#define SPLIT_LONGEST_AXIS
+// #define SPLIT_LONGEST_AXIS
 
 /**
  * @class SAH_bucket
@@ -22,7 +22,6 @@
 struct SAH_bucket {
   std::vector<uint> ids;
   bvh_box box;
-  float cost;
 };
 
 /// @brief Struct containing two-dimensional array of all buckets
