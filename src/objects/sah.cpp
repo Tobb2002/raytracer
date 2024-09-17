@@ -297,6 +297,12 @@ split_point SAH::calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets) {
     if (run_trough) {
       split.axis = 3;  // Fallback to middle split
     }
+    // check if leave is less costly
+    float cost_leave = COST_TRAVERSAL * get_surface_area(node->data.bounds) *
+                       node->data.triangle_ids.size();
+    if (cost_leave < min_cost) {
+      split.axis = 4;  // Do not further split
+    }
   }
   // std::cout << "best split: " << split.id << " " << split.axis << "\n";
   return split;
@@ -539,7 +545,7 @@ void SAH::split(bvh_node_pointer *node, const SAH_buckets &buckets,
                 const split_point &splitp) {
   // Split node at triangle with split id
   // update node
-  if (splitp.axis > 2) {
+  if (splitp.axis > 3) {
     split_middle_node(node);
     return;
   }
@@ -577,10 +583,11 @@ void SAH::split(bvh_node_pointer *node, const SAH_buckets &buckets,
 
 void SAH::split(bvh_node_pointer *node) {
   // check if split needed -> triangles > 2
-  if (_tree->get_data(node)->triangle_ids.size() <= _max_triangles) {
+  uint num_triangles = _tree->get_data(node)->triangle_ids.size();
+  if (num_triangles <= _max_triangles) {
     return;
   }
-  if (_tree->get_data(node)->triangle_ids.size() <= MIN_SAH_SPLIT) {
+  if (num_triangles <= MIN_SAH_SPLIT) {
     split_middle(node);
     return;
   }
@@ -599,11 +606,13 @@ void SAH::split(bvh_node_pointer *node) {
   // std::cout << "best split: " << splitp.id << "\t axis:" << splitp.axis <<
   // "\n";
 
-  split(node, buckets, splitp);
+  if (splitp.axis < 4) {
+    split(node, buckets, splitp);
 
-  // recursivley continue splitting
-  split(_tree->get_left(node));
-  split(_tree->get_right(node));
+    // recursivley continue splitting
+    split(_tree->get_left(node));
+    split(_tree->get_right(node));
+  }
 }
 
 void SAH::built_on_treelets() {

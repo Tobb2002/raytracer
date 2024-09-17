@@ -9,8 +9,8 @@
 // number of triangles at which array gets split in the middle
 #define MIN_SAH_SPLIT 5
 
-#define COST_TRAVERSAL 1
-#define COST_INTERSECT 8
+#define COST_TRAVERSAL 2
+#define COST_INTERSECT 1
 
 // #define SPLIT_LONGEST_AXIS
 
