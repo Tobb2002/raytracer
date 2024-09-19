@@ -189,6 +189,10 @@ bool BVH::intersect_node_bool(BVH_node_data *node_data, const Ray &ray) {
       _best_intersection.t <= tz.min) {
     return false;
   }
+  // discard intersection that are behind the ray
+  if (tx.max < 0 || ty.max < 0 || tz.max < 0) {
+    return false;
+  }
 
   if (tx.min > ty.max || ty.min > tx.max) {
     // xy do not ovelap
