@@ -561,7 +561,7 @@ void SAH::split(bvh_node_pointer *node, const SAH_buckets &buckets,
                 const split_point &splitp) {
   // Split node at triangle with split id
   // update node
-  if (splitp.axis > 3) {
+  if (splitp.axis >= 3) {
     split_middle_node(node);
     return;
   }
