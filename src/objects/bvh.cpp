@@ -71,11 +71,26 @@ Intersection BVH::intersect(const Ray &ray) {
   _best_intersection = Intersection();
 #if FLATTEN_TREE
   intersect_node((uint)0, ray);
-  return _best_intersection;
 #else
   intersect_node(_data.tree.get_root(), ray);
-  return _best_intersection;
 #endif
+#if VISUALIZE_INTERSECT
+  vec2 input_area = VISUALIZE_RANGE;
+  vec2 output_area = vec2(0, 1);
+
+  float value = (VISUALIZE_STATS - input_area.x) *
+                    (output_area.y - output_area.x) /
+                    (input_area.y - input_area.x) +
+                output_area.x;
+  vec3 color1 = VISUALIZE_COL1;  // vec3(0.04, 0.01, 0.24);
+  vec3 color2 = VISUALIZE_COL2;  // vec3(0.98, 0.94, 0.01);
+  vec3 color = value * color2 + (1 - value) * color1;
+  _best_intersection.material.color.x = color.x;
+  _best_intersection.material.color.y = color.y;
+  _best_intersection.material.color.z = color.z;
+  _best_intersection.found = true;
+#endif
+  return _best_intersection;
 }
 
 /**
@@ -193,8 +208,8 @@ bool BVH::intersect_node_bool(BVH_node_data *node_data, const Ray &ray) {
 }
 
 void BVH::intersect_leaf(BVH_node_data *node_data, const Ray &ray) {
-#ifdef DEBUG
-  std::cout << "id: " << id << "  parent:" << (id - 1) / 2 << "\n";
+#ifdef GET_STATS
+  _stats.leaves_intersects += 1;
 #endif
   // find best intersection in triangle set
   uint best_triangle_id = 0;
@@ -215,18 +230,6 @@ void BVH::intersect_leaf(BVH_node_data *node_data, const Ray &ray) {
   Intersection res =
       (_data.triangles->data() + best_triangle_id)->intersect(ray);
 
-#if VISUALIZE_INTERSECT
-  vec2 input_area = VISUALIZE_RANGE;
-  vec2 output_area = vec2(0, 1);
-
-  float value = (_intersect_count - input_area.x) *
-                    (output_area.y - output_area.x) /
-                    (input_area.y - input_area.x) +
-                output_area.x;
-  res.material.color.x = value;
-  res.material.color.y = value;
-  res.material.color.z = value;
-#endif
   update_intersection(&_best_intersection, res);
 }
 

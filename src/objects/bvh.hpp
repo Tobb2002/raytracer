@@ -11,8 +11,12 @@
 #include "sah.hpp"
 #include "triangle.hpp"
 
-#define VISUALIZE_INTERSECT false
-#define VISUALIZE_RANGE vec2(100, 1200)
+#define VISUALIZE_INTERSECT true
+#define VISUALIZE_RANGE vec2(0, 800)
+#define VISUALIZE_STATS _stats.node_intersects
+#define VISUALIZE_COL1 vec3(0.04, 0.01, 0.24)
+#define VISUALIZE_COL2 vec3(0.03, 1, 0.05)
+
 #define FLATTEN_TREE true
 
 #define GET_STATS true
