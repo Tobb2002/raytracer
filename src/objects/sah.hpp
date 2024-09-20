@@ -4,10 +4,10 @@
 
 #include "bvh_tree.hpp"
 
-#define SAH_NUM_BUCKETS 8
+#define SAH_NUM_BUCKETS 12
 
 // number of triangles at which array gets split in the middle
-#define MIN_SAH_SPLIT 5
+#define MIN_SAH_SPLIT 2
 
 #define COST_TRAVERSAL 2
 #define COST_INTERSECT 1
@@ -36,8 +36,6 @@ struct SAH_buckets {
 struct split_point {
   size_t axis = 3;  // axis > 2 --> no valid split
   size_t id = 0;
-  bvh_box left;
-  bvh_box right;
 };
 
 class SAH {
@@ -86,8 +84,8 @@ class SAH {
   split_point calc_min_split_treelets(bvh_node_pointer *node,
                                       SAH_buckets *buckets, uint axis);
 
-  bvh_box combine_box(SAH_buckets *buckets, const uint &axis, const uint &min,
-                      const uint &max);
+  bvh_box combine_box(const SAH_buckets &buckets, const uint &axis,
+                      const uint &min, const uint &max);
   bvh_box combine_box_treelets(bvh_node_pointer *node);
 
   bvh_box union_box(bvh_box a, bvh_box b);
