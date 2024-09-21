@@ -9,6 +9,7 @@
 
 #include <string>
 
+#define FLIP_HORIZONTAL
 #include "glm/glm.hpp"
 
 using glm::vec2, glm::vec3;
@@ -26,6 +27,8 @@ class Texture {
 
   vec3 get_color_uv(vec2 position_uv);
   vec3 get_color_absolute(vec2 position);
+
+  vec3 get_normal_uv(vec2 position_uv);
 
   vec2 get_dimensions();
 

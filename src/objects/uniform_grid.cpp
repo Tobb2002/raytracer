@@ -80,8 +80,8 @@ void UniformGrid::set_triangles(std::vector<Triangle> *triangles) {
   _data.triangles = triangles;
 }
 
-Intersection UniformGrid::intersect(const Ray &ray) {
-  _best_intersection = Intersection();
+TriangleIntersection UniformGrid::intersect(const Ray &ray) {
+  _best_intersection = TriangleIntersection();
   // check if box is intersected
   // find first intersecting cell -> convert ray origin to be in first cell
   float t_0 = intersect_bounds(_data.bounds, ray);
@@ -168,7 +168,7 @@ Intersection UniformGrid::intersect(const Ray &ray) {
     }
   }
 
-  _best_intersection = Intersection();
+  _best_intersection = TriangleIntersection();
   return _best_intersection;
 }
 
@@ -193,7 +193,7 @@ bool UniformGrid::intersect_cell(vec3 index, const Ray &ray) {
   uint64_t morton_code = _data.morton.get_value(index);
 
   if (!_data.grid.contains(morton_code)) {
-    _best_intersection = Intersection();
+    _best_intersection = TriangleIntersection();
     return false;
   }
   std::vector<uint> *triangle_ids = get_ids(index);
@@ -202,7 +202,7 @@ bool UniformGrid::intersect_cell(vec3 index, const Ray &ray) {
   float t_min = MAXFLOAT;
 
   for (uint i : *triangle_ids) {
-    Intersection t_i = _data.triangles->at(i).intersect(ray);
+    TriangleIntersection t_i = _data.triangles->at(i).intersect_triangle(ray);
 
     if (t_i.found && t_i.t < t_min) {
       t_min = t_i.t;
@@ -210,16 +210,17 @@ bool UniformGrid::intersect_cell(vec3 index, const Ray &ray) {
     }
   }
 
-  Intersection res =
-      (_data.triangles->data() + best_triangle_id)->intersect(ray);
+  TriangleIntersection res =
+      (_data.triangles->data() + best_triangle_id)->intersect_triangle(ray);
 
   update_intersection(&_best_intersection, res);
 
   return _best_intersection.found;
 }
 
-bool UniformGrid::update_intersection(Intersection *intersect,
-                                      const Intersection &new_intersect) {
+bool UniformGrid::update_intersection(
+    TriangleIntersection *intersect,
+    const TriangleIntersection &new_intersect) {
   if (new_intersect.found) {
     // update intersection if the new one is closer
     if (new_intersect.t < intersect->t) {

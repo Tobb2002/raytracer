@@ -4,9 +4,12 @@
 
 #include "mesh.hpp"
 
+#include <algorithm>
 #include <chrono>
+#include <execution>
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
+#include <mutex>
 
 #include "bvh.hpp"
 #include "lib/objloader.hpp"
@@ -19,9 +22,10 @@
  *
  * The Mesh will use the standart Material.
  */
-Mesh::Mesh(std::string input_file, vec3 origin) {
+Mesh::Mesh(std::string folder, std::string file, vec3 origin) {
   _origin = origin;
-  read_from_obj(input_file);  // read file with origin as offset
+  _path_folder = folder;
+  read_from_obj(folder, file);  // read file with origin as offset
 }
 
 /**
@@ -31,11 +35,12 @@ Mesh::Mesh(std::string input_file, vec3 origin) {
  * @param origin point to place the mesh.
  * @param material set material of mesh.
  */
-Mesh::Mesh(std::string input_file, vec3 origin, Material material,
+Mesh::Mesh(std::string folder, std::string file, vec3 origin, Material material,
            Algorithm algorithm) {
   _origin = origin;
-  _material = material;
-  read_from_obj(input_file);  // read file with origin as offset
+  _path_folder = folder;
+  _materials.push_back(material);
+  read_from_obj(folder, file);  // read file with origin as offset
   _used_algorithm = algorithm;
 
   // stop time needed to build bvh
@@ -54,11 +59,12 @@ Mesh::Mesh(std::string input_file, vec3 origin, Material material,
   std::cout << "------------------------------------------------\n";
 }
 
-Mesh::Mesh(std::string input_file, vec3 origin, Material material,
+Mesh::Mesh(std::string folder, std::string file, vec3 origin, Material material,
            std::string texture_path, Algorithm algorithm) {
   _origin = origin;
-  _material = material;
-  read_from_obj(input_file);  // read file with origin as offset
+  _path_folder = folder;
+  _materials.push_back(material);
+  read_from_obj(folder, file);  // read file with origin as offset
   _used_algorithm = algorithm;
 
   // load and enable texture
@@ -100,13 +106,15 @@ Mesh::Mesh(const Mesh &old_mesh) {
   _origin = old_mesh._origin;
   _bounding_box = old_mesh._bounding_box;
   _enable_smooth_shading = old_mesh._enable_smooth_shading;
-  _material = old_mesh._material;
+  _materials = old_mesh._materials;
   _bvh = old_mesh._bvh;
   _texture = old_mesh._texture;
   _enable_texture = old_mesh._enable_texture;
   _grid = old_mesh._grid;
   _used_algorithm = old_mesh._used_algorithm;
   _stats = old_mesh._stats;
+  _textures_diffuse = old_mesh._textures_diffuse;
+  _textures_specular = old_mesh._textures_specular;
 
   // set new triangle reference
   _bvh.set_triangles(&_triangles);
@@ -120,13 +128,15 @@ Mesh &Mesh::operator=(const Mesh &old_mesh) {
   _origin = old_mesh._origin;
   _bounding_box = old_mesh._bounding_box;
   _enable_smooth_shading = old_mesh._enable_smooth_shading;
-  _material = old_mesh._material;
+  _materials = old_mesh._materials;
   _bvh = old_mesh._bvh;
   _texture = old_mesh._texture;
   _enable_texture = old_mesh._enable_texture;
   _grid = old_mesh._grid;
   _used_algorithm = old_mesh._used_algorithm;
   _stats = old_mesh._stats;
+  _textures_diffuse = old_mesh._textures_diffuse;
+  _textures_specular = old_mesh._textures_specular;
 
   // set new triangle reference
   _bvh.set_triangles(&_triangles);
@@ -215,21 +225,36 @@ void Mesh::update_bounding_box(Triangle *t) {
 /***** Functions *****/
 
 Intersection Mesh::intersect(const Ray &ray) {
-  Intersection res;
+  TriangleIntersection intersect_triangle;
   switch (_used_algorithm) {
     case AGRID:
-      res = _grid.intersect(ray);
+      intersect_triangle = _grid.intersect(ray);
       break;
     default:
-      res = _bvh.intersect(ray);
+      intersect_triangle = _bvh.intersect(ray);
 #if GET_STATS
       update_stats(_bvh.get_stats());
 #endif
       break;
   }
 
+  return get_intersect(intersect_triangle);
+}
+
+Intersection Mesh::get_intersect(const TriangleIntersection t_intersect) {
+  Intersection res = {t_intersect.found, t_intersect.t, t_intersect.point,
+                      t_intersect.normal,
+                      _materials.at(t_intersect.material_id)};
+
   if (_enable_texture) {
-    res.material.color = _texture.get_color_uv(res.texture_uv);
+    res.material.color = _textures_diffuse.at(res.material.texture_id_diffuse)
+                             .get_color_uv(t_intersect.texture_uv);
+    res.material.specular =
+        _textures_specular.at(res.material.texture_id_specular)
+            .get_color_uv(t_intersect.texture_uv);
+    // calculate normals if
+    // res.normal =
+    // _textures_normal.at(res.material.texture_id_normal).get_normal_uv(t_intersect.normal_uv);
   }
   return res;
 }
@@ -241,7 +266,7 @@ Intersection Mesh::intersect(const Ray &ray) {
  *
  * @param inputfile path to obj file.
  */
-void Mesh::read_from_obj(std::string inputfile) {
+void Mesh::read_from_obj(std::string folder, std::string file) {
   tinyobj::attrib_t attrib;
   std::vector<tinyobj::shape_t> shapes;
   std::vector<tinyobj::material_t> materials;
@@ -249,8 +274,9 @@ void Mesh::read_from_obj(std::string inputfile) {
   std::string err;
   std::string warn;
 
+  std::string inputfile = folder + "/" + file;
   bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err,
-                              inputfile.c_str(), "data/input");
+                              inputfile.c_str(), folder.c_str());
 
   if (!err.empty()) {  // `err` may contain warning message.
     std::cerr << err << std::endl;
@@ -283,7 +309,37 @@ void Mesh::read_from_obj(std::string inputfile) {
     std::cout << "normals";
   }
 
-  std::cout << "\n";
+  // read materials
+  if (materials.size() > 0) {
+    _materials.clear();
+    std::for_each(
+        std::execution::seq, materials.begin(), materials.end(),
+        [this](tinyobj::material_t material) {
+          Texture t_diffuse = Texture();
+
+          if (material.diffuse_texname.length() > 0) {
+            Texture t_diffuse =
+                Texture(_path_folder + "/" + material.diffuse_texname);
+            _enable_texture = true;
+            _textures_diffuse.push_back(t_diffuse);
+          }
+          int texture_id_diffuse = _textures_diffuse.size() - 1;
+          if (material.specular_texname.length() > 0) {
+            Texture t_specular =
+                Texture(_path_folder + "/" + material.specular_texname);
+            _textures_specular.push_back(t_specular);
+          }
+          int texture_id_specular = _textures_specular.size() - 1;
+          _materials.push_back(
+              {.color = vec3(material.diffuse[0], material.diffuse[1],
+                             material.diffuse[2]),
+               .specular = vec3(material.specular[0], material.specular[1],
+                                material.specular[2]),
+               .pow_m = static_cast<float>(material.shininess),
+               .texture_id_diffuse = texture_id_diffuse,
+               .texture_id_specular = texture_id_specular});
+        });
+  }
 
   for (size_t s = 0; s < shapes.size(); s++) {
     int size = shapes[s].mesh.num_face_vertices.size();
@@ -335,7 +391,7 @@ void Mesh::read_from_obj(std::string inputfile) {
         triangle_normals[v] = vec3(nx, ny, nz);
       }
       // make triangle and add to triangles
-      Triangle t = Triangle(triangle_points, _material);
+      Triangle t = Triangle(triangle_points, 0);
       if (vertex_normals_available && _enable_smooth_shading) {
         t.set_vertex_normals(triangle_normals);
       }
@@ -343,28 +399,11 @@ void Mesh::read_from_obj(std::string inputfile) {
         t.set_vertex_texture(triangle_points_uv);
       }
 
-
       // per-face material
       // t.get_material(shapes[s].mesh.material_ids.at(f));
       // todo check if materials size > 0
       if (materials.size() > 0) {
-        tinyobj::material_t material =
-            materials.at(shapes[s].mesh.material_ids[f]);
-        Material mat = {.color = vec3(material.diffuse[0],
-                                      material.diffuse[1],
-                                      material.diffuse[2]),
-                        .ambient = vec3(material.ambient[0],
-                                        material.ambient[1],
-                                        material.ambient[2]),
-                        .specular = vec3(material.specular[0],
-                                         material.specular[1],
-                                         material.specular[2]),
-                        .pow_m = static_cast<float>(material.shininess)};
-        // Material mat = {.color = vec3(material.diffuse[0],
-        // material.diffuse[1],
-        //                               material.diffuse[2]),
-        //                               .ambient=0.4};
-        t.set_material(mat);
+        t.set_material(shapes[s].mesh.material_ids[f]);
       }
 
       _triangles.push_back(t);
@@ -375,6 +414,8 @@ void Mesh::read_from_obj(std::string inputfile) {
       index_offset += fv;
     }
   }
+  std::cout << "materials used: " << _materials.size() << "\n";
+  std::cout << "material 0: " << _materials.at(0).ambient.y << "\n";
   std::cout << "------------------------------------------------\n";
   _origin = _bounding_box.get_middle();
   _transform.add_translation(_origin);

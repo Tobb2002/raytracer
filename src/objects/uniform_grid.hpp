@@ -65,7 +65,7 @@ class UniformGrid {
    * @param ray
    * @return Intersection
    */
-  Intersection intersect(const Ray& ray);
+  TriangleIntersection intersect(const Ray& ray);
 
   void set_triangles(std::vector<Triangle>* triangles);
 
@@ -89,10 +89,10 @@ class UniformGrid {
   /// @brief intersect cell best intersection is saved in _best_intersection
   bool intersect_cell(vec3 index, const Ray& ray);
 
-  bool update_intersection(Intersection* intersect,
-                           const Intersection& new_intersect);
+  bool update_intersection(TriangleIntersection* intersect,
+                           const TriangleIntersection& new_intersect);
 
-  Intersection _best_intersection;
+  TriangleIntersection _best_intersection;
 
   /// @brief checks if given cell index is inside the grid.
   bool inside_grid(vec3 index);

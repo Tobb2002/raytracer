@@ -65,10 +65,10 @@ void BVH::set_triangles(std::vector<Triangle> *triangles) {
   _data.tree.set_triangles(triangles);
 }
 
-Intersection BVH::intersect(const Ray &ray) {
+TriangleIntersection BVH::intersect(const Ray &ray) {
   _intersect_count = 0;
   _stats = bvh_stats();
-  _best_intersection = Intersection();
+  _best_intersection = TriangleIntersection();
 #if FLATTEN_TREE
   intersect_node((uint)0, ray);
 #else
@@ -220,7 +220,7 @@ void BVH::intersect_leaf(BVH_node_data *node_data, const Ray &ray) {
   float t_min = MAXFLOAT;
 
   for (uint i : node_data->triangle_ids) {
-    Intersection t_i = _data.triangles->at(i).intersect(ray);
+    TriangleIntersection t_i = _data.triangles->at(i).intersect_triangle(ray);
 #if GET_STATS
     _stats.triangle_intersects += 1;
 #endif
@@ -231,14 +231,14 @@ void BVH::intersect_leaf(BVH_node_data *node_data, const Ray &ray) {
     }
   }
 
-  Intersection res =
-      (_data.triangles->data() + best_triangle_id)->intersect(ray);
+  TriangleIntersection res =
+      (_data.triangles->data() + best_triangle_id)->intersect_triangle(ray);
 
   update_intersection(&_best_intersection, res);
 }
 
-bool BVH::update_intersection(Intersection *intersect,
-                              const Intersection &new_intersect) {
+bool BVH::update_intersection(TriangleIntersection *intersect,
+                              const TriangleIntersection &new_intersect) {
   if (new_intersect.found) {
     // update intersection if the new one is closer
     if (new_intersect.t < intersect->t) {

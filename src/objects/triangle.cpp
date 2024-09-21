@@ -22,22 +22,22 @@ Triangle::Triangle() {
   _middle_point = calculate_middle();
 }
 
-Triangle::Triangle(vec3 points[3], Material material) {
+Triangle::Triangle(vec3 points[3], uint material_id) {
   for (int i = 0; i < 3; i++) {
     _p[i] = points[i];
     _p_uv[i] = vec2(-1, -1);
   }
   _normal = calculate_normal();
-  _material = material;
+  _material_id = material_id;
 }
 
-Triangle::Triangle(vec3 points[3], Material material, vec2 uv_coordinates[3]) {
+Triangle::Triangle(vec3 points[3], uint material_id, vec2 uv_coordinates[3]) {
   for (int i = 0; i < 3; i++) {
     _p[i] = points[i];
     _p_uv[i] = uv_coordinates[i];
   }
   _normal = calculate_normal();
-  _material = material;
+  _material_id = material_id;
 }
 
 vec3 Triangle::calculate_normal(void) {
@@ -66,7 +66,7 @@ vec3 Triangle::calculate_middle(void) {
 
 // calculate intersection and give back t.
 // if no intersection return -1.
-Intersection Triangle::intersect(const Ray& ray) {
+TriangleIntersection Triangle::intersect_triangle(const Ray& ray) {
   /*
    * returns intersection Point beetween ray and trianlge.
    * if intersection is outside of triangle return vec(0,0,0) since that's the
@@ -109,8 +109,8 @@ Intersection Triangle::intersect(const Ray& ray) {
     texture = calculate_texture_interpolated(res);
   }
 
-  Intersection i = {found,  res[0],    ray.get_point(res[0]),
-                    normal, _material, texture};
+  TriangleIntersection i = {found,  res[0],       ray.get_point(res[0]),
+                            normal, _material_id, texture};
 
   return i;
 }
@@ -124,16 +124,19 @@ void Triangle::set_vertex_normals(vec3 normals[3]) {
 }
 void Triangle::set_vertex_texture(vec2 texture_uv[3]) {
   // _enable_texture = true;
-  for (int i = 0; i < 3; i++) {
-    _p_uv[i] = texture_uv[i];
-  }
+  _p_uv[0] = texture_uv[0];
+  _p_uv[1] = texture_uv[1];
+  _p_uv[2] = texture_uv[2];
+  // for (int i = 0; i < 3; i++) {
+  //   _p_uv[i] = texture_uv[i];
+  // }
 }
 
 vec3 Triangle::get_normal() { return _normal; }
 vec3 Triangle::get_pos() { return calculate_middle(); }
-Material Triangle::get_material(void) { return _material; }
+uint Triangle::get_material(void) { return _material_id; }
 
-void Triangle::set_material(Material material) { _material = material; }
+void Triangle::set_material(uint material_id) { _material_id = material_id; }
 
 vec3 Triangle::get_min_bounding(void) {
   vec3 min = vec3(MAXFLOAT);
@@ -164,7 +167,7 @@ void Triangle::print() {
   for (int i = 0; i < 3; i++) {
     std::cout << "p" << i << ": " << glm::to_string(_p[i]) << std::endl;
   }
-  std::cout << "color: " << glm::to_string(_material.color) << std::endl;
+  std::cout << "material id: " << _material_id << std::endl;
   std::cout << "normal: " << glm::to_string(_normal) << std::endl;
   std::cout << "---------------- " << std::endl;
 }

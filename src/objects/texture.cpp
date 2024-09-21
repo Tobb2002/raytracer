@@ -32,6 +32,20 @@ vec3 Texture::get_color_absolute(vec2 position_xy) {
 
 // only acepts values between 0-1
 vec3 Texture::get_color_uv(vec2 position_uv) {
+  position_uv = glm::abs(position_uv - vec2(static_cast<int>(position_uv.x),
+                                            static_cast<int>(position_uv.y)));
+
+// flip y direction
+#ifdef FLIP_HORIZONTAL
+  position_uv.y = 1 - position_uv.y;
+#endif
+  position_uv.x = static_cast<int>(position_uv.x * _texture.width());
+  position_uv.y = static_cast<int>(position_uv.y * _texture.height());
+  vec3 colors = get_color_absolute(position_uv);
+  colors *= 1.f / 255;
+  return colors;
+}
+vec3 Texture::get_normal_uv(vec2 position_uv) {
   if (position_uv.x > 1) {
     position_uv.x = 0.99;
   }
@@ -44,6 +58,10 @@ vec3 Texture::get_color_uv(vec2 position_uv) {
   if (position_uv.y < 0) {
     position_uv.y = 0;
   }
+// flip y direction
+#ifdef FLIP_HORIZONTAL
+  position_uv.y = 1 - position_uv.y;
+#endif
   position_uv.x = static_cast<int>(position_uv.x * _texture.width());
   position_uv.y = static_cast<int>(position_uv.y * _texture.height());
   vec3 colors =
@@ -51,7 +69,8 @@ vec3 Texture::get_color_uv(vec2 position_uv) {
            static_cast<int>(_texture(position_uv.x, position_uv.y, 0, 1)),
            static_cast<int>(_texture(position_uv.x, position_uv.y, 0, 2)));
   colors *= 1.f / 255;
-  return colors;
+  vec3 normal = colors * vec3(2) - vec3(1);
+  return normal;
 }
 
 vec2 Texture::get_dimensions() {

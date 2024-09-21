@@ -26,10 +26,10 @@ struct mesh_stats {
 
 class Mesh : public Object {
  public:
-  Mesh(std::string input_file, vec3 origin);
-  Mesh(std::string input_file, vec3 origin, Material material,
+  Mesh(std::string folder, std::string file, vec3 origin);
+  Mesh(std::string folder, std::string file, vec3 origin, Material material,
        Algorithm algorithm = ASAH);
-  Mesh(std::string input_file, vec3 origin, Material material,
+  Mesh(std::string folder, std::string file, vec3 origin, Material material,
        std::string texture_path, Algorithm algorithm = ASAH);
 
   Mesh(const Mesh& old_mesh);
@@ -50,6 +50,7 @@ class Mesh : public Object {
 
   /***** Functions *****/
   Intersection intersect(const Ray& ray) override;
+  Intersection get_intersect(const TriangleIntersection triangle_intersect);
 
   void print_stats();
 
@@ -64,7 +65,13 @@ class Mesh : public Object {
 
   bool _enable_smooth_shading = true;
 
-  Material _material;
+  std::vector<Material> _materials;
+  std::vector<Texture> _textures_diffuse;
+  std::vector<Texture> _textures_specular;
+  std::vector<Texture> _textures_normal;
+
+  std::string _path_folder;
+
   Texture _texture;
   bool _enable_texture = false;
 
@@ -79,5 +86,5 @@ class Mesh : public Object {
   Algorithm _used_algorithm = ASAH;
 
   void update_bounding_box(Triangle* t);
-  void read_from_obj(std::string input_file);
+  void read_from_obj(std::string folder, std::string file);
 };
