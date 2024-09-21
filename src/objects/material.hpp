@@ -5,6 +5,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <string>
 
 using glm::vec3;
 
@@ -20,15 +21,18 @@ struct Material {
   vec3 color = vec3(1, 1, 1);
 
   /// @brief factor for diffuse material
-  float diffuse = 0.7;
+  vec3 diffuse = vec3(0.7);
 
   /// @brief factor to define the amount of ambient light to add.
-  float ambient = 0.25;
+  vec3 ambient = vec3(0.25);
 
   /// @brief factor for specular material.
-  float specular = 0.7;
+  vec3 specular = vec3(0.7);
   float pow_m = 2;
 
   /// @brief factor for mirroring material.
   float mirror = 0;
+
+  // textures
+  std::string diffuse_texname = "";             // map_Kd
 };

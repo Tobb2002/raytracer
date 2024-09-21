@@ -343,16 +343,22 @@ void Mesh::read_from_obj(std::string inputfile) {
         t.set_vertex_texture(triangle_points_uv);
       }
 
+
       // per-face material
       // t.get_material(shapes[s].mesh.material_ids.at(f));
       // todo check if materials size > 0
       if (materials.size() > 0) {
         tinyobj::material_t material =
             materials.at(shapes[s].mesh.material_ids[f]);
-        Material mat = {.color = vec3(material.diffuse[0], material.diffuse[1],
+        Material mat = {.color = vec3(material.diffuse[0],
+                                      material.diffuse[1],
                                       material.diffuse[2]),
-                        .ambient = static_cast<float>(material.ambient[0]),
-                        .specular = material.specular[0],
+                        .ambient = vec3(material.ambient[0],
+                                        material.ambient[1],
+                                        material.ambient[2]),
+                        .specular = vec3(material.specular[0],
+                                         material.specular[1],
+                                         material.specular[2]),
                         .pow_m = static_cast<float>(material.shininess)};
         // Material mat = {.color = vec3(material.diffuse[0],
         // material.diffuse[1],
