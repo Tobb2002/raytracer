@@ -247,11 +247,15 @@ Intersection Mesh::get_intersect(const TriangleIntersection t_intersect) {
                       _materials.at(t_intersect.material_id)};
 
   if (_enable_texture) {
-    res.material.color = _textures_diffuse.at(res.material.texture_id_diffuse)
-                             .get_color_uv(t_intersect.texture_uv);
-    res.material.specular =
-        _textures_specular.at(res.material.texture_id_specular)
-            .get_color_uv(t_intersect.texture_uv);
+    if (res.material.texture_id_diffuse >= 0) {
+      res.material.color = _textures_diffuse.at(res.material.texture_id_diffuse)
+                               .get_color_uv(t_intersect.texture_uv);
+    }
+    if (res.material.texture_id_specular >= 0) {
+      res.material.specular =
+          _textures_specular.at(res.material.texture_id_specular)
+              .get_color_uv(t_intersect.texture_uv);
+    }
     // calculate normals if
     // res.normal =
     // _textures_normal.at(res.material.texture_id_normal).get_normal_uv(t_intersect.normal_uv);
