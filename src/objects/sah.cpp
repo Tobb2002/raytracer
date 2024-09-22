@@ -360,7 +360,7 @@ split_point SAH::calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets,
                                           node->data.triangle_ids.size() *
                                           COST_INTERSECT;
   if (cost_leave < min_cost) {
-    split.axis = 4;  // Do not further split
+    // split.axis = 4;  // Do not further split
   }
   return split;
 }
