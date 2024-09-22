@@ -22,6 +22,9 @@ compile_commands.json
 data/output
 data/input/no_git
 data/input/blender
+data/experiments
+
+*.blend
 
 test/
 
