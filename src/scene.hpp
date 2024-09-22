@@ -18,7 +18,7 @@
 // #define DEBUG
 #define PRINT_PROGRESS
 
-// #define NO_SHADING
+#define NO_SHADING false
 
 class Scene {
  public:

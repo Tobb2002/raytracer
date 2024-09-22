@@ -440,14 +440,14 @@ vec3 Scene::get_light(const Ray &ray) {
       }
     }
   }
+
+#if NO_SHADING
+  return best_intersection.material.color * vec3(255);
+#endif
   if (best_intersection.found) {
     vec3 light =
         calculate_light(best_intersection.point, best_intersection.material,
                         best_intersection.normal, ray);
-
-#ifdef NO_SHADING
-    return best_intersection.material.color * vec3(255);
-#endif
     return light;
   }
   // didn't hit any object
