@@ -43,6 +43,9 @@ float intersect_bounds(const bvh_box &box, const Ray &ray) {
     // yz do not overlap
     return -1;
   }
+  if (tx.max < 0 || ty.max < 0 || tz.max < 0) {
+    return -1;
+  }
 
   // all intervalls overlap
   //
