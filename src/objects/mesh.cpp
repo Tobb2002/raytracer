@@ -256,10 +256,13 @@ Intersection Mesh::get_intersect(const TriangleIntersection t_intersect) {
           _textures_specular.at(res.material.texture_id_specular)
               .get_color_uv(t_intersect.texture_uv);
     }
-    // calculate normals if
-    // res.normal =
-    // _textures_normal.at(res.material.texture_id_normal).get_normal_uv(t_intersect.normal_uv);
   }
+  // calculate normals if
+  // res.normal =
+  // _textures_normal.at(res.material.texture_id_normal).get_normal_uv(t_intersect.normal_uv);
+#if VISUALIZE_BVH
+  res.material.color = _bvh.get_stats().intersection_color;
+#endif
   return res;
 }
 

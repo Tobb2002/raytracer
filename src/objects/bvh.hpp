@@ -12,9 +12,9 @@
 #include "triangle.hpp"
 
 #define VISUALIZE_INTERSECT true
-#define VISUALIZE_RANGE vec2(0, 800)
+#define VISUALIZE_RANGE vec2(0, 300)
 #define VISUALIZE_STATS _stats.node_intersects
-#define VISUALIZE_COL1 vec3(0.04, 0.01, 0.24)
+#define VISUALIZE_COL1 vec3(0.04, 0.01, 0.18)
 #define VISUALIZE_COL2 vec3(0.03, 1, 0.05)
 
 #define FLATTEN_TREE true
@@ -28,6 +28,7 @@ enum Algorithm { AGRID, ASAH, ALBVH, AHLBVH, AMID };
 struct bvh_stats {
   uint node_intersects = 0;
   uint triangle_intersects = 0;
+  vec3 intersection_color = VISUALIZE_COL1;
 };
 
 struct Triangle_set {

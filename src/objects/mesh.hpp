@@ -14,6 +14,8 @@
 #include "triangle.hpp"
 #include "uniform_grid.hpp"
 
+#define VISUALIZE_BVH false
+
 struct mesh_stats {
   uint intersects = 0;
   uint max_node_intersects = 0;
