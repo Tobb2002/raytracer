@@ -31,6 +31,10 @@ float intersect_bounds(const bvh_box &box, const Ray &ray) {
     std::swap(tz.min, tz.max);
   }
 
+  if (tx.max < 0 || ty.max < 0 || tz.max < 0) {
+    return -1;
+  }
+
   if (tx.min > ty.max || ty.min > tx.max) {
     // xy do not ovelap
     return -1;
@@ -41,9 +45,6 @@ float intersect_bounds(const bvh_box &box, const Ray &ray) {
   }
   if (ty.min > tz.max || tz.min > ty.max) {
     // yz do not overlap
-    return -1;
-  }
-  if (tx.max < 0 || ty.max < 0 || tz.max < 0) {
     return -1;
   }
 
