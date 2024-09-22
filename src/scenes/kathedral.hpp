@@ -17,12 +17,15 @@ inline Scene get_scene() {
 
   vec3 origin = vec3(0, 0, 0);
 
-  Mesh m = Mesh(
-      "data/input/sibenik/sibenik_edited.obj", origin + vec3(0, 0, -8),
-      {.color = vec3(0.2, 0.2, 0.2), .ambient = 0.3, .specular = 0.15}, AGRID);
+  Mesh m =
+      Mesh("data/input/sibenik", "sibenik_edited.obj", origin + vec3(0, 0, -8),
+           {.color = vec3(0.2, 0.2, 0.2),
+            .ambient = vec3(0.3),
+            .specular = vec3(0.15)},
+           ASAH);
 
   ObjectFactory factory = ObjectFactory(&scene);
-  factory.new_xy_square_light(origin + vec3(0.8, 2, -3), 500, 4, 0.05);
+  factory.new_xy_square_light(origin + vec3(0.8, 2, -3), 300, 4, 0.05);
 
   // Pointlight light = Pointlight(origin + vec3(0, 0, 0), 450);
   // scene.add_light(light);

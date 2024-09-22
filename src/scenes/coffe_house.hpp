@@ -14,8 +14,9 @@ inline Scene get_scene() {
 
   vec3 tree_pos = vec3(0, -14, -28);
 
-  Mesh house = Mesh("data/input/coffee_house2.obj", origin,
-                    {.color = vec3(0.32, 0.21, 0.01), .specular = 0.0});
+  Mesh house =
+      Mesh("data/input/coffe_house", "coffee_house.obj", origin,
+           {.color = vec3(0.32, 0.21, 0.01), .specular = vec3(0.0)}, ASAH);
 
   Pointlight light = Pointlight(vec3(0, 10, 0), 350);
   // scene.add_light(light);

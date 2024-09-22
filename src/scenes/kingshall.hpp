@@ -14,18 +14,18 @@ inline Scene get_scene() {
   vec3 origin_plane = vec3(0, -0.7, -2);
 
 #if TEXTURE
-  Mesh m = Mesh("data/input/kingshall.obj", origin_plane + vec3(0, 0, -18),
-                {.color = vec3(0.2, 0.2, 0.2), .specular = 0.0},
-                "data/input/textures/kingshall.png", AGRID);
+  Mesh m = Mesh("data/input", "kingshall.obj", origin_plane + vec3(0, 0, -18),
+                {.color = vec3(0.2, 0.2, 0.2), .specular = vec3(0.0)},
+                "data/input/textures/kingshall.png", AHLBVH);
 #else
   Mesh m = Mesh("data/input/kingshall.obj", origin_plane + vec3(0, 0, -18),
-                {.color = vec3(0.2, 0.2, 0.2), .specular = 0.0});
+                {.color = vec3(0.2, 0.2, 0.2), .specular = vec3(0.0)});
 #endif
 
   // Pointlight light = Pointlight(origin_plane + vec3(-3, 2, 4), 450);
   // scene.add_light(light);
   ObjectFactory factory = ObjectFactory(&scene);
-  factory.new_xy_square_light(origin_plane + vec3(-3, 2, 4), 300, 8, 0.1);
+  factory.new_xy_square_light(origin_plane + vec3(-3, 2, 4), 300, 2, 0.1);
 
   scene.get_camera()->set_resolution(800, 600);
   scene.get_camera()->set_sensor_size(1.6, 1.2);

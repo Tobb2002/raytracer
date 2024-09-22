@@ -14,19 +14,13 @@ inline Scene get_scene() {
 
   vec3 tree_pos = vec3(0, -14, -28);
 
-  Mesh tree = Mesh("data/input/willow_tree.obj", origin + tree_pos,
-                   {.color = vec3(0.32, 0.21, 0.01), .specular = 0.0});
-
-  Mesh leaves = Mesh("data/input/willow_tree_leaves.obj", origin + tree_pos,
-                     {.color = vec3(0.46, 0.77, 0.29), .specular = 0.0});
-
-  Mesh combined = Mesh("data/input/willow_tree_combined.obj", origin + tree_pos,
-                       {.color = vec3(0.46, 0.77, 0.29), .specular = 0.0});
+  Mesh tree = Mesh("data/input/willow_tree_combined.obj", origin + tree_pos,
+                   {.color = vec3(0.32, 0.21, 0.01), .specular = 0.0}, AHLBVH);
 
   // Pointlight light = Pointlight(origin + vec3(-3, 2, 4), 350);
   // scene.add_light(light);
   ObjectFactory factory = ObjectFactory(&scene);
-  factory.new_xy_square_light(origin + vec3(-3, 2, 4), 300, 4, 0.1);
+  factory.new_xy_square_light(origin + vec3(-3, 2, 4), 300, 1, 0.1);
 
   scene.get_camera()->set_resolution(1600, 1200);
   scene.get_camera()->set_sensor_size(1.6, 1.2);
@@ -34,10 +28,7 @@ inline Scene get_scene() {
   scene.set_aliasing(1);
   scene.set_tonemapping_value(-1);
 
-  // scene.add_object(tree);
-  // scene.add_object(leaves);
-  scene.add_object(combined);
-  // scene.add_light(light1);
+  scene.add_object(tree);
 
   return scene;
 }

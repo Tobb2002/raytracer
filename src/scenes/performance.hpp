@@ -12,11 +12,11 @@ inline Scene get_scene() {
 
   vec3 origin_plane = vec3(0, -0.7, -2);
 
-  Mesh m = Mesh("data/input/dragon.obj", origin_plane + vec3(0, 0, 0),
-                {.color = vec3(0.2, 0.2, 0.2), .specular = 0.1}, AHLBVH);
+  Mesh m = Mesh("data/input", "dragon.obj", origin_plane + vec3(0, 0, 0),
+                {.color = vec3(0.2, 0.2, 0.2), .specular = vec3(0.1)}, ASAH);
 
   ObjectFactory factory = ObjectFactory(&scene);
-  factory.new_xy_square_light(origin_plane + vec3(-3, 2, 4), 370, 10, 0.05);
+  factory.new_xy_square_light(origin_plane + vec3(-3, 2, 1), 370, 1, 0.05);
 
   scene.get_camera()->set_resolution(800, 600);
   scene.get_camera()->set_sensor_size(1.6, 1.2);
