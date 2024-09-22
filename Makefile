@@ -12,7 +12,7 @@ FLAGS += -fsanitize=address -O0 -g -pg
 OBJ_DIR = obj/debug
 else
 # "Release" build - optimization, and no debug symbols
-FLAGS += -O2 -DNDEBUG
+FLAGS += -O3 -DNDEBUG
 OBJ_DIR = obj/release
 endif
 
