@@ -289,20 +289,18 @@ vec3 Scene::get_phong(const Pointlight &light, const Material &material,
   vec3 l_diffuse = material.diffuse * material.color;
 
   vec3 l_specular = vec3(0, 0, 0);
+  rdotv *= -1;
   if (rdotv > 0) {
     l_specular =
-        material.specular * (vec3(1, 1, 1) * glm::pow(rdotv, material.pow_m));
-  } else {
-    rdotv *= -1;
-    l_specular =
-        material.specular * (vec3(1, 1, 1) * glm::pow(rdotv, material.pow_m));
-  }
-  // only ad the ones which are not blocked
-  if (!check_intersection(ray_to_light, light.get_distance(point))) {
-    l_material = l_diffuse + l_specular;
+        material.specular[1] * incoming_light * glm::pow(rdotv, material.pow_m);
   }
 
-  return incoming_light * ndotl * l_material + incoming_light * l_ambient;
+  // only ad the ones which are not blocked
+  if (!check_intersection(ray_to_light, light.get_distance(point))) {
+    l_material = incoming_light * ndotl * l_diffuse + ndotl * l_specular;
+  }
+
+  return l_material + incoming_light * l_ambient;
 }
 
 /**

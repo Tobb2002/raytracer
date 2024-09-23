@@ -27,7 +27,7 @@ struct Material {
 
   /// @brief factor for specular material.
   vec3 specular = vec3(0.0);
-  float pow_m = 0;
+  float pow_m = 3;
 
   /// @brief factor for mirroring material.
   float mirror = 0;
