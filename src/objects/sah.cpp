@@ -224,11 +224,7 @@ bvh_box SAH::combine_box(const SAH_buckets &buckets, const uint &axis,
                          const uint &bid_min, const uint &bid_max) {
   bvh_box res;
   for (size_t i = bid_min; i <= bid_max; i++) {
-    // update bounding box only if there are triangles
-    if (buckets.buckets[axis][i].ids.size() > 0) {
-      _tree->update_min(&res.min, buckets.buckets[axis][i].box.min);
-      _tree->update_max(&res.max, buckets.buckets[axis][i].box.max);
-    }
+    res = union_box(res, buckets.buckets[axis][i].box);
   }
   return res;
 }
@@ -587,8 +583,9 @@ void SAH::split(bvh_node_pointer *node, const SAH_buckets &buckets,
 #endif
 
   // TODO(tobi) insert child withou BVH_node_data parameter
-  bvh_node_pointer *node_left = _tree->insert_child(data_left, node);
-  bvh_node_pointer *node_right = _tree->insert_child(data_right, node);
+  _tree->insert_child(data_left, node);
+  _tree->insert_child(data_right, node);
+
   // clear triangles from node to save memory
   _tree->free_triangles(node);
 }
