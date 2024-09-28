@@ -89,6 +89,7 @@ class SAH {
   bvh_box combine_box_treelets(bvh_node_pointer *node);
 
   bvh_box get_mid_bounds(bvh_node_pointer *node);
+  bvh_box get_mid_bounds_treelets(bvh_node_pointer *node);
   uint get_biggest_axis(vec3 vec);
 
   bvh_box union_box(bvh_box a, bvh_box b);
