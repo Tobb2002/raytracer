@@ -270,6 +270,7 @@ split_point SAH::calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets) {
   // float surface_box = get_surface_area(box);
   //
   float cost[3][SAH_NUM_BUCKETS - 1] = {};
+  bool block_axis[3] = {false};
 
   for (size_t a = 0; a < 3; a++) {  // for every axis
     bvh_box left_bounds;
@@ -277,8 +278,12 @@ split_point SAH::calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets) {
 
     uint left_amount = 0;
     uint right_amount = 0;
+    uint max_amount = 0;
 
     for (size_t i = 0; i < SAH_NUM_BUCKETS - 1; i++) {
+      if (buckets->buckets[0][i].ids.size() > max_amount) {
+        max_amount = buckets->buckets[0][i].ids.size();
+      }
       left_bounds = union_box(left_bounds, buckets->buckets[a][i].box);
       left_amount += buckets->buckets[a][i].ids.size();
       // partially initialize costs
@@ -293,36 +298,36 @@ split_point SAH::calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets) {
       cost[a][i - 1] +=
           get_surface_area(right_bounds) * right_amount * COST_INTERSECT;
     }
+    // all triangles are in the same bucket
+    if (max_amount == left_amount) {
+      block_axis[a] = true;
+    }
   }
   // calculate minimum split
   float min_cost = MAXFLOAT;
   split_point split;
 
-  bool run_trough = true;
-
   for (size_t a = 0; a < 3; a++) {
     for (size_t split_id = 0; split_id < SAH_NUM_BUCKETS - 1; split_id++) {
-      float cost_split = COST_TRAVERSAL + cost[a][split_id];
+      float cost_split = cost[a][split_id];
       if (cost_split < min_cost) {
         min_cost = cost_split;
         split.id = split_id;
         split.axis = a;
-        run_trough = false;
       }
     }
   }
-  if (run_trough) {
+  if (block_axis[split.axis]) {
     split.axis = 3;  // Fallback to middle split
+    return split;
   }
   // check if leave is less costly
-  float cost_leave = COST_TRAVERSAL + get_surface_area(node->data.bounds) *
-                                          node->data.triangle_ids.size() *
-                                          COST_INTERSECT;
+  float cost_leave = node->data.triangle_ids.size() * COST_INTERSECT;
+  min_cost = COST_TRAVERSAL + min_cost / get_surface_area(node->data.bounds);
   if (cost_leave < min_cost) {
     split.axis = 4;  // Do not further split
   }
 
-  // std::cout << "best split: " << split.id << " " << split.axis << "\n";
   return split;
 }
 
@@ -338,9 +343,14 @@ split_point SAH::calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets,
   uint left_amount = 0;
   uint right_amount = 0;
 
+  uint max_amount = 0;
+
   for (size_t i = 0; i < SAH_NUM_BUCKETS - 1; i++) {
     left_bounds = union_box(left_bounds, buckets->buckets[0][i].box);
     left_amount += buckets->buckets[0][i].ids.size();
+    if (buckets->buckets[0][i].ids.size() > max_amount) {
+      max_amount = buckets->buckets[0][i].ids.size();
+    }
     // partially initialize costs
     cost[i] += get_surface_area(left_bounds) * left_amount * COST_INTERSECT;
   }
@@ -352,31 +362,26 @@ split_point SAH::calc_min_split(bvh_node_pointer *node, SAH_buckets *buckets,
     cost[i - 1] +=
         get_surface_area(right_bounds) * right_amount * COST_INTERSECT;
   }
-
+  split_point split;
+  if (max_amount == left_amount) {  // all triagnles in one bucket
+    split.axis = 3;
+    return split;
+  }
   // calculate minimum split
   float min_cost = MAXFLOAT;
-  split_point split;
-
-  bool run_trough = true;
 
   for (size_t split_id = 0; split_id < SAH_NUM_BUCKETS - 1; split_id++) {
-    float cost_split = COST_TRAVERSAL + cost[split_id];
+    float cost_split = cost[split_id];
     if (cost_split < min_cost) {
       min_cost = cost_split;
       split.id = split_id;
       split.axis = axis;
-      run_trough = false;
     }
   }
-  if (run_trough) {
-    split.axis = 3;  // Fallback to middle split
-  }
-  // check if leave is less costly
-  float cost_leave = COST_TRAVERSAL + get_surface_area(node->data.bounds) *
-                                          node->data.triangle_ids.size() *
-                                          COST_INTERSECT;
+  float cost_leave = node->data.triangle_ids.size() * COST_INTERSECT;
+  min_cost = COST_TRAVERSAL + min_cost / get_surface_area(node->data.bounds);
   if (cost_leave < min_cost) {
-    // split.axis = 4;  // Do not further split
+    split.axis = 4;  // Do not further split
   }
   return split;
 }
@@ -435,7 +440,6 @@ split_point SAH::calc_min_split_treelets(bvh_node_pointer *node,
   if (run_trough) {
     split.axis = 3;  // Fallback to middle split
   }
-  // std::cout << "best_split: " << split.axis << " : " << split.id << "\n";
   return split;
 }
 
@@ -612,8 +616,6 @@ void SAH::split(bvh_node_pointer *node) {
   uint axis = triangles_into_buckets_axis(node, &buckets);
   split_point splitp = calc_min_split(node, &buckets, axis);
 #endif
-  // std::cout << "best split: " << splitp.id << "\t axis:" << splitp.axis <<
-  // "\n";
 
   if (splitp.axis < 4) {
     split(node, buckets, splitp);
@@ -731,6 +733,7 @@ void SAH::split_treelets(bvh_node_pointer *node) {
 
   bvh_node_pointer *left = _tree->insert_child(data_left, node);
   bvh_node_pointer *right = _tree->insert_child(data_right, node);
+  node->data.axis = split.axis;
 
   _tree->free_triangles(node);
 
