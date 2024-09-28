@@ -9,10 +9,10 @@
 // number of triangles at which array gets split in the middle
 #define MIN_SAH_SPLIT 2
 
-#define COST_TRAVERSAL 2
+#define COST_TRAVERSAL 0.5
 #define COST_INTERSECT 1
 
-// #define SPLIT_LONGEST_AXIS
+#define SPLIT_LONGEST_AXIS
 
 /**
  * @class SAH_bucket
@@ -87,6 +87,9 @@ class SAH {
   bvh_box combine_box(const SAH_buckets &buckets, const uint &axis,
                       const uint &min, const uint &max);
   bvh_box combine_box_treelets(bvh_node_pointer *node);
+
+  bvh_box get_mid_bounds(bvh_node_pointer *node);
+  uint get_biggest_axis(vec3 vec);
 
   bvh_box union_box(bvh_box a, bvh_box b);
   void combine_ids(std::vector<uint> *result, const SAH_buckets &buckets,
