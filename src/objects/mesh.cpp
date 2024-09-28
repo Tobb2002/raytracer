@@ -424,6 +424,9 @@ void Mesh::read_from_obj(std::string folder, std::string file) {
   std::cout << "materials used: " << _materials.size() << "\n";
   std::cout << "material 0: " << _materials.at(0).ambient.y << "\n";
   std::cout << "------------------------------------------------\n";
+  std::cout << "root bounds surface area: " << _bounding_box.get_surface_area() << "\n";
+  std::cout << "------------------------------------------------\n";
+
   _origin = _bounding_box.get_middle();
   _transform.add_translation(_origin);
 }

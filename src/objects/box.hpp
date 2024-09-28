@@ -42,6 +42,7 @@ class Box : public Object {
   void update_min_max(vec3 min, vec3 max);
   bool intersect_bool(Ray ray);
   vec3 get_middle(void);
+  float get_surface_area(void);
 
   // Transformations
   void apply_transform(mat4 transformation) override;

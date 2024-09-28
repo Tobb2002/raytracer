@@ -112,6 +112,13 @@ void Box::print(void) {
  */
 vec3 Box::get_middle(void) { return (_min + _max) * 0.5f; }
 
+float Box::get_surface_area(void) {
+  vec3 length = _max - _min;
+
+  return 2 * length.x + 2 * length.y + 2 * length.z;
+
+}
+
 /**
  * @brief Ensure that all the min values are smaller than the max values.
  *
