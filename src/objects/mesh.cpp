@@ -314,7 +314,7 @@ void Mesh::read_from_obj(std::string folder, std::string file) {
   }
 
   // read materials
-  if (materials.size() > 0) {
+  if (materials.size() > 1) {
     _materials.clear();
     std::for_each(
         std::execution::seq, materials.begin(), materials.end(),
@@ -408,7 +408,7 @@ void Mesh::read_from_obj(std::string folder, std::string file) {
       // per-face material
       // t.get_material(shapes[s].mesh.material_ids.at(f));
       // todo check if materials size > 0
-      if (materials.size() > 0) {
+      if (materials.size() > 1) {
         t.set_material(shapes[s].mesh.material_ids[f]);
       }
 
