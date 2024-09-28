@@ -39,6 +39,7 @@ Mesh::Mesh(std::string folder, std::string file, vec3 origin, Material material,
            Algorithm algorithm) {
   _origin = origin;
   _path_folder = folder;
+  _material_default = material;
   _materials.push_back(material);
   read_from_obj(folder, file);  // read file with origin as offset
   _used_algorithm = algorithm;
@@ -50,6 +51,7 @@ Mesh::Mesh(std::string folder, std::string file, vec3 origin, Material material,
            std::string texture_path, Algorithm algorithm) {
   _origin = origin;
   _path_folder = folder;
+  _material_default = material;
   _materials.push_back(material);
   read_from_obj(folder, file);  // read file with origin as offset
   _used_algorithm = algorithm;
@@ -241,9 +243,15 @@ Intersection Mesh::get_intersect(const TriangleIntersection t_intersect) {
                                .get_color_uv(t_intersect.texture_uv);
     }
     if (res.material.texture_id_specular >= 0) {
-      res.material.specular =
-          _textures_specular.at(res.material.texture_id_specular)
-              .get_color_uv(t_intersect.texture_uv);
+      vec3 spec = _textures_specular.at(res.material.texture_id_specular)
+                      .get_color_uv(t_intersect.texture_uv);
+      res.material.specular = spec;
+
+      // if (spec.z >= 0.5) {
+      // res.material.mirror =
+      //     _textures_specular.at(res.material.texture_id_specular)
+      //         .get_color_uv(t_intersect.texture_uv).z;
+      // }
     }
   }
   // calculate normals if
@@ -329,9 +337,11 @@ void Mesh::read_from_obj(std::string folder, std::string file) {
           _materials.push_back(
               {.color = vec3(material.diffuse[0], material.diffuse[1],
                              material.diffuse[2]),
+               .ambient = _material_default.ambient,
                .specular = vec3(material.specular[0], material.specular[1],
                                 material.specular[2]),
                .pow_m = static_cast<float>(material.shininess),
+               .mirror = _material_default.mirror,
                .texture_id_diffuse = texture_id_diffuse,
                .texture_id_specular = texture_id_specular});
         });

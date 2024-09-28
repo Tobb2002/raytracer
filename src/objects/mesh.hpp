@@ -71,6 +71,7 @@ class Mesh : public Object {
 
   bool _enable_smooth_shading = true;
 
+  Material _material_default;
   std::vector<Material> _materials;
   std::vector<Texture> _textures_diffuse;
   std::vector<Texture> _textures_specular;
