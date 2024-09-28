@@ -21,3 +21,18 @@ void ObjectFactory::new_xy_square_light(const vec3 &position,
     }
   }
 }
+void ObjectFactory::new_xy_square_light(const vec3 &position,
+                                        const vec3 &strength,
+                                        const uint &amount,
+                                        const float &space) {
+  // square light
+  float ssize = space;
+
+  for (uint x = 0; x < amount; x++) {
+    for (uint y = 0; y < amount; y++) {
+      Pointlight l = Pointlight(position + vec3(x * ssize, y * ssize, 0),
+                                strength / vec3(amount * amount));
+      _scene->add_light(l);
+    }
+  }
+}

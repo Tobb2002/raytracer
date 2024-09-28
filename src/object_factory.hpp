@@ -16,6 +16,8 @@ class ObjectFactory {
 
   void new_xy_square_light(const vec3 &position, const int &strength,
                            const uint &amount, const float &space);
+  void new_xy_square_light(const vec3 &position, const vec3 &strength,
+                           const uint &amount, const float &space);
 
  private:
   Scene *_scene;
