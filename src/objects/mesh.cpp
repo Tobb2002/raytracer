@@ -321,18 +321,20 @@ void Mesh::read_from_obj(std::string folder, std::string file) {
         [this](tinyobj::material_t material) {
           Texture t_diffuse = Texture();
 
+#if LOAD_TEXTURES
           if (material.diffuse_texname.length() > 0) {
             Texture t_diffuse =
                 Texture(_path_folder + "/" + material.diffuse_texname);
             _enable_texture = true;
             _textures_diffuse.push_back(t_diffuse);
           }
-          int texture_id_diffuse = _textures_diffuse.size() - 1;
           if (material.specular_texname.length() > 0) {
             Texture t_specular =
                 Texture(_path_folder + "/" + material.specular_texname);
             _textures_specular.push_back(t_specular);
           }
+#endif
+          int texture_id_diffuse = _textures_diffuse.size() - 1;
           int texture_id_specular = _textures_specular.size() - 1;
           _materials.push_back(
               {.color = vec3(material.diffuse[0], material.diffuse[1],
