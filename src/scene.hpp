@@ -50,6 +50,7 @@ class Scene {
   vec3 get_light(const Ray &ray);
 
   void update_view_transform(void);
+  void stats_append_csv(std::string path);
 
   /***** Rendering *****/
 
@@ -64,6 +65,7 @@ class Scene {
 
   Camera _camera;
 
+  Scene_stats _stats;
   /// @brief light if a ray hit's nothing
   vec3 _standart_light;
   float _tonemapping_gray = 0.8;

@@ -7,10 +7,14 @@
 #include <time.h>
 
 #include <chrono>
+#include <fstream>
 #include <glm/gtx/string_cast.hpp>
 #include <memory>
+#include <string>
 
 #include "objects/plane.hpp"
+
+using std::fstream;
 
 Scene::Scene() {
   _standart_light = vec3(0);
@@ -233,16 +237,17 @@ Image Scene::trace_image() {
   }
   // stop and print time
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-  std::cout << "Time for rendering (sec) = "
-            << (std::chrono::duration_cast<std::chrono::microseconds>(end -
-                                                                      begin)
-                    .count()) /
-                   1000000.0
-            << "\n";
+  _stats.time_rendering =
+      (std::chrono::duration_cast<std::chrono::microseconds>(end - begin)
+           .count()) /
+      1000000.0;
+  std::cout << "Time for rendering (sec) = " << _stats.time_rendering << "\n";
   std::cout << "------------------------------------------------\n";
 #if GET_STATS
   for (Mesh m : _obj_meshes) {
+    _stats.time_build = m.get_stats().time_building;
     m.print_stats();
+    m.print_triangle_stats();
   }
 #endif
 
@@ -396,6 +401,45 @@ void Scene::update_view_transform(void) {
   for (Pointlight light : _lights) {
     light.update_view_transform(view_transform);
   }
+}
+
+/// @ brief appen build and rendering time to csv file
+void Scene::stats_append_csv(std::string path) {
+  fstream f;
+  f.open(path);
+
+  std::vector<std::string> lines;
+  // read content from old file
+  if (f.fail()) {
+    std::cout << "could not write times to file\n";
+  } else {
+    std::string line;
+
+    while (getline(f, line)) {
+      lines.push_back(line);
+    }
+  }
+  f.close();
+  // write content to file
+  std::ofstream f_out;
+  f_out.open(path);
+  if (f_out.fail()) {
+    std::cout << "could not write times to file2\n";
+  } else {
+    for (size_t i = 0; i < lines.size(); i++) {
+      std::string l = lines.at(i);
+      if (i == 0) {
+        l.append(std::to_string(_stats.time_build) + ",");
+        f_out << l << std::endl;
+      } else if (i == 1) {
+        l.append(std::to_string(_stats.time_rendering) + ",");
+        f_out << l << std::endl;
+      } else {
+        f_out << l << std::endl;
+      }
+    }
+  }
+  f_out.close();
 }
 
 /**

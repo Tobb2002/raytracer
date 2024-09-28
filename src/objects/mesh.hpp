@@ -14,7 +14,8 @@
 #include "triangle.hpp"
 #include "uniform_grid.hpp"
 
-#define VISUALIZE_BVH false
+#define VISUALIZE_BVH true
+#define LOAD_TEXTURES false
 
 struct mesh_stats {
   uint intersects = 0;
@@ -24,6 +25,7 @@ struct mesh_stats {
   uint max_triangle_intersects = 0;
   uint min_triangle_intersects = UINT_MAX;
   uint triangle_intersects = 0;
+  float time_building = 0;
 };
 
 class Mesh : public Object {
@@ -41,6 +43,7 @@ class Mesh : public Object {
   void print_triangles(void);
   void print_bounding_box(void);
   void print(void) override;
+  mesh_stats get_stats(void);
 
   /***** Transformations *****/
 
@@ -55,6 +58,7 @@ class Mesh : public Object {
   Intersection get_intersect(const TriangleIntersection triangle_intersect);
 
   void print_stats();
+  void print_triangle_stats();
 
  private:
   std::vector<Triangle> _triangles;

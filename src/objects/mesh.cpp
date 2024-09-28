@@ -43,20 +43,7 @@ Mesh::Mesh(std::string folder, std::string file, vec3 origin, Material material,
   read_from_obj(folder, file);  // read file with origin as offset
   _used_algorithm = algorithm;
 
-  // stop time needed to build bvh
-  std::chrono::steady_clock::time_point begin =
-      std::chrono::steady_clock::now();
   build_datastructure();
-  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-
-  std::cout << "------------------------------------------------\n";
-  std::cout << "Time for building bvh (sec) = "
-            << (std::chrono::duration_cast<std::chrono::microseconds>(end -
-                                                                      begin)
-                    .count()) /
-                   1000000.0
-            << "\n";
-  std::cout << "------------------------------------------------\n";
 }
 
 Mesh::Mesh(std::string folder, std::string file, vec3 origin, Material material,
@@ -71,23 +58,13 @@ Mesh::Mesh(std::string folder, std::string file, vec3 origin, Material material,
   _enable_texture = true;
   _texture.load_image(texture_path);
 
-  // stop time needed to build bvh
-  std::chrono::steady_clock::time_point begin =
-      std::chrono::steady_clock::now();
   build_datastructure();
-  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-
-  std::cout << "------------------------------------------------\n";
-  std::cout << "Time for building bvh (sec) = "
-            << (std::chrono::duration_cast<std::chrono::microseconds>(end -
-                                                                      begin)
-                    .count()) /
-                   1000000.0
-            << "\n";
-  std::cout << "------------------------------------------------\n";
 }
 
 void Mesh::build_datastructure() {
+  // stop time needed to build bvh
+  std::chrono::steady_clock::time_point begin =
+      std::chrono::steady_clock::now();
   switch (_used_algorithm) {
     case AGRID:
       std::cout << "Algorithm: Uniform Grid\n";
@@ -97,6 +74,16 @@ void Mesh::build_datastructure() {
       _bvh.build_tree_axis(&_triangles, _used_algorithm);
       break;
   }
+  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+  _stats.time_building =
+      (std::chrono::duration_cast<std::chrono::microseconds>(end - begin)
+           .count()) /
+      1000000.0;
+  std::cout << "------------------------------------------------\n";
+  std::cout << "Time for building bvh (sec) = ";
+  std::cout << _stats.time_building << "\n";
+  std::cout << "------------------------------------------------\n";
 }
 
 Mesh::Mesh(const Mesh &old_mesh) {
@@ -156,6 +143,8 @@ void Mesh::print(void) {
   std::cout << "origin: " << glm::to_string(_origin) << "\n";
   print_bounding_box();
 }
+
+mesh_stats Mesh::get_stats(void) { return _stats; }
 
 /**
  * @brief Print all triangles of the mesh.
@@ -424,7 +413,8 @@ void Mesh::read_from_obj(std::string folder, std::string file) {
   std::cout << "materials used: " << _materials.size() << "\n";
   std::cout << "material 0: " << _materials.at(0).ambient.y << "\n";
   std::cout << "------------------------------------------------\n";
-  std::cout << "root bounds surface area: " << _bounding_box.get_surface_area() << "\n";
+  std::cout << "root bounds surface area: " << _bounding_box.get_surface_area()
+            << "\n";
   std::cout << "------------------------------------------------\n";
 
   _origin = _bounding_box.get_middle();
@@ -470,5 +460,22 @@ void Mesh::print_stats() {
     std::cout << "\t avg: \t" << _stats.triangle_intersects / _stats.intersects
               << "\n";
   }
+  std::cout << "------------------------------------------------\n";
+}
+void Mesh::print_triangle_stats() {
+  vec3 combined_lenght = vec3(0);
+  for (Triangle t : _triangles) {
+    vec3 length = glm::abs(t.get_max_bounding() - t.get_min_bounding());
+
+    combined_lenght += length;
+  }
+  std::cout << "------------------------------------------------\n";
+  combined_lenght /= _triangles.size() - 1;
+  std::cout << "avg_triangle size: " << combined_lenght.x << ", "
+            << combined_lenght.y << ", " << combined_lenght.z << "\n";
+  std::cout << "... surface area: "
+            << 2 * combined_lenght.x + 2 * combined_lenght.y +
+                   2 * combined_lenght.z
+            << "\n";
   std::cout << "------------------------------------------------\n";
 }
