@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <boost/lambda/bind.hpp>
+#include <chrono>
 #include <cmath>
 
 #include "bvh_tree.hpp"
@@ -615,6 +616,8 @@ void SAH::split(bvh_node_pointer *node) {
 }
 
 void SAH::built_on_treelets() {
+  std::chrono::steady_clock::time_point begin =
+      std::chrono::steady_clock::now();
   // define new root node
   BVH_node_data data{};
 
@@ -629,6 +632,16 @@ void SAH::built_on_treelets() {
   split_treelets(_tree->get_root());
 
   _tree->clear_treelets();
+  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+  float time_building =
+      (std::chrono::duration_cast<std::chrono::microseconds>(end - begin)
+           .count()) /
+      1000000.0;
+  std::cout << "------------------------------------------------\n";
+  std::cout << "Time for building SAH of treelets (sec) = ";
+  std::cout << time_building << "\n";
+  std::cout << "------------------------------------------------\n";
 }
 void SAH::split_middle_node_treelets(bvh_node_pointer *node) {
   uint count = node->data.triangle_ids.size();

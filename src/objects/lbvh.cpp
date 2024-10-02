@@ -123,12 +123,25 @@ void LBVH::build_treelets() {
   // for (bvh_node_pointer *treelet : _tree->get_treelets()) {
   //   split_first_bit(treelet, _morton.get_morton_size() - TREELET_BITS);
   // }
+  std::chrono::steady_clock::time_point begin =
+      std::chrono::steady_clock::now();
+
   std::vector<bvh_node_pointer *> treelets = _tree->get_treelets();
   std::for_each(std::execution::par_unseq, treelets.begin(), treelets.end(),
                 [this](bvh_node_pointer *treelet) {
                   split_first_bit(treelet,
                                   _morton.get_morton_size() - TREELET_BITS);
                 });
+
+  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+  float time_building =
+      (std::chrono::duration_cast<std::chrono::microseconds>(end - begin)
+           .count()) /
+      1000000.0;
+  std::cout << "------------------------------------------------\n";
+  std::cout << "Time for building treelets (sec) = ";
+  std::cout << time_building << "\n";
+  std::cout << "------------------------------------------------\n";
 
   _tree->destroy_tree();
 }

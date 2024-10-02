@@ -61,8 +61,21 @@ void Morton::generate_morton_codes(std::vector<uint> *triangle_ids,
   }
 }
 void Morton::build(std::vector<uint> *triangle_ids, const bvh_box &bounds) {
+  std::chrono::steady_clock::time_point begin =
+      std::chrono::steady_clock::now();
+
   generate_morton_codes(triangle_ids, bounds);
   sort(triangle_ids);
+
+  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+  float time_building =
+      (std::chrono::duration_cast<std::chrono::microseconds>(end - begin)
+           .count()) /
+      1000000.0;
+  std::cout << "------------------------------------------------\n";
+  std::cout << "Time for building morton codes (sec) = ";
+  std::cout << time_building << "\n";
+  std::cout << "------------------------------------------------\n";
 }
 
 uint64_t Morton::get_code(uint id) { return _morton_codes.at(id); }
