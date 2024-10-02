@@ -117,7 +117,7 @@ void SAH::triangles_into_buckets(bvh_node_pointer *node, SAH_buckets *buckets) {
       if (len[a] > 0.00001) {  // values smaller are equal to zero
         b_id = length_to_pos[a] / len[a] * (SAH_NUM_BUCKETS - 1);
       }
-      buckets->buckets[a][b_id].ids.push_back(i);
+      buckets->buckets[a][b_id].ids.emplace_back(i);
       // update bounds
       buckets->buckets[a][b_id].box = union_box(
           buckets->buckets[a][b_id].box,
@@ -144,7 +144,7 @@ uint SAH::triangles_into_buckets_axis(bvh_node_pointer *node,
     if (len[a] > 0.00001) {  // values smaller are equal to zero
       b_id = length_to_pos[a] / len[a] * (SAH_NUM_BUCKETS - 1);
     }
-    buckets->buckets[0][b_id].ids.push_back(i);
+    buckets->buckets[0][b_id].ids.emplace_back(i);
     buckets->buckets[0][b_id].box = union_box(
         buckets->buckets[0][b_id].box,
         bvh_box(triangle->get_min_bounding(), triangle->get_max_bounding()));
@@ -171,7 +171,7 @@ void SAH::treelets_into_buckets(bvh_node_pointer *node, SAH_buckets *buckets) {
       if (len[a] > 0.00001) {
         b_id = (length_to_pos[a] / len[a]) * (SAH_NUM_BUCKETS - 1);
       }
-      buckets->buckets[a][b_id].ids.push_back(id);
+      buckets->buckets[a][b_id].ids.emplace_back(id);
       // update bounds
       buckets->buckets[a][b_id].box =
           union_box(buckets->buckets[a][b_id].box, treelet->data.bounds);
@@ -197,7 +197,7 @@ uint SAH::treelets_into_buckets_axis(bvh_node_pointer *node,
     if (len[a] > 0.00001) {
       b_id = (length_to_pos[a] / len[a]) * (SAH_NUM_BUCKETS - 1);
     }
-    buckets->buckets[0][b_id].ids.push_back(id);
+    buckets->buckets[0][b_id].ids.emplace_back(id);
     // update bounds
     buckets->buckets[0][b_id].box =
         union_box(buckets->buckets[0][b_id].box, treelet->data.bounds);
@@ -235,7 +235,7 @@ void SAH::combine_ids(std::vector<uint> *res, const SAH_buckets &buckets,
                       const uint &bid_max) {
   for (size_t i = bid_min; i <= bid_max; i++) {
     for (uint id : buckets.buckets[axis][i].ids) {
-      res->push_back(id);
+      res->emplace_back(id);
     }
   }
 }
@@ -521,9 +521,9 @@ void SAH::split_middle_node(bvh_node_pointer *node) {
   for (size_t i = 0; i < size; i++) {
     uint id = _tree->get_data(node)->triangle_ids[i];
     if (i < size / 2) {
-      _tree->get_data(node_left)->triangle_ids.push_back(id);
+      _tree->get_data(node_left)->triangle_ids.emplace_back(id);
     } else {
-      _tree->get_data(node_right)->triangle_ids.push_back(id);
+      _tree->get_data(node_right)->triangle_ids.emplace_back(id);
     }
   }
 
@@ -619,8 +619,9 @@ void SAH::built_on_treelets() {
   BVH_node_data data{};
 
   uint num_treelets = _tree->get_treelets().size();
+  data.triangle_ids.reserve(num_treelets);
   for (uint i = 0; i < num_treelets; i++) {
-    data.triangle_ids.push_back(i);
+    data.triangle_ids.emplace_back(i);
   }
 
   _tree->set_root(data);
@@ -650,9 +651,9 @@ void SAH::split_middle_node_treelets(bvh_node_pointer *node) {
   for (size_t i = 0; i < size; i++) {
     uint id = _tree->get_data(node)->triangle_ids[i];
     if (i < size / 2) {
-      _tree->get_data(node_left)->triangle_ids.push_back(id);
+      _tree->get_data(node_left)->triangle_ids.emplace_back(id);
     } else {
-      _tree->get_data(node_right)->triangle_ids.push_back(id);
+      _tree->get_data(node_right)->triangle_ids.emplace_back(id);
     }
   }
 }

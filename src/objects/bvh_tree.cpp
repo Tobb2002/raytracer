@@ -234,8 +234,7 @@ void BVH_tree::flatten_tree() {
 
 uint BVH_tree::flatten_node(bvh_node_pointer* node) {
   uint index = _triangles_flat.size();
-  bvh_node_flat data = bvh_node_flat(node->data, 0, is_leaf(node));
-  _triangles_flat.push_back(data);
+  _triangles_flat.emplace_back(node->data, 0, is_leaf(node));
 
   if (is_leaf(node)) {
     return index;
@@ -274,7 +273,7 @@ void BVH_tree::destroy_treelets() {
 void BVH_tree::add_treelet(const std::vector<uint>& treelet_ids) {
   BVH_node_data data;
   for (uint id : treelet_ids) {
-    data.triangle_ids.push_back(id);
+    data.triangle_ids.emplace_back(id);
   }
 
   bvh_node_pointer* node = new bvh_node_pointer(data);

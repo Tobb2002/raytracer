@@ -29,11 +29,13 @@ void LBVH::split(bvh_node_pointer *node, uint split_id) {
   // push back triangles
   BVH_node_data *data = _tree->get_data(node);
   size_t size = _tree->get_data(node)->triangle_ids.size();
+  node_left->data.triangle_ids.reserve(split_id);
+  node_right->data.triangle_ids.reserve(size - split_id);
   for (size_t i = 0; i < size; i++) {
     if (i < split_id) {
-      node_left->data.triangle_ids.push_back(data->triangle_ids.at(i));
+      node_left->data.triangle_ids.emplace_back(data->triangle_ids.at(i));
     } else {
-      node_right->data.triangle_ids.push_back(data->triangle_ids.at(i));
+      node_right->data.triangle_ids.emplace_back(data->triangle_ids.at(i));
     }
   }
 
@@ -94,13 +96,13 @@ void LBVH::add_treelets(bvh_node_pointer *node) {
     }
 
     if (current_top_bits == top_bits) {
-      current_treelet.push_back(id);
+      current_treelet.emplace_back(id);
     } else {
       // insert treelet
       _tree->add_treelet(current_treelet);
       current_treelet.clear();
       // initialize new treelet
-      current_treelet.push_back(id);
+      current_treelet.emplace_back(id);
       current_top_bits = top_bits;
     }
   }

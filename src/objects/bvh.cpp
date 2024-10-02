@@ -21,7 +21,7 @@ void BVH::build_tree_axis(std::vector<Triangle> *triangles,
   BVH_node_data root_data = BVH_node_data();
   root_data.triangle_ids.reserve(size);
   for (size_t i = 0; i < size; i++) {
-    root_data.triangle_ids.push_back(i);
+    root_data.triangle_ids.emplace_back(i);
   }
   _data.tree = BVH_tree(root_data, triangles);
   bvh_node_pointer *root = _data.tree.get_root();

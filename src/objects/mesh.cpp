@@ -398,23 +398,23 @@ void Mesh::read_from_obj(std::string folder, std::string file) {
         triangle_points_uv[v] = vec2(tx, ty);
         triangle_normals[v] = vec3(nx, ny, nz);
       }
-      // make triangle and add to triangles
-      Triangle t = Triangle(triangle_points, 0);
+      // add triangle to triangles vector
+      _triangles.emplace_back(triangle_points, 0);
+
+      // add properties of triangle
+      Triangle *t = _triangles.data() + _triangles.size() - 1;
       if (vertex_normals_available && _enable_smooth_shading) {
-        t.set_vertex_normals(triangle_normals);
+        t->set_vertex_normals(triangle_normals);
       }
       if (texture_available) {
-        t.set_vertex_texture(triangle_points_uv);
+        t->set_vertex_texture(triangle_points_uv);
       }
 
       // per-face material
-      // t.get_material(shapes[s].mesh.material_ids.at(f));
-      // todo check if materials size > 0
       if (materials.size() > 1) {
-        t.set_material(shapes[s].mesh.material_ids[f]);
+        t->set_material(shapes[s].mesh.material_ids[f]);
       }
 
-      _triangles.push_back(t);
 
       // update bounding box values
       update_bounding_box(&_triangles.back());
