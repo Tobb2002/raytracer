@@ -7,6 +7,8 @@ This is a implementation of a simple raytracer.
   </a>
 </div>
 
+Model downloaded from [Amazon Lumberyard Bistro, Open Research Content Archive (ORCA)](http://developer.nvidia.com/orca/amazon-lumberyard-bistro).
+
 ## Requirements
 To be able to run the programm the following requiremnts need to be installed on
 the system:
