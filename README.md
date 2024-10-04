@@ -2,6 +2,9 @@
 
 This is a implementation of a simple raytracer.
 
+<img src="images/bistro.png" alt="Logo" width="1080" height="600">
+
+
 ## Requirements
 To be able to run the programm the following requiremnts need to be installed on
 the system:
