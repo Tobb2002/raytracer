@@ -1,9 +1,11 @@
 # A simple Raytracer
 
 This is a implementation of a simple raytracer.
-
-<img src="images/bistro.png" alt="Logo" width="1080" height="600">
-
+<div align="center">
+  <a href="https://github.com/github_username/repo_name">
+    <img src="images/bistro.png" alt="Logo">
+  </a>
+</div>
 
 ## Requirements
 To be able to run the programm the following requiremnts need to be installed on
