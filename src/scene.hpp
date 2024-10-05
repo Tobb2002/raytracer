@@ -20,6 +20,11 @@
 
 #define NO_SHADING false
 
+struct Scene_stats {
+  float time_rendering;
+  float time_build;
+};
+
 class Scene {
  public:
   Scene();
