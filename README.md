@@ -22,17 +22,10 @@
 [![Creative Commons License][license-shield]][license-url]
 
 
+# Ray Tracer
 
-<!-- PROJECT LOGO -->
-<br />
-<h3 align="center">A simple Ray Tracer</h3>
-
-  <p align="center">
-    This project was build for my Bachelorthesis at the Albert-Ludwigs-Univerty
-Freiburg.
-  </p>
-</div>
-
+This project was developed as a part of my undergraduate thesis at the chair of
+computer graphics at the University of Freiburg.
 
 
 <!-- TABLE OF CONTENTS -->
@@ -54,14 +47,16 @@ Freiburg.
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-This is a implementation of a simple raytracer.
 <div align="center">
     <img src="images/bistro.png" alt="Logo">
 </div>
 
 Model downloaded from [Amazon Lumberyard Bistro, Open Research Content Archive (ORCA)](http://developer.nvidia.com/orca/amazon-lumberyard-bistro).
 
-TODO: description
+My Ray Tracer is capable of creating photorealistic renderings as the one above.
+It uses Bounding Volume Hierarchies to accelerate intersections tests with scene
+primitives enabling it to handle scenes with millions of triangles.
+
 ### Built With
 The following libraries where used to build the project:
 * [![glm][glm-shield]][glm-url]
@@ -78,20 +73,19 @@ Other tools used for the project:
 
 <!-- FEATURES -->
 ## Features
-### Supported Objects:
-  - Spheres, Planes and Triangles
-  - Triangle meshes (in the .obj format) 
-- Textures (read from .mtl file)
+### Triangle Meshes:
+Complex geometries are handeled with trianlge meshes using Wavefront Object
+files (.obj)
+Format.
 
-### Shading:
-To realistically represent materials this implementation uses the simple Phong
-shading. It can handle Difusse, Specular and Mirroring Materials.
-
-  - Diffuse specular and Mirroring materials.
+### Materials and Textures:
+Materials properties and textures can be specified using Wavefront Material
+files (.mtl) files.
 
 ### Intersection Acceleration:
-To efficiently calculate ray-primitive intersections my implementation uses one
-of the following methods:
+To efficiently calculate ray-primitive intersections one of the following data
+structures can be used:
+
 - Bounding Volume Hierarchies with:
   - Surface Area Heuristic (SAH)
   - Linear Bounding Volume Hierarhies (LBVH)
