@@ -14,8 +14,8 @@
 #include "triangle.hpp"
 #include "uniform_grid.hpp"
 
-#define VISUALIZE_BVH true
-#define LOAD_TEXTURES false
+#define VISUALIZE_BVH false
+#define LOAD_TEXTURES true
 
 struct mesh_stats {
   uint intersects = 0;
