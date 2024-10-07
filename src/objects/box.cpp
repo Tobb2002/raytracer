@@ -116,7 +116,6 @@ float Box::get_surface_area(void) {
   vec3 length = _max - _min;
 
   return 2 * length.x + 2 * length.y + 2 * length.z;
-
 }
 
 /**

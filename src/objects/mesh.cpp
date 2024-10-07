@@ -415,7 +415,6 @@ void Mesh::read_from_obj(std::string folder, std::string file) {
         t->set_material(shapes[s].mesh.material_ids[f]);
       }
 
-
       // update bounding box values
       update_bounding_box(&_triangles.back());
 
