@@ -51,10 +51,8 @@ void Morton::generate_morton_codes(std::vector<uint> *triangle_ids,
     Triangle *t = _triangles->data() + i;
     // get normalized triangle position dependent on bounding box
     vec3 pos = t->get_pos();
-    vec3 bounds_min = bounds.min;
-    vec3 bounds_max = bounds.max;
-
-    vec3 pos_normalized = (pos - bounds_min) / (bounds_max - bounds_min);
+    vec3 pos_normalized =
+        glm::abs((pos - bounds.min) / (bounds.max - bounds.min));
 
     // save respective morten code trianlge with id i -> morton code at index i
     _morton_codes.push_back(get_morton_value(pos_normalized));
