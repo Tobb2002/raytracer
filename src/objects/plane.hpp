@@ -10,6 +10,8 @@
 #include "ray.hpp"
 #include "texture.hpp"
 
+#define SQUARE_SIZE 4.f
+
 using glm::vec3;
 
 /**

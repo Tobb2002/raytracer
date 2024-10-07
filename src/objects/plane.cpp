@@ -126,7 +126,7 @@ Material Plane::get_material(vec3 point) {
   }
 
   // squares of two materials
-  vec3 point_origin_mod = glm::mod(point_origin, 4.f);
+  vec3 point_origin_mod = glm::mod(point_origin, SQUARE_SIZE);
 
   // draw axis of worldspace
   if (_axis_enable) {
@@ -135,8 +135,10 @@ Material Plane::get_material(vec3 point) {
       return {.color = vec3(0, 1, 0)};
     }
   }
-  if ((point_origin_mod.x < 2 && point_origin_mod.y < 2) ||
-      (point_origin_mod.x > 2 && point_origin_mod.y > 2)) {
+  if ((point_origin_mod.x < SQUARE_SIZE / 2 &&
+       point_origin_mod.y < SQUARE_SIZE / 2) ||
+      (point_origin_mod.x > SQUARE_SIZE / 2 &&
+       point_origin_mod.y > SQUARE_SIZE / 2)) {
     return _material;
   } else {
     return _material2;
