@@ -75,12 +75,11 @@ Other tools used for the project:
 ## Features
 ### Triangle Meshes:
 Complex geometries are handeled with trianlge meshes using Wavefront Object
-files (.obj)
-Format.
+files (.obj).
 
 ### Materials and Textures:
 Materials properties and textures can be specified using Wavefront Material
-files (.mtl) files.
+files (.mtl).
 
 ### Intersection Acceleration:
 To efficiently calculate ray-primitive intersections one of the following data
