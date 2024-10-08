@@ -30,8 +30,8 @@ inline Scene get_scene() {
   // Pointlight light = Pointlight(origin + vec3(0, 0, 0), 450);
   // scene.add_light(light);
 
-  scene.get_camera()->set_resolution(800, 600);
-  scene.get_camera()->set_sensor_size(1.6, 1.2);
+  scene.get_camera()->set_resolution(800 * 1.77, 800);
+  scene.get_camera()->set_sensor_size(1.77, 1);
 
   scene.set_aliasing(1);
   scene.set_tonemapping_value(-1);

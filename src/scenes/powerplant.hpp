@@ -12,7 +12,7 @@
  * HLBVH: TREELETBITS: 23
  *        GRID_SIZE: 13
  *
- * VISUALIZE_RANGE: 
+ * VISUALIZE_RANGE:
  */
 
 inline Scene get_scene() {

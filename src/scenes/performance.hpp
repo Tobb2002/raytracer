@@ -18,8 +18,8 @@ inline Scene get_scene() {
   ObjectFactory factory = ObjectFactory(&scene);
   factory.new_xy_square_light(origin_plane + vec3(-1.5, 2, 2), 370, 6, 0.02);
 
-  scene.get_camera()->set_resolution(1200, 800);
-  scene.get_camera()->set_sensor_size(1.2, 0.8);
+  scene.get_camera()->set_resolution(800 * 1.77, 800);
+  scene.get_camera()->set_sensor_size(0.8 * 1.77, 0.8);
 
   scene.set_aliasing(1);
   scene.set_tonemapping_value(-1);

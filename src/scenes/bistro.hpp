@@ -20,20 +20,24 @@ inline Scene get_scene() {
   vec3 origin = vec3(0, 0, 0);
   vec3 camera_pos = vec3(-18, 9, 0);
 
-  Mesh m = Mesh("data/input/bistro", "bistro2.obj", origin - camera_pos,
+  Mesh m = Mesh("data/input/bistro", "bistro.obj", origin - camera_pos,
                 {.color = vec3(0.2, 0.2, 0.2),
-                 .ambient = vec3(0.0),
+                 .ambient = vec3(0.25),
                  .specular = vec3(0.15)},
                 AHLBVH);
 
-  // ObjectFactory factory = ObjectFactory(&scene);
-  // factory.new_xy_square_light(origin + vec3(0.8, 2, -3), 500, 4, 0.05);
+  vec3 light = vec3(1, 0.9, 0.9);
+  ObjectFactory factory = ObjectFactory(&scene);
+  factory.new_xy_square_light(origin + vec3(10, 40, -3), light * vec3(70), 5,
+                              0.55);
+  factory.new_xy_square_light(origin + vec3(-350, 380, -140), light * vec3(500),
+                              5, 10.2);
 
-  Pointlight light = Pointlight(origin + vec3(0, 0, 0), 450);
-  scene.add_light(light);
+  // Pointlight light = Pointlight(origin + vec3(0, 0, 0), 450);
+  // scene.add_light(light);
 
-  scene.get_camera()->set_resolution(1600, 800);
-  scene.get_camera()->set_sensor_size(2, 1);
+  scene.get_camera()->set_resolution(800 * 1.77, 800);
+  scene.get_camera()->set_sensor_size(1.77, 1);
 
   scene.set_aliasing(1);
   scene.set_tonemapping_value(-1);
