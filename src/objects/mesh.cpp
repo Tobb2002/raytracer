@@ -459,7 +459,8 @@ void Mesh::print_stats() {
   std::cout << "\t min: \t" << _stats.min_node_intersects << "\n";
   std::cout << "\t max: \t" << _stats.max_node_intersects << "\n";
   if (_stats.intersects != 0) {
-    std::cout << "\t avg: \t" << _stats.node_intersects / _stats.intersects
+    std::cout << "\t avg: \t"
+              << static_cast<float>(_stats.node_intersects) / _stats.intersects
               << "\n";
   }
   std::cout << "BVH triangles intersected: \n";
@@ -467,7 +468,9 @@ void Mesh::print_stats() {
   std::cout << "\t min: \t" << _stats.min_triangle_intersects << "\n";
   std::cout << "\t max: \t" << _stats.max_triangle_intersects << "\n";
   if (_stats.intersects != 0) {
-    std::cout << "\t avg: \t" << _stats.triangle_intersects / _stats.intersects
+    std::cout << "\t avg: \t"
+              << static_cast<float>(_stats.triangle_intersects) /
+                     _stats.intersects
               << "\n";
   }
   std::cout << "------------------------------------------------\n";
