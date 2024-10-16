@@ -26,6 +26,7 @@ struct mesh_stats {
   uint min_triangle_intersects = UINT_MAX;
   uint triangle_intersects = 0;
   float time_building = 0;
+  float intersection_time_all = 0;
 };
 
 class Mesh : public Object {

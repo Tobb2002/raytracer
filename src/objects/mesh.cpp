@@ -435,6 +435,7 @@ void Mesh::update_stats(bvh_stats bvh_stats) {
   _stats.intersects += 1;
   _stats.node_intersects += bvh_stats.node_intersects;
   _stats.triangle_intersects += bvh_stats.triangle_intersects;
+  _stats.intersection_time_all += bvh_stats.intersection_time;
 
   // update min max values
   if (bvh_stats.node_intersects < _stats.min_node_intersects) {
@@ -473,6 +474,10 @@ void Mesh::print_stats() {
                      _stats.intersects
               << "\n";
   }
+  std::cout << "Intersection time: \n";
+  std::cout << "\t all: \t" << _stats.intersection_time_all << "\n";
+  std::cout << "\t avg: \t" << _stats.intersection_time_all / _stats.intersects
+            << "\n";
   std::cout << "------------------------------------------------\n";
 }
 void Mesh::print_triangle_stats() {

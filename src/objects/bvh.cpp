@@ -3,6 +3,7 @@
  */
 #include <cmath>
 #include <vector>
+#include <chrono>
 
 #include "box.hpp"
 #include "bvh_tree.hpp"
@@ -69,11 +70,20 @@ TriangleIntersection BVH::intersect(const Ray &ray) {
   _intersect_count = 0;
   _stats = bvh_stats();
   _best_intersection = TriangleIntersection();
+
+  std::chrono::steady_clock::time_point begin =
+      std::chrono::steady_clock::now();
 #if FLATTEN_TREE
   intersect_node((uint)0, ray);
 #else
   intersect_node(_data.tree.get_root(), ray);
 #endif
+  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+  _stats.intersection_time =
+    (std::chrono::duration_cast<std::chrono::microseconds>(end - begin)
+         .count()) /
+    1000000.0;
 #if VISUALIZE_INTERSECT
   vec2 input_area = VISUALIZE_RANGE;
   vec2 output_area = vec2(0, 1);
